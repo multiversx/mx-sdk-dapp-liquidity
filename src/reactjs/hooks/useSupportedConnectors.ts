@@ -24,10 +24,14 @@ export const useSupportedConnectors = () => {
     [connectors, supportedConnectorIds]
   );
 
-  return useMemo(() => supportedConnectors.filter(
-      (connector, index) =>
+  return useMemo(
+    () =>
+      supportedConnectors.filter(
+        (connector, index) =>
           supportedConnectors.findIndex(
-              (searchingConnector) => connector.id === searchingConnector.id
+            (searchingConnector) => connector.id === searchingConnector.id
           ) === index
-  ), [supportedConnectors]);
+      ),
+    [supportedConnectors]
+  );
 };
