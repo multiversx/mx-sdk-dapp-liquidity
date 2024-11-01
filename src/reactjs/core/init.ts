@@ -1,43 +1,33 @@
-import type { Metadata } from '@reown/appkit';
+import type { AppKitOptions } from '@reown/appkit';
 import { bsc, mainnet } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import type { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
 
 export type InitOptions = {
   /**
-   * @reown project ID
-   * */
-  projectID: string;
-  /**
-   * Metadata object
-   * */
-  metadata: Metadata;
-  /**
-   * Supported networks
+   * @reown AppKit options
    */
-  networks: AppKitNetwork[];
-  /**
-   * Enable debug mode
-   * */
-  debug?: boolean;
+  appKitOptions: AppKitOptions;
   /**
    * WagmiAdapter config
-   *
-   * */
+   */
   adapterConfig: Partial<CreateConfigParameters>;
+  /**
+   * Accepted connectors IDs
+   */
+  acceptedConnectorsIDs?: string[];
 };
 
 export function init(options: InitOptions) {
   const wagmiAdapter = new WagmiAdapter({
     ...options.adapterConfig,
-    projectId: options.projectID,
-    networks: options.networks,
-    ssr: options.adapterConfig.ssr ?? true
+    ssr: options.adapterConfig.ssr ?? true,
+    projectId: options.appKitOptions.projectId,
+    networks: options.appKitOptions.networks
   });
 
-  const networks = [mainnet, bsc, ...options.networks];
+  const networks = [mainnet, bsc, ...options.appKitOptions.networks];
   const uniqueNetworks = networks.filter(
     (network, index) =>
       networks.findIndex(
@@ -46,15 +36,14 @@ export function init(options: InitOptions) {
   );
 
   const appKit = createAppKit({
+    ...options.appKitOptions,
     adapters: [wagmiAdapter],
     networks: [uniqueNetworks[0], ...uniqueNetworks.slice(1)],
-    projectId: options.projectID,
-    metadata: options.metadata,
-    debug: options.debug
   });
 
   return {
     config: wagmiAdapter.wagmiConfig,
-    appKit
+    appKit,
+    options
   };
 }

@@ -64,37 +64,62 @@ yarn publish-package-next
 
 ```tsx
 import { init, Web3AppProvider } from '@multiversx/mx-sdk-dapp-liquidity';
-import { walletConnect, injected } from 'wagmi/connectors'
+import {
+  arbitrum,
+  mainnet,
+  solana,
+  solanaDevnet,
+  bscTestnet,
+  zkSyncSepoliaTestnet,
+  fantomTestnet,
+} from '@reown/appkit/networks'
+import {DEFAULT_APP_METADATA, DEFAULT_PROJECT_ID} from "../constants";
+import type {AppKitNetwork} from "@reown/appkit-common";
+import { walletConnect } from "wagmi/connectors";
 
-// This is mandatory to initialize the SDK in order to support multi chain connections
-const { config, appKit } = init({
-  projectID: 'your-@rewon-project',
-  metadata: {
-    name: 'AppName',
-    description: 'AppName Example',
-    url: 'https://example.com', // origin must match your domain & subdomain
-    icons: ['https://avatars.githubusercontent.com/u/179229932']
+const metadata = {
+  name: 'AppName',
+  description: 'AppName Example',
+  url: 'https://example.com', // origin must match your domain & subdomain
+  icons: ['https://avatars.githubusercontent.com/u/179229932']
+};
+const projectId = "@reown project id";
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, bscTestnet, arbitrum, solana, solanaDevnet, zkSyncSepoliaTestnet, fantomTestnet ]
+
+const { config, appKit, options } = init({
+  appKitOptions: {
+    projectId,
+    networks,
+    metadata,
+    connectorImages: {
+      injected: 'https://avatars.githubusercontent.com/u/179229932',
+      walletConnect: 'https://avatars.githubusercontent.com/u/37784886?s=200&v=4',
+      "io.metamask": 'https://avatars.githubusercontent.com/u/11744586?s=200&v=4',
+      "com.trustwallet.app": 'https://avatars.githubusercontent.com/u/32179889?s=200&v=4',
+    }
   },
-  networks: [mainnet, bsc, bscTestnet, arbitrum, solana, solanaDevnet, zkSyncSepoliaTestnet, fantomTestnet],
   adapterConfig: {
     ssr: true,
     connectors: [
-      injected({
-        shimDisconnect: true
-      }),
       walletConnect({
-        projectId: 'your-@rewon-project',
+        projectId,
         metadata,
-        showQrModal: false
-      }),
+        showQrModal: true
+      })
+      // Add more connectors here
     ]
-  }
-})
+  },
+  acceptedConnectorsIDs: [
+    'io.metamask',
+    'com.trustwallet.app',
+    'walletconnect'
+  ]
+});
 
 const App = () => {
   return (
     // Wrap your app with Web3AppProvider to enable multi-chain connections
-    <Web3AppProvider appKit={appKit} config={config}>
+    <Web3AppProvider appKit={appKit} config={config} options={options}>
       <YourComponent />
     </Web3AppProvider>
   )
