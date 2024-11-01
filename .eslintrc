@@ -1,0 +1,71 @@
+{
+  "root":true,
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins":[
+    "@typescript-eslint",
+    "import",
+    "prettier"
+  ],
+  "env": {
+    "es2021": true,
+    "node": true,
+    "jest/globals": true
+  },
+  "settings": {
+    "parserOptions": {
+      "ecmaFeatures": { "jsx": true }
+    },
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "src/"]
+      },
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  },
+  "overrides": [
+      {
+          "files": ["src/localConstants.ts"],
+          "env": {
+              "browser": true,
+              "node": false
+          }
+      }
+  ],
+  "rules": {
+    "no-multiple-empty-lines":"error",
+    "@typescript-eslint/no-unused-vars":"error",
+    "promise/always-return": 0,
+    "no-shadow": "off",
+    "no-undef": "error",
+    "curly": ["error", "all"],
+    "no-catch-shadow": "error",
+    "no-confusing-arrow": "error",
+    "@typescript-eslint/no-shadow": "error",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/indent": "off",
+    "import/order": [
+      "warn",
+      {
+        "groups": ["builtin", "external", "internal"],
+        "newlines-between": "ignore",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "radix":"off"
+  }
+}
