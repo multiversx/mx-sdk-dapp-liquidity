@@ -38,7 +38,7 @@ export function init(options: InitOptions) {
   const appKit = createAppKit({
     ...options.appKitOptions,
     adapters: [wagmiAdapter],
-    networks: [uniqueNetworks[0], ...uniqueNetworks.slice(1)],
+    networks: [uniqueNetworks[0], ...uniqueNetworks.slice(1)]
   });
 
   return {
