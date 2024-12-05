@@ -1,4 +1,4 @@
-import { safeWindow } from 'constants/general';
+import { safeWindow } from 'reactjs/constants/general';
 
 export function isMobile() {
   let check = false;
