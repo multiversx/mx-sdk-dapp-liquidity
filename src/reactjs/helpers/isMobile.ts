@@ -1,3 +1,5 @@
+import { safeWindow } from 'constants/general';
+
 export function isMobile() {
   let check = false;
 
@@ -12,7 +14,11 @@ export function isMobile() {
     ) {
       check = true;
     }
-  })(navigator.userAgent || navigator.vendor || (window as any).opera);
+  })(
+    safeWindow.navigator.userAgent ||
+      (safeWindow as any).vendor ||
+      (safeWindow as any).opera
+  );
 
   return check;
 }
