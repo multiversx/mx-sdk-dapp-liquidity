@@ -1,7 +1,7 @@
 import { decodeBase64 } from './base64Utils';
 import { decodeLoginToken } from './decodeLoginToken';
 
-export const decodeToken = async (token: string) => {
+export function decodeToken(token: string) {
   if (!token) {
     return null;
   }
@@ -20,14 +20,7 @@ export const decodeToken = async (token: string) => {
     const parsedInitToken = decodeLoginToken(parsedBody);
 
     if (!parsedInitToken) {
-      return {
-        address: parsedAddress,
-        body: parsedBody,
-        signature,
-        blockHash: '',
-        origin: '',
-        ttl: 0
-      };
+      return null;
     }
 
     const result = {
@@ -47,4 +40,4 @@ export const decodeToken = async (token: string) => {
       throw new Error(error.message);
     }
   }
-};
+}

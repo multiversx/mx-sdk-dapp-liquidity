@@ -7,9 +7,9 @@ export interface DecodedLoginTokenType {
   ttl: number;
 }
 
-export const decodeLoginToken = (
+export function decodeLoginToken(
   loginToken: string
-): DecodedLoginTokenType | null => {
+): DecodedLoginTokenType | null {
   if (!loginToken) {
     return null;
   }
@@ -36,4 +36,4 @@ export const decodeLoginToken = (
 
     return null;
   }
-};
+}
