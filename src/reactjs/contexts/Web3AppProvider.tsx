@@ -4,7 +4,7 @@ import type { ResolvedRegister } from '@wagmi/core';
 import { PropsWithChildren, useMemo } from 'react';
 import { createContext } from 'react';
 import { WagmiProvider } from 'wagmi';
-import { InitOptions } from '../core/init';
+import { InitOptions } from '../../bootstrap/init';
 
 export type Web3AppContextProps = {
   config: ResolvedRegister['config'];
