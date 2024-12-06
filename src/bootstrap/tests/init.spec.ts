@@ -5,7 +5,7 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import { CreateConfigParameters } from '@wagmi/core';
 import { injected, walletConnect } from 'wagmi/connectors';
-import { init, InitOptions } from '../init.ts';
+import { init, InitOptions } from '../init';
 
 const projectID = 'testProjectID';
 
