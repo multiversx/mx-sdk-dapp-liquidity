@@ -55,11 +55,13 @@ describe('init', () => {
 
   it('initializes with provided options', () => {
     const options: InitOptions = {
-      projectID: 'testProjectID',
-      metadata: mockMetadata,
-      networks: [mockNetwork],
-      debug: true,
-      adapterConfig: mockAdapterConfig
+      adapterConfig: mockAdapterConfig,
+      appKitOptions: {
+        projectId: projectID,
+        metadata: mockMetadata,
+        networks: [mockNetwork],
+        debug: true
+      }
     };
 
     const result = init(options);
@@ -83,11 +85,13 @@ describe('init', () => {
 
   it('removes duplicate networks', () => {
     const options: InitOptions = {
-      projectID: projectID,
-      metadata: mockMetadata,
-      networks: [mainnet, mockNetwork, bsc, mockNetwork],
-      debug: false,
-      adapterConfig: mockAdapterConfig
+      adapterConfig: mockAdapterConfig,
+      appKitOptions: {
+        projectId: projectID,
+        metadata: mockMetadata,
+        networks: [mainnet, mockNetwork, bsc, mockNetwork],
+        debug: false
+      }
     };
 
     init(options);
@@ -103,11 +107,12 @@ describe('init', () => {
 
   it('sets ssr to true if not provided in adapterConfig', () => {
     const options: InitOptions = {
-      projectID: projectID,
-      metadata: mockMetadata,
-      networks: [mockNetwork],
-      debug: false,
-      adapterConfig: {}
+      adapterConfig: {},
+      appKitOptions: {
+        projectId: projectID,
+        metadata: mockMetadata,
+        networks: [mockNetwork]
+      }
     };
 
     init(options);
@@ -121,11 +126,13 @@ describe('init', () => {
 
   it('sets ssr to true if provided in adapterConfig', () => {
     const options: InitOptions = {
-      projectID: projectID,
-      metadata: mockMetadata,
-      networks: [mockNetwork],
-      debug: false,
-      adapterConfig: { ssr: true }
+      adapterConfig: { ssr: true },
+      appKitOptions: {
+        projectId: projectID,
+        metadata: mockMetadata,
+        networks: [mockNetwork],
+        debug: false
+      }
     };
 
     init(options);
