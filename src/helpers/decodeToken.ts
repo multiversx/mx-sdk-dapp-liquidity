@@ -37,7 +37,6 @@ export const decodeToken = async (token: string) => {
       signature
     };
 
-    // if empty object, delete extraInfo
     if (!parsedInitToken.extraInfo?.timestamp) {
       delete result.extraInfo;
     }
