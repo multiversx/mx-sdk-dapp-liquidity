@@ -1,18 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { decodeToken } from 'helpers/decodeToken';
-
-interface RateRequestBody {
-  tokenIn: string;
-  amountIn: string;
-  fromChain: string;
-  tokenOut: string;
-  toChain: string;
-}
-
-interface RateRequestResponse {
-  fee: string;
-  amountOut: string;
-}
+import { RateRequestBody, RateRequestResponse } from 'types/rate';
 
 interface RateProps {
   url: string;
