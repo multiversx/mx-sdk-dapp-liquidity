@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { RateRequestResponse } from 'types/rate';
-import { getRate } from '../getRate.ts';
+import { getRate } from '../getRate';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
