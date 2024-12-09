@@ -1,6 +1,7 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ConfirmRateDTO } from 'dto/ConfirmRateDTO';
 import { decodeToken } from 'helpers/decodeToken';
+import { TransactionType } from '../types/transaction.ts';
 
 type ConfirmRateProps = {
   url: string;
@@ -12,7 +13,7 @@ export async function confirmRate({
   url,
   nativeAuthToken,
   body
-}: ConfirmRateProps) {
+}: ConfirmRateProps): Promise<AxiosResponse<TransactionType[]>> {
   const config: AxiosRequestConfig = {
     baseURL: url,
     headers: {
@@ -30,5 +31,5 @@ export async function confirmRate({
     origin: decodedToken?.origin
   };
 
-  return await axios.post(`/rate/confirm`, body, config);
+  return await axios.post<TransactionType[]>(`/rate/confirm`, body, config);
 }
