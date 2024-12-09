@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { RateRequestResponse } from 'types/rate';
-import { rate } from '../rate';
+import { getRate } from '../getRate.ts';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe('rate', () => {
+describe('getRate', () => {
   const url = 'https://api.example.com';
 
   it('POST rate successfully', async () => {
@@ -32,7 +32,7 @@ describe('rate', () => {
     };
     mockedAxios.post.mockResolvedValue({ data: response });
 
-    const result = await rate({
+    const result = await getRate({
       url,
       nativeAuthToken,
       body
@@ -63,7 +63,7 @@ describe('rate', () => {
 
     mockedAxios.post.mockResolvedValue({ data: response });
 
-    const result = await rate({
+    const result = await getRate({
       url,
       nativeAuthToken,
       body
@@ -89,7 +89,9 @@ describe('rate', () => {
 
     mockedAxios.post.mockRejectedValue(new Error('error'));
 
-    await expect(rate({ url, nativeAuthToken, body })).rejects.toThrow('error');
+    await expect(getRate({ url, nativeAuthToken, body })).rejects.toThrow(
+      'error'
+    );
     expect(mockedAxios.post).toHaveBeenCalledWith('/rate', body, config);
   });
 });

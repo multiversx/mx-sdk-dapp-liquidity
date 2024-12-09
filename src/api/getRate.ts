@@ -8,7 +8,7 @@ interface RateProps {
   body: RateRequestBody;
 }
 
-export async function rate({
+export async function getRate({
   url,
   nativeAuthToken,
   body
