@@ -1,4 +1,4 @@
-import { safeWindow } from '../constants/general.ts';
+import { safeWindow } from '../constants/general';
 
 const isSupportedProvider = (provider: any) => {
   return provider?.isMetaMask || provider?.isXPortal;

@@ -1,8 +1,8 @@
-import { createWalletClient, custom, EIP1193Provider } from 'viem';
+import { createPublicClient, custom, EIP1193Provider } from 'viem';
 import { findChain } from '../helpers/findChain';
 import { ethereum } from '../providers/ethereum';
 
-export const getWalletClient = async (
+export const getPublicClient = async (
   provider: EIP1193Provider = ethereum()
 ) => {
   const chain = await findChain(provider);
@@ -11,7 +11,7 @@ export const getWalletClient = async (
     throw new Error('Chain not found');
   }
 
-  return createWalletClient({
+  return createPublicClient({
     chain,
     transport: custom(provider)
   });

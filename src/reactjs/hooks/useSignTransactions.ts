@@ -17,20 +17,16 @@ export const useSignTransactions = () => {
 
   const signTransaction = useCallback(
     async (transaction: TransactionType) => {
-      const signature = await sendTransaction(client, transaction);
-
-      // TODO send signed transaction to the server
-      return {
-        ...transaction,
-        signature
-      };
+      const hash = await sendTransaction(client, transaction);
+      console.log({ hash });
+      return hash;
     },
     [client]
   );
 
   const signTransactions = useCallback(
     async (transactions: TransactionType[]) => {
-      const signedTransactions: TransactionType[] = [];
+      const signedTransactions: `0x${string}`[] = [];
 
       const promises = transactions.map((transaction) =>
         signTransaction(transaction)
@@ -46,7 +42,6 @@ export const useSignTransactions = () => {
         }
       });
 
-      // TODO send signed transactions to the server
       return signedTransactions;
     },
     [signTransaction]
