@@ -18,6 +18,8 @@ export const useSignTransactions = () => {
   const signTransaction = useCallback(
     async (transaction: TransactionType & { account: `0x${string}` }) => {
       const signature = await sendTransaction(client, transaction);
+
+      // TODO send signed transaction to the server
       return {
         ...transaction,
         signature
@@ -44,6 +46,7 @@ export const useSignTransactions = () => {
         }
       });
 
+      // TODO send signed transactions to the server
       return signedTransactions;
     },
     [signTransaction]

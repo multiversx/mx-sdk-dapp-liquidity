@@ -14,6 +14,8 @@ export async function signTransaction({
   }
 
   const signature = await sendTransaction(client, transaction);
+
+  // TODO send signed transaction to the server
   return {
     ...transaction,
     signature
