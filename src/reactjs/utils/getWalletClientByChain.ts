@@ -1,10 +1,11 @@
-import { Chain, createWalletClient, custom, EIP1193Provider } from 'viem';
+import { Chain, createWalletClient, custom } from 'viem';
 import { ethereum } from '../providers/ethereum';
 
-export const getWalletClientByChain = (
-  chain: Chain,
-  provider: EIP1193Provider = ethereum()
-) => {
+export const getWalletClientByChain = (chain: Chain, provider = ethereum()) => {
+  if (!provider) {
+    throw new Error('Provider not found');
+  }
+
   return createWalletClient({
     chain,
     transport: custom(provider)

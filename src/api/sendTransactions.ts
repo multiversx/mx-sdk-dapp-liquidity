@@ -1,8 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { Transaction } from 'viem/types/transaction';
 import { TransactionType } from 'types/transaction';
+import { serializeTransaction } from '../helpers/serializeTransaction';
 
-type SendTransactionsType = {
-  transactions: TransactionType[];
+export type SendTransactionsType = {
+  transactions: Transaction[];
   url: string;
   token: string;
   axiosConfig?: AxiosRequestConfig;
@@ -24,9 +26,11 @@ export const sendTransactions = async ({
     ...axiosConfig
   };
 
-  return await axios.post<TransactionType[]>(
+  return axios.post<TransactionType[]>(
     `/transactions`,
-    transactions,
+    transactions.map((transaction) =>
+      JSON.parse(serializeTransaction(transaction))
+    ),
     config
   );
 };

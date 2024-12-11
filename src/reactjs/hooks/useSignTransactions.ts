@@ -19,14 +19,17 @@ export const useSignTransactions = () => {
     async (transaction: TransactionType) => {
       const hash = await sendTransaction(client, transaction);
       console.log({ hash });
-      return hash;
+      return {
+        ...transaction,
+        hash
+      };
     },
     [client]
   );
 
   const signTransactions = useCallback(
     async (transactions: TransactionType[]) => {
-      const signedTransactions: `0x${string}`[] = [];
+      const signedTransactions: TransactionType[] = [];
 
       const promises = transactions.map((transaction) =>
         signTransaction(transaction)

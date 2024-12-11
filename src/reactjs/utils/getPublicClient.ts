@@ -1,10 +1,12 @@
-import { createPublicClient, custom, EIP1193Provider } from 'viem';
+import { createPublicClient, custom } from 'viem';
 import { findChain } from '../helpers/findChain';
 import { ethereum } from '../providers/ethereum';
 
-export const getPublicClient = async (
-  provider: EIP1193Provider = ethereum()
-) => {
+export const getPublicClient = async (provider = ethereum()) => {
+  if (!provider) {
+    throw new Error('Provider not found');
+  }
+
   const chain = await findChain(provider);
 
   if (!chain) {

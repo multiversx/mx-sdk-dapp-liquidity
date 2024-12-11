@@ -1,7 +1,8 @@
-import { Chain, EIP1193Provider } from 'viem';
+import { Chain } from 'viem';
 import * as chains from 'viem/chains';
+import { EthereumProvider } from '../providers/ethereum';
 
-export async function findChain(provider: EIP1193Provider) {
+export async function findChain(provider: EthereumProvider) {
   const chainId = Number(await provider.request({ method: 'eth_chainId' }));
   const chainsArr = Object.keys(chains);
 

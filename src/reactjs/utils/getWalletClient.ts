@@ -1,10 +1,12 @@
-import { createWalletClient, custom, EIP1193Provider } from 'viem';
+import { createWalletClient, custom } from 'viem';
 import { findChain } from '../helpers/findChain';
 import { ethereum } from '../providers/ethereum';
 
-export const getWalletClient = async (
-  provider: EIP1193Provider = ethereum()
-) => {
+export const getWalletClient = async (provider = ethereum()) => {
+  if (!provider) {
+    throw new Error('Provider not found');
+  }
+
   const chain = await findChain(provider);
 
   if (!chain) {
