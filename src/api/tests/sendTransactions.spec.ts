@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { Transaction } from 'viem';
 import { sendTransactions } from 'api/sendTransactions';
-import { TransactionType } from 'types/transaction';
+import { serializeTransaction } from '../../helpers/serializeTransaction';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -8,7 +9,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('sendTransactions', () => {
   const url = 'https://api.example.com';
   const token = 'someValidToken';
-  const transactions: TransactionType[] = [
+  const transactions: Transaction[] = [
     {
       from: '0xAlice',
       to: '0xBob',
@@ -19,7 +20,7 @@ describe('sendTransactions', () => {
       hash: '0x1234',
       nonce: 1,
       value: BigInt(1000000000000000000)
-    } as unknown as TransactionType
+    } as unknown as Transaction
   ];
 
   it('POST sendTransactions successfully', async () => {
@@ -30,7 +31,9 @@ describe('sendTransactions', () => {
 
     expect(mockedAxios.post).toHaveBeenCalledWith(
       '/transactions',
-      transactions,
+      transactions.map((transaction) =>
+        JSON.parse(serializeTransaction(transaction))
+      ),
       {
         baseURL: url,
         headers: {
@@ -57,7 +60,9 @@ describe('sendTransactions', () => {
 
     expect(mockedAxios.post).toHaveBeenCalledWith(
       '/transactions',
-      transactions,
+      transactions.map((transaction) =>
+        JSON.parse(serializeTransaction(transaction))
+      ),
       {
         baseURL: url,
         headers: {
