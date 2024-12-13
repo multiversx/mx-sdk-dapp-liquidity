@@ -9,6 +9,7 @@
   "types": "index.d.ts",
   "scripts": {
     "build": "rimraf dist && vite build && cp package.json dist && cp README.md dist",
+    "build-dev": "yarn build && sh copy-dist.sh",
     "build:watch": "tsc && vite build --watch",
     "publish-package": "yarn build && cd dist && npm publish",
     "publish-package-next": "yarn build && cd dist && npm publish --tag next",
@@ -35,6 +36,7 @@
     "@swc-node/jest": "1.6.6",
     "@swc/core": "1.5.24",
     "@swc/jest": "0.2.27",
+    "@tanstack/eslint-plugin-query": "5.62.1",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.4.2",
     "@testing-library/react": "16.0.1",
