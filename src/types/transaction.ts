@@ -1,3 +1,9 @@
-import { TransactionBase } from 'viem/types/transaction';
+import {
+  TransactionBase,
+  Transaction as ViemTransaction
+} from 'viem/types/transaction';
 
-export type TransactionType = TransactionBase & { account: `0x${string}` };
+export type TransactionType = TransactionBase & {
+  account: `0x${string}`;
+};
+export type Transaction = ViemTransaction;
