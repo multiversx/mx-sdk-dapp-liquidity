@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { TokenDTO } from 'dto/Token.dto';
+import { TokenType } from '../types/token';
 
 export async function getTokens({
   url,
@@ -7,10 +7,10 @@ export async function getTokens({
 }: {
   url: string;
   chainId?: number;
-}): Promise<AxiosResponse<TokenDTO[]>> {
+}): Promise<AxiosResponse<TokenType[]>> {
   const endpoint = chainId ? `/tokens/${chainId}` : '/tokens';
 
-  return await axios.get<TokenDTO[]>(endpoint, {
+  return await axios.get<TokenType[]>(endpoint, {
     baseURL: url
   });
 }
