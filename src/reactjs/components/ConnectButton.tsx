@@ -23,19 +23,28 @@ export const ConnectButton = ({ connector }: { connector: Connector }) => {
   }, [handleCheckIfReady]);
 
   return (
-    <button
-      className="sdk-dapp-liquidity-wallet-connect-button"
-      disabled={isDisabled}
-      onClick={handleConnect(connector.id)}
-    >
-      <img
-        src={connector.icon}
-        alt={''}
-        className="sdk-dapp-liquidity-wallet-connect-button-icon"
-      />
-      <span className="sdk-dapp-liquidity-wallet-connect-button-text">
-        {connector.name}
-      </span>
-    </button>
+    <div className="flex items-center space-x-4 rtl:space-x-reverse">
+      <div className="flex-shrink-0">
+        <img
+          src={connector.icon}
+          alt={''}
+          className="sdk-dapp-liquidity-wallet-connect-button-icon"
+        />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-900 truncate dark:text-white sdk-dapp-liquidity-wallet-connect-button-text">
+          {connector.name}
+        </p>
+      </div>
+      <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+        <button
+          className="sdk-dapp-liquidity-wallet-connect-button"
+          disabled={isDisabled}
+          onClick={handleConnect(connector.id)}
+        >
+          Connect
+        </button>
+      </div>
+    </div>
   );
 };

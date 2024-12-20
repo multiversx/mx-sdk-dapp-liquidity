@@ -1,9 +1,12 @@
+import { useAppKitAccount } from '@reown/appkit/react';
 import { useCallback, useState } from 'react';
 import { useConnect, useDisconnect } from 'wagmi';
 import { useSupportedConnectors } from './useSupportedConnectors';
 
 export const useAuth = () => {
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const account = useAppKitAccount();
 
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
@@ -22,6 +25,7 @@ export const useAuth = () => {
         setIsConnecting(true);
         const connected = await connectAsync({ connector: foundConnector });
         setIsConnecting(false);
+        setIsConnected(connected.accounts.length > 0);
 
         return connected;
       } catch (error) {
@@ -45,6 +49,8 @@ export const useAuth = () => {
   return {
     connect,
     disconnect,
-    isConnecting
+    isConnecting,
+    isConnected,
+    account
   };
 };
