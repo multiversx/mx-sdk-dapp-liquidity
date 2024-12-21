@@ -1,22 +1,30 @@
 import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { ReactNode } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 
-export const CustomConnectButton = () => {
+export const CustomConnectButton = ({
+  disabled,
+  className,
+  children
+}: {
+  disabled?: boolean;
+  className?: string;
+  children?: ReactNode;
+}) => {
   const { open } = useWeb3Modal();
   const { isConnected, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const baseStyle =
-    'px-4 py-2 font-bold text-white rounded-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 active:translate-y-0 focus:outline-none';
+  const baseStyle = 'font-bold text-white rounded-lg';
 
   if (isConnected) {
     return (
       <button
         onClick={() => disconnect()}
-        className={`${baseStyle} bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600`}
+        className={`${baseStyle} ${className}`}
+        disabled={disabled}
       >
-        <span className="mr-2 text-xl">🔓</span>
-        Disconnect
+        {children || 'Disconnect'}
       </button>
     );
   }
@@ -27,10 +35,10 @@ export const CustomConnectButton = () => {
           view: 'Networks'
         })
       }
-      className={`${baseStyle} bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600`}
+      className={`${baseStyle} ${className}`}
+      disabled={disabled}
     >
-      <span className="mr-2 text-xl">👛</span>
-      {isConnecting ? 'Trying to connect...' : 'Connect'}
+      {children || (isConnecting ? 'Trying to connect...' : 'Connect')}
     </button>
   );
 };
