@@ -1,17 +1,20 @@
+import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { getTokens } from '../../api/getTokens';
+import { getTokensBalances } from '../../api/getTokensBalances';
 import { API_URL } from '../constants/general';
-import { useGetChainId } from '../hooks/useGetChainId';
 
-export const useGetTokensQuery = () => {
-  const chainId = useGetChainId();
+export const useGetTokensBalancesQuery = () => {
+  const { address } = useAppKitAccount();
 
   const queryFn = async () => {
     try {
-      const { data } = await getTokens({
+      if (!address) {
+        return [];
+      }
+      const { data } = await getTokensBalances({
         url: API_URL,
-        chainId: Number(chainId)
+        userAddress: address
       });
       return data;
     } catch (error) {
@@ -24,9 +27,10 @@ export const useGetTokensQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['tokens', chainId],
+    queryKey: ['tokens-balances', address],
     queryFn,
     retry,
+    enabled: Boolean(address),
     refetchOnWindowFocus: false,
     gcTime: 0
   });
