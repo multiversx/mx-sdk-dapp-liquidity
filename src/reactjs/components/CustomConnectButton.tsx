@@ -22,7 +22,11 @@ export const CustomConnectButton = () => {
   }
   return (
     <button
-      onClick={() => open()}
+      onClick={() =>
+        open({
+          view: 'Networks'
+        })
+      }
       className={`${baseStyle} bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600`}
     >
       <span className="mr-2 text-xl">👛</span>
