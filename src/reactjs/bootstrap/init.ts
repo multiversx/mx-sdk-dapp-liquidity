@@ -9,13 +9,13 @@ export type InitOptions = {
   /**
    * @reown AppKit options
    */
-  appKitOptions: AppKitOptions;
+  appKitOptions: Omit<AppKitOptions, 'networks'>;
   /**
    * WagmiAdapter config
    */
   adapterConfig: Partial<CreateConfigParameters>;
   /**
-   * Accepted chain IDs
+   * Accepted chain IDs. The chains with ids [31, 44, 54] will be ignored as these are mapped to the mvx networks as [1, D, T]
    */
   acceptedChainIDs: number[];
   /**
@@ -26,7 +26,11 @@ export type InitOptions = {
 
 export function init(options: InitOptions) {
   const acceptedNetworks = Object.values(networks)
-    .filter((chain) => options.acceptedChainIDs.includes(Number(chain.id)))
+    .filter(
+      (chain) =>
+        options.acceptedChainIDs.includes(Number(chain.id)) &&
+        ![31, 44, 54].includes(Number(chain.id))
+    )
     .map((network) => network) as AppKitNetwork[];
 
   const wagmiAdapter = new WagmiAdapter({
