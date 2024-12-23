@@ -1,5 +1,5 @@
 import { Metadata } from '@reown/appkit';
-import { bsc, mainnet } from '@reown/appkit/networks';
+import { mainnet } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
@@ -16,26 +16,7 @@ describe('init', () => {
     url: 'https://example.com',
     icons: ['https://avatars.githubusercontent.com/u/179229932']
   };
-  const mockNetwork: AppKitNetwork = {
-    id: 123456789,
-    caipNetworkId: 'eip155:123456789',
-    chainNamespace: 'eip155',
-    name: 'Custom Network',
-    nativeCurrency: {
-      decimals: 18,
-      name: 'Ether',
-      symbol: 'ETH'
-    },
-    rpcUrls: {
-      default: {
-        http: ['RPC_URL'],
-        webSocket: ['WS_RPC_URL']
-      }
-    },
-    blockExplorers: {
-      default: { name: 'Explorer', url: 'BLOCK_EXPLORER_URL' }
-    }
-  };
+  const mockNetwork: AppKitNetwork = mainnet;
   const mockAdapterConfig: Partial<CreateConfigParameters> = {
     ssr: true,
     connectors: [
@@ -61,7 +42,8 @@ describe('init', () => {
         metadata: mockMetadata,
         networks: [mockNetwork],
         debug: true
-      }
+      },
+      acceptedChainIDs: [1]
     };
 
     const result = init(options);
@@ -74,35 +56,13 @@ describe('init', () => {
     });
     expect(createAppKit).toHaveBeenCalledWith({
       adapters: [expect.any(WagmiAdapter)],
-      networks: [mainnet, bsc, mockNetwork],
+      networks: [mockNetwork],
       projectId: projectID,
       metadata: mockMetadata,
       debug: true
     });
     expect(result).toHaveProperty('config');
     expect(result).toHaveProperty('appKit');
-  });
-
-  it('removes duplicate networks', () => {
-    const options: InitOptions = {
-      adapterConfig: mockAdapterConfig,
-      appKitOptions: {
-        projectId: projectID,
-        metadata: mockMetadata,
-        networks: [mainnet, mockNetwork, bsc, mockNetwork],
-        debug: false
-      }
-    };
-
-    init(options);
-
-    expect(createAppKit).toHaveBeenCalledWith({
-      adapters: [expect.any(WagmiAdapter)],
-      networks: [mainnet, bsc, mockNetwork],
-      projectId: projectID,
-      metadata: mockMetadata,
-      debug: false
-    });
   });
 
   it('sets ssr to true if not provided in adapterConfig', () => {
@@ -112,7 +72,8 @@ describe('init', () => {
         projectId: projectID,
         metadata: mockMetadata,
         networks: [mockNetwork]
-      }
+      },
+      acceptedChainIDs: [1]
     };
 
     init(options);
@@ -132,7 +93,8 @@ describe('init', () => {
         metadata: mockMetadata,
         networks: [mockNetwork],
         debug: false
-      }
+      },
+      acceptedChainIDs: [1]
     };
 
     init(options);
