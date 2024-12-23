@@ -12,7 +12,7 @@ export async function getTokensBalances({
     throw new Error('User address is required');
   }
 
-  return await axios.get<TokenBalanceDTO[]>(`/tokens/${userAddress}`, {
+  return await axios.get<TokenBalanceDTO[]>(`/tokens/balances/${userAddress}`, {
     baseURL: url
   });
 }
