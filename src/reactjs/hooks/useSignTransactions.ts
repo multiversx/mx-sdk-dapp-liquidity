@@ -17,6 +17,10 @@ export const useSignTransactions = () => {
 
   const signTransaction = useCallback(
     async (transaction: TransactionType) => {
+      if (!client) {
+        throw new Error('Client not found');
+      }
+
       const hash = await sendTransaction(client, transaction);
       console.log({ hash });
       return {
