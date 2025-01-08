@@ -40,7 +40,6 @@ describe('init', () => {
       appKitOptions: {
         projectId: projectID,
         metadata: mockMetadata,
-        networks: [mockNetwork],
         debug: true
       },
       acceptedChainIDs: [1]
@@ -70,8 +69,7 @@ describe('init', () => {
       adapterConfig: {},
       appKitOptions: {
         projectId: projectID,
-        metadata: mockMetadata,
-        networks: [mockNetwork]
+        metadata: mockMetadata
       },
       acceptedChainIDs: [1]
     };
@@ -91,7 +89,6 @@ describe('init', () => {
       appKitOptions: {
         projectId: projectID,
         metadata: mockMetadata,
-        networks: [mockNetwork],
         debug: false
       },
       acceptedChainIDs: [1]
