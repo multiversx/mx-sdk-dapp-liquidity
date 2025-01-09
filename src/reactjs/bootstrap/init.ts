@@ -4,6 +4,7 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
 import * as networks from 'viem/chains';
+import { InMemoryStore } from '../../store/inMemoryStore';
 
 export type InitOptions = {
   /**
@@ -22,9 +23,16 @@ export type InitOptions = {
    * Accepted connectors IDs
    */
   acceptedConnectorsIDs?: string[];
+  /**
+   * Liquidity API URL
+   */
+  apiURL: string;
 };
 
 export function init(options: InitOptions) {
+  const store = InMemoryStore.getInstance();
+  store.setItem('apiURL', options.apiURL);
+
   const acceptedNetworks = Object.values(networks)
     .filter(
       (chain) =>

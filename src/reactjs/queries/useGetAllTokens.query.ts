@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTokens } from '../../api/getTokens';
-import { API_URL } from '../constants/general';
+import { getApiURL } from '../../helpers/getApiURL';
 
 export const useGetAllTokensQuery = () => {
   const queryFn = async () => {
     try {
       const { data } = await getTokens({
-        url: API_URL
+        url: getApiURL()
       });
       return data;
     } catch (error) {

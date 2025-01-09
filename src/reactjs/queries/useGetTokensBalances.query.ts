@@ -2,8 +2,8 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTokensBalances } from '../../api/getTokensBalances';
-import { API_URL } from '../constants/general';
-import { useGetChainId } from '../hooks/useGetChainId.ts';
+import { getApiURL } from '../../helpers/getApiURL';
+import { useGetChainId } from '../hooks/useGetChainId';
 
 export const useGetTokensBalancesQuery = () => {
   const { address } = useAppKitAccount();
@@ -20,7 +20,7 @@ export const useGetTokensBalancesQuery = () => {
       }
 
       const { data } = await getTokensBalances({
-        url: API_URL,
+        url: getApiURL(),
         userAddress: address,
         chainId: chainId.toString()
       });

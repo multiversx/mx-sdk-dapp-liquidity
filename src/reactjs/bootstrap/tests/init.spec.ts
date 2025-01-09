@@ -42,7 +42,8 @@ describe('init', () => {
         metadata: mockMetadata,
         debug: true
       },
-      acceptedChainIDs: [1]
+      acceptedChainIDs: [1],
+      apiURL: 'https://localhost:3000'
     };
 
     const result = init(options);
@@ -71,7 +72,8 @@ describe('init', () => {
         projectId: projectID,
         metadata: mockMetadata
       },
-      acceptedChainIDs: [1]
+      acceptedChainIDs: [1],
+      apiURL: 'https://localhost:3000'
     };
 
     init(options);
@@ -91,7 +93,8 @@ describe('init', () => {
         metadata: mockMetadata,
         debug: false
       },
-      acceptedChainIDs: [1]
+      acceptedChainIDs: [1],
+      apiURL: 'https://localhost:3000'
     };
 
     init(options);

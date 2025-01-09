@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getChains } from '../../api/getChains.ts';
-import { API_URL } from '../constants/general';
+import { getApiURL } from '../../helpers/getApiURL';
 
 export const useGetChainsQuery = () => {
   const queryFn = async () => {
     try {
       const { data } = await getChains({
-        url: API_URL
+        url: getApiURL()
       });
       return data;
     } catch (error) {

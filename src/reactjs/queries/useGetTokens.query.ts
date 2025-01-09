@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTokens } from '../../api/getTokens';
-import { API_URL } from '../constants/general';
+import { getApiURL } from '../../helpers/getApiURL';
 import { useGetChainId } from '../hooks/useGetChainId';
 
 export const useGetTokensQuery = () => {
@@ -10,7 +10,7 @@ export const useGetTokensQuery = () => {
   const queryFn = async () => {
     try {
       const { data } = await getTokens({
-        url: API_URL,
+        url: getApiURL(),
         chainId: Number(chainId)
       });
       return data;

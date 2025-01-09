@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { getRate } from '../../api/getRate.ts';
-import { RateRequestBody } from '../../types/rate.ts';
-import { API_URL } from '../constants/general';
+import { getRate } from '../../api/getRate';
+import { getApiURL } from '../../helpers/getApiURL';
+import { RateRequestBody } from '../../types/rate';
 
 export const useGetRateMutation = () => {
   const mutationFn = async (params: {
@@ -9,7 +9,7 @@ export const useGetRateMutation = () => {
     body: RateRequestBody;
   }) => {
     const { data } = await getRate({
-      url: API_URL,
+      url: getApiURL(),
       ...params
     });
     return data;
