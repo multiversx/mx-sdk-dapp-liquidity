@@ -17,7 +17,8 @@ describe('getTokens', () => {
         symbol: 'T1',
         decimals: 18,
         crosschain: true,
-        logoURI: 'https://example.com/logo.png'
+        pngUrl: 'https://example.com/logo.png',
+        svgUrl: 'https://example.com/logo.svg'
       }
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
@@ -38,7 +39,8 @@ describe('getTokens', () => {
         symbol: 'T1',
         decimals: 18,
         crosschain: true,
-        logoURI: 'https://example.com/logo.png'
+        pngUrl: 'https://example.com/logo.png',
+        svgUrl: 'https://example.com/logo.svg'
       }
     ];
     mockedAxios.get.mockResolvedValue({ data: response });

@@ -5,5 +5,6 @@ export interface TokenDTO {
   symbol: string;
   decimals: number;
   crosschain: boolean;
-  logoURI: string;
+  pngUrl: string;
+  svgUrl: string;
 }
