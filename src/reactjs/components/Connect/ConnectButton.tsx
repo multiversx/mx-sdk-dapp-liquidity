@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Connector } from 'wagmi';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 export const ConnectButton = ({ connector }: { connector: Connector }) => {
   const [ready, setReady] = useState(false);

@@ -12,15 +12,18 @@ export const SwitchChainButton = ({
 }) => {
   const { open } = useWeb3Modal();
 
-  const baseStyle = `font-bold text-white rounded-lg ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`;
+  const baseStyle = `font-bold text-white rounded-lg ${
+    disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+  }`;
 
   return (
     <button
-      onClick={() =>
+      onClick={(e) => {
+        e.preventDefault();
         open({
           view: 'Networks'
-        })
-      }
+        });
+      }}
       className={`${baseStyle} ${className}`}
       disabled={disabled}
     >
