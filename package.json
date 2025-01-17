@@ -27,7 +27,13 @@
     "@headlessui/react": "^2.2.0",
     "@multiversx/sdk-dapp-utils": "^1.0.2",
     "@tanstack/react-query": "5.62.7",
+    "@types/numeral": "^2.0.5",
+    "animated-number-react": "^0.1.2",
     "axios": "1.7.9",
+    "numeral": "^2.0.6",
+    "react-joyride": "^2.9.3",
+    "react-popper": "^2.3.0",
+    "react-toastify": "^11.0.3",
     "tailwind-merge": "^2.6.0",
     "yup": "1.4.0"
   },

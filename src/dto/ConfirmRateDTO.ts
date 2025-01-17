@@ -6,4 +6,6 @@ export interface ConfirmRateDTO {
   toChain: string;
   fee: string;
   amountOut: string;
+  sender: string;
+  receiver: string;
 }

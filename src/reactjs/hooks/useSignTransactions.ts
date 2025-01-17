@@ -21,6 +21,9 @@ export const useSignTransactions = () => {
         throw new Error('Client not found');
       }
 
+      // TODO fix typescript error
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       const hash = await sendTransaction(client, transaction);
       console.log({ hash });
       return {

@@ -14,7 +14,8 @@ export type ServerTransaction = {
 //   account: `0x${string}`;
 // };
 
-export type TransactionType = ServerTransaction & {
+// export type TransactionType = ServerTransaction & {
+export type TransactionType = Transaction & {
   account: `0x${string}`;
 };
 
