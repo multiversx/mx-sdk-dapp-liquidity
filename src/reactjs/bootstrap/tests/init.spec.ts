@@ -43,7 +43,8 @@ describe('init', () => {
         debug: true
       },
       acceptedChainIDs: [1],
-      apiURL: 'https://localhost:3000'
+      apiURL: 'https://localhost:3000',
+      bridgeURL: 'https://devnet-bridge.example.com'
     };
 
     const result = init(options);
@@ -73,7 +74,8 @@ describe('init', () => {
         metadata: mockMetadata
       },
       acceptedChainIDs: [1],
-      apiURL: 'https://localhost:3000'
+      apiURL: 'https://localhost:3000',
+      bridgeURL: 'https://devnet-bridge.example.com'
     };
 
     init(options);
@@ -94,7 +96,8 @@ describe('init', () => {
         debug: false
       },
       acceptedChainIDs: [1],
-      apiURL: 'https://localhost:3000'
+      apiURL: 'https://localhost:3000',
+      bridgeURL: 'https://devnet-bridge.example.com'
     };
 
     init(options);

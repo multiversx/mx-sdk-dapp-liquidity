@@ -489,7 +489,7 @@ export const BridgeForm = ({
           </div>
         </EnterAmountCard>
         {fee && (
-          <div className="my-2 ml-2 flex justify-start rounded-xl border border-neutral-700/50 px-4 py-2 text-sm text-neutral-600">
+          <div className="my-2 ml-2 flex justify-start rounded-xl border border-neutral-700 px-4 py-2 text-sm text-neutral-600">
             {fee && `Fee: ${fee}`}
           </div>
         )}
