@@ -23,7 +23,7 @@ export const BridgeWalletConnection = ({
 }) => {
   const account = useAccount();
   const { disconnect } = useAuth();
-  const SelectedChainIcon = useChainIcon(activeChain?.chainName ?? 'default');
+  const selectedChainIcon = useChainIcon(activeChain?.chainName ?? 'default');
 
   return (
     <div className="flex items-center">
@@ -41,7 +41,11 @@ export const BridgeWalletConnection = ({
             </div>
           )}
           {activeChain && (
-            <SelectedChainIcon className="z-10 flex h-[1.5rem] w-[1.5rem] p-1" />
+            <img
+              src={selectedChainIcon}
+              alt={activeChain.chainName}
+              className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
+            />
           )}
           {activeChain?.chainName}
         </div>

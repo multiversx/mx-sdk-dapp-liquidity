@@ -28,7 +28,7 @@ export const TokenIcon = ({
   const getIconComponent = useCallback(
     (assetTicker?: string) => {
       if (!assetTicker || !token) {
-        return <DefaultIcon />;
+        return <img src={DefaultIcon} alt="" />;
       }
 
       return token.svgUrl && token.svgUrl !== '' ? (
@@ -38,7 +38,7 @@ export const TokenIcon = ({
           className="asset-icon sm p-0"
         />
       ) : (
-        <DefaultIcon />
+        <img src={DefaultIcon} alt="" />
       );
     },
     [token]

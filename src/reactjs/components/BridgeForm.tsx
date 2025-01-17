@@ -43,6 +43,7 @@ interface BridgeFormProps {
     color?: 'muted' | 'secondary' | string;
     className?: string;
   }) => JSX.Element;
+  TransactionToastComponent: typeof TransactionToast;
 }
 
 export const BridgeForm = ({
@@ -54,7 +55,8 @@ export const BridgeForm = ({
   isTokensLoading = true,
   callbackRoute = '/',
   explorerAddress,
-  TrimAddressComponent
+  TrimAddressComponent,
+  TransactionToastComponent
 }: BridgeFormProps) => {
   const navigate = useNavigate();
   const account = useAccount();
@@ -230,7 +232,7 @@ export const BridgeForm = ({
       console.log('sentTransaction', sentTransaction.data);
       toast(
         (props) => (
-          <TransactionToast
+          <TransactionToastComponent
             {...props}
             TrimAddressComponent={TrimAddressComponent}
           />
@@ -255,6 +257,7 @@ export const BridgeForm = ({
     handleSubmit
   } = useBridgeFormik({
     nativeAuthToken,
+    mvxAccountAddress: mvxAddress,
     firstToken,
     firstAmount,
     fromChain: selectedChainOption?.chainType,

@@ -27,6 +27,10 @@ export type InitOptions = {
    * Liquidity API URL
    */
   apiURL: string;
+  /**
+   * Bridge URL
+   */
+  bridgeURL: string;
 };
 
 export function init(options: InitOptions) {

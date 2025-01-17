@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ConfirmRateDTO } from 'dto/ConfirmRateDTO';
 import { decodeToken } from 'helpers/decodeToken';
 import { ServerTransaction } from '../types/transaction';
@@ -26,10 +26,22 @@ export async function confirmRate({
   }
 
   const decodedToken = await decodeToken(nativeAuthToken);
-  config.headers = {
-    ...config.headers,
-    origin: decodedToken?.origin
-  };
+  // config.headers.set({
+  //   ...config.headers,
+  //   origin: decodedToken?.origin
+  // });
+  if ((config.headers as AxiosHeaders).set) {
+    (config.headers as AxiosHeaders).set({
+      ...config.headers,
+      origin: decodedToken?.origin ?? ''
+    });
+  }
+  // if (config.headers?.set) {
+  //   config.headers.set({
+  //     ...config.headers,
+  //     origin: decodedToken?.origin
+  //   });
+  // }
 
   return await axios.post<ServerTransaction[]>(`/rate/confirm`, body, config);
 }

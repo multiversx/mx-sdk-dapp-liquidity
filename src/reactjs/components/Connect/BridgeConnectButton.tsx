@@ -13,7 +13,7 @@ export const BridgeConnectButton = ({
   className?: string;
 }) => {
   const account = useAccount();
-  const SelectedChainIcon = useChainIcon(activeChain?.chainName ?? 'default');
+  const selectedChainIcon = useChainIcon(activeChain?.chainName ?? 'default');
 
   return (
     <CustomConnectButton className={className} disabled={disabled}>
@@ -27,7 +27,11 @@ export const BridgeConnectButton = ({
             </div>
           )}
           {activeChain && (
-            <SelectedChainIcon className="z-10 flex h-[1.5rem] w-[1.5rem] p-1" />
+            <img
+              src={selectedChainIcon}
+              alt={activeChain.chainName}
+              className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
+            />
           )}
           {activeChain?.chainName}
         </div>

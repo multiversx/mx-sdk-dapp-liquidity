@@ -1,7 +1,7 @@
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons/faArrowUpRightFromSquare';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToastContentProps } from 'react-toastify';
-import { getApiURL } from '../../../helpers/getApiURL';
+import { useWeb3App } from '../../hooks/useWeb3App';
 import { CopyButton } from '../CopyButton';
 
 export const TransactionToast = ({
@@ -15,6 +15,8 @@ export const TransactionToast = ({
   }) => JSX.Element;
 }) => {
   const hash = (data as { hash: string }).hash;
+  const { options } = useWeb3App();
+
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-sm font-semibold text-zinc-300">Transaction sent</h3>
@@ -33,7 +35,7 @@ export const TransactionToast = ({
         />
 
         <a
-          href={`${getApiURL()}/status/${hash}`}
+          href={`${options.bridgeURL}/status/${hash}`}
           target="_blank"
           className="ml-auto mr-0 flex items-center"
           rel="noreferrer"
