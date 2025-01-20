@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ConfirmRateDTO } from 'dto/ConfirmRateDTO';
+import { ServerTransaction } from '../../types/transaction.ts';
 import { confirmRate } from '../confirmRate';
 
 jest.mock('axios');
@@ -25,15 +26,23 @@ describe('confirmRate', () => {
     const config = {
       baseURL: url,
       headers: {
-        Authorization: `Bearer ${nativeAuthToken}`,
-        origin: 'https://devnet.template-dapp.multiversx.com'
+        Authorization: `Bearer ${nativeAuthToken}`
       }
     };
 
-    const response = {
-      success: true,
-      transactionId: 'tx123'
-    };
+    const response = [
+      {
+        from: '0xAlice',
+        to: '0xBob',
+        type: 'eip1559',
+        gas: '100000',
+        gasPrice: '1000000000',
+        chainId: 1,
+        hash: '0x1234',
+        nonce: 1,
+        value: '1000000000000000000'
+      } as unknown as ServerTransaction
+    ];
     mockedAxios.post.mockResolvedValue({ data: response });
 
     const result = await confirmRate({
@@ -68,10 +77,19 @@ describe('confirmRate', () => {
       headers: {}
     };
 
-    const response = {
-      success: true,
-      transactionId: 'tx123'
-    };
+    const response = [
+      {
+        from: '0xAlice',
+        to: '0xBob',
+        type: 'eip1559',
+        gas: '100000',
+        gasPrice: '1000000000',
+        chainId: 1,
+        hash: '0x1234',
+        nonce: 1,
+        value: '1000000000000000000'
+      } as unknown as ServerTransaction
+    ];
 
     mockedAxios.post.mockResolvedValue({ data: response });
 

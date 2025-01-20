@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Transaction } from 'viem';
 import { sendTransactions } from 'api/sendTransactions';
-import { serializeTransaction } from '../../helpers/serializeTransaction';
+import { serializeTransaction } from '../../helpers/serializeTransaction.ts';
+import { ServerTransaction } from '../../types/transaction';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -9,7 +9,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('sendTransactions', () => {
   const url = 'https://api.example.com';
   const token = 'someValidToken';
-  const transactions: Transaction[] = [
+  const transactions = [
     {
       from: '0xAlice',
       to: '0xBob',
@@ -20,11 +20,11 @@ describe('sendTransactions', () => {
       hash: '0x1234',
       nonce: 1,
       value: BigInt(1000000000000000000)
-    } as unknown as Transaction
+    } as unknown as ServerTransaction
   ];
 
   it('POST sendTransactions successfully', async () => {
-    const response = { data: transactions };
+    const response = { data: { transactions } };
     mockedAxios.post.mockResolvedValue(response);
 
     const result = await sendTransactions({ transactions, url, token });
@@ -43,12 +43,12 @@ describe('sendTransactions', () => {
         }
       }
     );
-    expect(result.data).toEqual(transactions);
+    expect(result.data).toEqual(response.data);
   });
 
   it('POST sendTransactions with additional axiosConfig', async () => {
     const axiosConfig = { timeout: 1000 };
-    const response = { data: transactions };
+    const response = { data: { transactions } };
     mockedAxios.post.mockResolvedValue(response);
 
     const result = await sendTransactions({
@@ -73,14 +73,20 @@ describe('sendTransactions', () => {
         timeout: 1000
       }
     );
-    expect(result.data).toEqual(transactions);
+    expect(result.data).toEqual(response.data);
   });
 
   it('handles error when sending transactions', async () => {
     mockedAxios.post.mockRejectedValue(new Error('Network Error'));
 
     await expect(
-      sendTransactions({ transactions, url, token })
+      sendTransactions({
+        transactions: transactions.map((transaction) =>
+          JSON.parse(serializeTransaction(transaction))
+        ),
+        url,
+        token
+      })
     ).rejects.toThrow('Network Error');
   });
 });

@@ -26,6 +26,7 @@ export async function confirmRate({
   }
 
   const decodedToken = await decodeToken(nativeAuthToken);
+  // TODO refactor this
   // config.headers.set({
   //   ...config.headers,
   //   origin: decodedToken?.origin
@@ -36,12 +37,6 @@ export async function confirmRate({
       origin: decodedToken?.origin ?? ''
     });
   }
-  // if (config.headers?.set) {
-  //   config.headers.set({
-  //     ...config.headers,
-  //     origin: decodedToken?.origin
-  //   });
-  // }
 
   return await axios.post<ServerTransaction[]>(`/rate/confirm`, body, config);
 }

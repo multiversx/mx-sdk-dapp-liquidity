@@ -17,11 +17,11 @@ import { ChainDTO } from '../../dto/Chain.dto';
 import { getApiURL } from '../../helpers/getApiURL';
 import { OptionType } from '../../types/form';
 import { TokenType } from '../../types/token';
-import { ServerTransaction, TransactionType } from '../../types/transaction';
+import { ServerTransaction } from '../../types/transaction';
 import { useAccount } from '../hooks/useAccount';
 import { useBridgeFormik } from '../hooks/useBridgeFormik';
 import { useSendTransactions } from '../hooks/useSendTransactions';
-import { useSignTransactions } from '../hooks/useSignTransactions';
+import { useSignTransaction } from '../hooks/useSignTransaction.ts';
 import { useWeb3App } from '../hooks/useWeb3App';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
 import { getCompletePathname } from '../utils/getCompletePathname';
@@ -71,7 +71,7 @@ export const BridgeForm = ({
     return sdkChains.find((chain) => chain.id === chainId);
   }, [chainId, sdkChains]);
 
-  const { signTransactions } = useSignTransactions();
+  const { signTransaction } = useSignTransaction();
   const sendTransactions = useSendTransactions();
 
   const {
@@ -198,33 +198,35 @@ export const BridgeForm = ({
     handleOnChangeSecondAmount('');
   };
 
-  const onSubmit = async (transactions: ServerTransaction[]) => {
-    console.log('Signing and sending transactions', { transactions });
+  const onSubmit = async (transaction: ServerTransaction) => {
+    console.log('Signing and sending transaction', { transaction });
     try {
-      const signedTransactions = await signTransactions(
-        transactions.map(
-          (transaction) =>
-            ({
-              ...transaction,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-expect-error
-              value: BigInt(transaction.value._hex),
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-expect-error
-              gasLimit: BigInt(transaction.gasLimit._hex),
-              account: bridgeAddress as `0x${string}`
-            }) as unknown as TransactionType
-        )
-      );
-      console.log({ signedTransactions });
+      const hash = await signTransaction({
+        ...transaction,
+        // TODO fix this
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        value: BigInt(transaction.value._hex),
+        // TODO fix this
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        gasLimit: BigInt(transaction.gasLimit._hex),
+        account: bridgeAddress as `0x${string}`
+      });
+      console.log({ hash });
 
-      if (signedTransactions.length === 0) {
-        console.error('No signed transactions');
+      if (!hash) {
+        console.error('Error signing transaction');
         return;
       }
 
       const sentTransaction = await sendTransactions({
-        transactions: signedTransactions,
+        transactions: [
+          {
+            ...transaction,
+            hash
+          }
+        ],
         url: getApiURL() ?? '',
         token: nativeAuthToken ?? ''
       });
@@ -446,7 +448,6 @@ export const BridgeForm = ({
             </div>
           </div>
         </EnterAmountCard>
-        {/*TODO change the second card to EnterAmountCard from the trade page*/}
         <EnterAmountCard className="pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6">
           <MvxAccountDisplay
             accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}

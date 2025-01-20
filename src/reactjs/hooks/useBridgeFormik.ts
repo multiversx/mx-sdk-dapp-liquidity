@@ -40,7 +40,7 @@ export const useBridgeFormik = ({
   fromChain?: string;
   firstToken?: OptionType;
   secondToken?: OptionType;
-  onSubmit: (transactions: ServerTransaction[]) => void;
+  onSubmit: (transaction: ServerTransaction) => void;
 }) => {
   const account = useAccount();
 
@@ -68,7 +68,7 @@ export const useBridgeFormik = ({
       );
     }
 
-    const { data: transactions } = await confirmRate({
+    const { data } = await confirmRate({
       url: getApiURL(),
       nativeAuthToken: nativeAuthToken ?? '',
       body: {
@@ -84,12 +84,14 @@ export const useBridgeFormik = ({
       }
     });
 
-    if (!transactions) {
+    const transaction = data?.[0];
+
+    if (!transaction) {
       return;
     }
 
     resetSwapForm();
-    onSubmit(transactions);
+    onSubmit(transaction);
   };
 
   const formik = useFormik({

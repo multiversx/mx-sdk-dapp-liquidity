@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Transaction } from 'viem/types/transaction';
 import { serializeTransaction } from '../helpers/serializeTransaction';
-import { BatchTransactions } from '../types/batchTransactions.ts';
+import { BatchTransactions } from '../types/batchTransactions';
+import { ServerTransaction } from '../types/transaction';
 
 export type SendTransactionsType = {
-  transactions: Transaction[];
+  transactions: ServerTransaction[];
   url: string;
   token: string;
   axiosConfig?: AxiosRequestConfig;
