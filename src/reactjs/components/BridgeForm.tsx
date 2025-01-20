@@ -30,6 +30,7 @@ import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
 
 interface BridgeFormProps {
   mvxAddress?: string;
+  username?: string;
   nativeAuthToken?: string;
   callbackRoute?: string;
   chains?: ChainDTO[];
@@ -51,6 +52,7 @@ export const BridgeForm = ({
   tokens = [],
   mvxTokens = [],
   mvxAddress,
+  username,
   nativeAuthToken,
   isTokensLoading = true,
   callbackRoute = '/',
@@ -203,14 +205,8 @@ export const BridgeForm = ({
     try {
       const hash = await signTransaction({
         ...transaction,
-        // TODO fix this
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        value: BigInt(transaction.value._hex),
-        // TODO fix this
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        gasLimit: BigInt(transaction.gasLimit._hex),
+        value: BigInt(transaction.value),
+        gas: BigInt(transaction.gasLimit),
         account: bridgeAddress as `0x${string}`
       });
       console.log({ hash });
@@ -450,8 +446,11 @@ export const BridgeForm = ({
         </EnterAmountCard>
         <EnterAmountCard className="pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6">
           <MvxAccountDisplay
+            accountAddress={mvxAddress}
+            username={username}
             accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}
             TrimAddressComponent={TrimAddressComponent}
+            showTag={true}
           />
           <div className="flex justify-between gap-1">
             <EnterAmountInput
