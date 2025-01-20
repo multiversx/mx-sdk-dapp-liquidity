@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useFetchTokens } from './useFetchTokens.ts';
-import { useGetChainId } from './useGetChainId.ts';
-import { useGetChainsQuery } from '../queries/useGetChains.query.ts';
+import { useFetchTokens } from './useFetchTokens';
+import { useGetChainId } from './useGetChainId';
+import { useGetChainsQuery } from '../queries/useGetChains.query';
 
 export const useFetchBridgeData = ({
   refetchTrigger

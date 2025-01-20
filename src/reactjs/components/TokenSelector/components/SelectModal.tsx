@@ -23,8 +23,6 @@ export const SelectModal = ({
   const [filteredTokens, setFilteredTokens] = useState(tokens);
   const [selected, setSelected] = useState(selectedToken);
 
-  console.log({ filteredTokens });
-
   const handleSelect = (token: TokenType) => {
     setSelected(token);
     onSelect(token);

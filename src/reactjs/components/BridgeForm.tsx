@@ -145,7 +145,8 @@ export const BridgeForm = ({
   );
 
   console.log({
-    selectedChainOption
+    firstToken,
+    fromOptions
   });
 
   const fetchRate = useCallback(() => {
@@ -308,7 +309,7 @@ export const BridgeForm = ({
         fromOptions?.find(({ identifier }) =>
           [initialTokens?.firstTokenId].includes(identifier)
         )
-      ) ?? getDefaultOption(fromOptions?.[0]);
+      ) ?? getDefaultOption(fromOptions[0]);
 
     const secondOption =
       getDefaultOption(
@@ -335,6 +336,32 @@ export const BridgeForm = ({
   };
 
   useEffect(setInitialSelectedTokens, [isTokensLoading]);
+
+  useEffect(() => {
+    setFirstToken((prevState) => {
+      if (!prevState) {
+        return;
+      }
+
+      const token = fromOptions.find(
+        (option) => option.identifier === prevState.token.address
+      );
+
+      return token ? { ...prevState, token } : prevState;
+    });
+
+    setSecondToken((prevState) => {
+      if (!prevState) {
+        return;
+      }
+
+      const token = toOptions.find(
+        (option) => option.identifier === prevState.token.address
+      );
+
+      return token ? { ...prevState, token } : prevState;
+    });
+  }, [tokensWithBalances]);
 
   const firstSelectOptions =
     useMemo(
@@ -382,12 +409,6 @@ export const BridgeForm = ({
     }
     navigate(newUrl, { replace: true });
   };
-
-  console.log({
-    isAuthenticated,
-    bridgeAddress,
-    account
-  });
 
   useEffect(() => {
     fetchRate();
