@@ -13,13 +13,13 @@ import { MvxAccountDisplay } from './MvxAccountDisplay';
 import { MxButton } from './MxButton';
 import { TokenSelector } from './TokenSelector';
 import { TransactionToast } from './TransactionToast/TransactionToast';
-import { ChainDTO } from '../../dto/Chain.dto';
 import { getApiURL } from '../../helpers/getApiURL';
 import { OptionType } from '../../types/form';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
 import { useAccount } from '../hooks/useAccount';
 import { useBridgeFormik } from '../hooks/useBridgeFormik';
+import { useFetchBridgeData } from '../hooks/useFetchBridgeData.ts';
 import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction.ts';
 import { useWeb3App } from '../hooks/useWeb3App';
@@ -33,12 +33,9 @@ interface BridgeFormProps {
   username?: string;
   nativeAuthToken?: string;
   callbackRoute?: string;
-  chains?: ChainDTO[];
-  tokens?: TokenType[];
-  mvxTokens?: TokenType[];
-  isTokensLoading?: boolean;
   showTokenPriceDetails?: boolean;
   explorerAddress: string;
+  refetchTrigger?: boolean;
   TrimAddressComponent: (props: {
     text: string;
     color?: 'muted' | 'secondary' | string;
@@ -48,15 +45,12 @@ interface BridgeFormProps {
 }
 
 export const BridgeForm = ({
-  chains = [],
-  tokens = [],
-  mvxTokens = [],
   mvxAddress,
   username,
   nativeAuthToken,
-  isTokensLoading = true,
   callbackRoute = '/',
   explorerAddress,
+  refetchTrigger,
   TrimAddressComponent,
   TransactionToastComponent
 }: BridgeFormProps) => {
@@ -68,6 +62,20 @@ export const BridgeForm = ({
   const chainId = Number(
     account.caipAddress?.split(':')[1] ?? appKit.getChainId()
   );
+
+  const {
+    tokensWithBalances,
+    mvxTokensWithBalances,
+    isTokensLoading: tokensLoading,
+    isLoadingTokensBalances,
+    chains = [],
+    isChainsLoading
+  } = useFetchBridgeData({
+    refetchTrigger
+  });
+
+  const isTokensLoading =
+    tokensLoading || isLoadingTokensBalances || isChainsLoading;
 
   const activeChain = useMemo(() => {
     return sdkChains.find((chain) => chain.id === chainId);
@@ -101,39 +109,38 @@ export const BridgeForm = ({
     return rate?.fee ?? '';
   }, [rate]);
 
-  console.log({
-    tokens
-  });
-
   const fromOptions = useMemo(
     () =>
-      tokens &&
-      tokens.map((token) => {
-        return {
-          ...token,
-          identifier: token.address,
-          ticker: token.symbol
-        };
-      }),
-    [tokens]
+      (tokensWithBalances &&
+        tokensWithBalances.map((token) => {
+          return {
+            ...token,
+            identifier: token.address,
+            ticker: token.symbol
+          };
+        })) ??
+      [],
+    [tokensWithBalances]
   );
 
   const toOptions = useMemo(
     () =>
-      mvxTokens &&
-      mvxTokens.map((token) => {
-        return {
-          ...token,
-          identifier: token.address,
-          ticker: token.symbol
-        };
-      }),
-    [mvxTokens]
+      (mvxTokensWithBalances &&
+        mvxTokensWithBalances.map((token) => {
+          return {
+            ...token,
+            identifier: token.address,
+            ticker: token.symbol
+          };
+        })) ??
+      [],
+    [mvxTokensWithBalances]
   );
 
   const selectedChainOption = useMemo(
     () =>
-      chains.find((option) => option.chainId === activeChain?.id) ?? chains[0],
+      chains?.find((option) => option.chainId === activeChain?.id) ??
+      chains?.[0],
     [activeChain?.id, chains]
   );
 
@@ -340,7 +347,7 @@ export const BridgeForm = ({
 
   const secondSelectOptions = useMemo(
     () =>
-      toOptions?.filter(
+      toOptions.filter(
         (option) => option.identifier !== firstToken?.token?.address
       ),
     [firstToken, toOptions]
