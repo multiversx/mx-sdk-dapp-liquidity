@@ -1,6 +1,5 @@
-import { sendTransaction } from 'viem/actions';
-import { TransactionType } from 'types/transaction';
 import { getWalletClient } from './getWalletClient';
+import { TransactionType } from '../../types/transaction';
 
 export async function signTransaction({
   transaction
@@ -13,12 +12,11 @@ export async function signTransaction({
     throw new Error('Client not found');
   }
 
-  // TODO fix typescript error
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const signature = await sendTransaction(client, transaction);
+  const request = (await client.prepareTransactionRequest(
+    transaction
+  )) as unknown as TransactionType;
+  const signature = await client.signTransaction(request);
 
-  // TODO send signed transaction to the server
   return {
     ...transaction,
     signature

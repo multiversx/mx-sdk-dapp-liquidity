@@ -12,7 +12,7 @@ describe('getChains', () => {
     const response: ChainDTO[] = [
       {
         chainId: 1,
-        chainName: 'Chain One',
+        chainName: 'msx',
         chainType: 'type1',
         rpc: 'rpc1',
         blockExplorerUrls: ['explorer1'],

@@ -1,8 +1,7 @@
 import {
-  // TransactionBase,
+  TransactionBase,
   Transaction as ViemTransaction
 } from 'viem/types/transaction';
-// import { UseTransactionReturnType } from 'wagmi';
 
 export type ServerTransaction = {
   to: `0x${string}`;
@@ -13,12 +12,7 @@ export type ServerTransaction = {
   hash: string;
 };
 
-// export type TransactionType = TransactionBase & {
-//   account: `0x${string}`;
-// };
-
-// export type TransactionType = ServerTransaction & {
-export type TransactionType = Transaction & {
+export type TransactionType = TransactionBase & {
   account: `0x${string}`;
 };
 
