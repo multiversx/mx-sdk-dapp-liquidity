@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useFetchTokensBalances } from './useFetchTokensBalances';
+import { mvxChainIds } from '../constants/general.ts';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 
 export const useFetchTokens = () => {
@@ -9,6 +10,7 @@ export const useFetchTokens = () => {
     isError: isTokensError,
     refetch: refetchTokens
   } = useGetAllTokensQuery();
+
   const {
     tokensBalances,
     isLoadingTokensBalances,
@@ -33,7 +35,10 @@ export const useFetchTokens = () => {
 
   return {
     tokens: useMemo(
-      () => tokens?.filter((token) => token.chainId.toString() !== '44'),
+      () =>
+        tokens?.filter(
+          (token) => !mvxChainIds.includes(Number(token.chainId.toString()))
+        ),
       [tokens]
     ),
     isTokensLoading,
@@ -46,18 +51,21 @@ export const useFetchTokens = () => {
     tokensWithBalances: useMemo(
       () =>
         tokensWithBalances?.filter(
-          (token) => token.chainId.toString() !== '44'
+          (token) => !mvxChainIds.includes(Number(token.chainId.toString()))
         ),
       [tokensWithBalances]
     ),
     mvxTokens: useMemo(
-      () => tokens?.filter((token) => token.chainId.toString() === '44'),
+      () =>
+        tokens?.filter((token) =>
+          mvxChainIds.includes(Number(token.chainId.toString()))
+        ),
       [tokens]
     ),
     mvxTokensWithBalances: useMemo(
       () =>
-        tokensWithBalances?.filter(
-          (token) => token.chainId.toString() === '44'
+        tokensWithBalances?.filter((token) =>
+          mvxChainIds.includes(Number(token.chainId.toString()))
         ),
       [tokensWithBalances]
     )

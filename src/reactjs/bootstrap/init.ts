@@ -5,6 +5,7 @@ import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
 import * as networks from 'viem/chains';
 import { InMemoryStore } from '../../store/inMemoryStore';
+import { mvxChainIds } from '../constants/general.ts';
 
 export type InitOptions = {
   /**
@@ -41,7 +42,7 @@ export function init(options: InitOptions) {
     .filter(
       (chain) =>
         options.acceptedChainIDs.includes(Number(chain.id)) &&
-        ![31, 44, 54].includes(Number(chain.id))
+        !mvxChainIds.includes(Number(chain.id))
     )
     .map((network) => network) as AppKitNetwork[];
 
