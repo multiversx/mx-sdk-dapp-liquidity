@@ -18,6 +18,7 @@ import { OptionType } from '../../types/form';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
 import { useAccount } from '../hooks/useAccount';
+import { useBalances } from '../hooks/useBalances';
 import { useBridgeFormik } from '../hooks/useBridgeFormik';
 import { useFetchBridgeData } from '../hooks/useFetchBridgeData.ts';
 import { useSendTransactions } from '../hooks/useSendTransactions';
@@ -73,6 +74,8 @@ export const BridgeForm = ({
   } = useFetchBridgeData({
     refetchTrigger
   });
+
+  const { fetchBalances } = useBalances();
 
   const isTokensLoading =
     tokensLoading || isLoadingTokensBalances || isChainsLoading;
@@ -143,11 +146,6 @@ export const BridgeForm = ({
       chains?.[0],
     [activeChain?.id, chains]
   );
-
-  console.log({
-    firstToken,
-    fromOptions
-  });
 
   const fetchRate = useCallback(() => {
     if (
@@ -360,6 +358,12 @@ export const BridgeForm = ({
       );
 
       return token ? { ...prevState, token } : prevState;
+    });
+
+    fetchBalances({
+      tokenIdentifiers: tokensWithBalances?.map(({ address }) => address) ?? []
+    }).then((balances) => {
+      console.log({ balances });
     });
   }, [tokensWithBalances]);
 
