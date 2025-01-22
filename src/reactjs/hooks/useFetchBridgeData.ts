@@ -4,25 +4,32 @@ import { useGetChainId } from './useGetChainId';
 import { useGetChainsQuery } from '../queries/useGetChains.query';
 
 export const useFetchBridgeData = ({
-  refetchTrigger
+  refetchTrigger,
+  mvxAddress,
+  mvxApiURL
 }: {
-  refetchTrigger?: boolean;
+  refetchTrigger?: number;
+  mvxAddress?: string;
+  mvxApiURL: string;
 }) => {
   const chainId = useGetChainId();
 
   const {
-    tokens,
     isTokensError,
     isTokensLoading,
     refetchTokens,
-    tokensBalances,
-    tokensWithBalances,
-    mvxTokens,
-    mvxTokensWithBalances,
-    isLoadingTokensBalances,
-    isErrorTokensBalances,
-    refetchTokensBalances
-  } = useFetchTokens();
+    evmTokensBalances,
+    isLoadingEvmTokensBalances,
+    isErrorMvxTokensBalances,
+    refetchEvmTokensBalances,
+    mvxTokensBalances,
+    isLoadingMvxTokensBalances,
+    isErrorEvmTokensBalances,
+    refetchMvxTokensBalances
+  } = useFetchTokens({
+    mvxApiURL,
+    mvxAddress
+  });
   const {
     data: chains,
     isLoading: isChainsLoading,
@@ -31,19 +38,21 @@ export const useFetchBridgeData = ({
 
   useEffect(() => {
     refetchTokens();
-    refetchTokensBalances();
-  }, [refetchTrigger, chainId, refetchTokens, refetchTokensBalances]);
+    refetchEvmTokensBalances();
+    refetchMvxTokensBalances();
+  }, [refetchTrigger, chainId, refetchTokens]);
 
   return {
-    tokens,
     isTokensError,
     isTokensLoading,
-    tokensBalances,
-    mvxTokens,
-    mvxTokensWithBalances,
-    isLoadingTokensBalances,
-    isErrorTokensBalances,
-    tokensWithBalances,
+    evmTokensBalances,
+    isLoadingEvmTokensBalances,
+    isErrorMvxTokensBalances,
+    refetchEvmTokensBalances,
+    mvxTokensBalances,
+    isLoadingMvxTokensBalances,
+    isErrorEvmTokensBalances,
+    refetchMvxTokensBalances,
     chains,
     isChainsLoading,
     isChainsError

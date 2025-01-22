@@ -1,87 +1,70 @@
 import { useMemo } from 'react';
-import { mvxChainIds } from '../constants/general.ts';
+import { mvxChainIds } from '../constants/general';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
-import { useGetTokensBalancesQuery } from '../queries/useGetTokensBalances.query';
+import { useGetEvmTokensBalancesQuery } from '../queries/useGetEvmTokensBalances.query';
+import { useGetMvxTokensBalancesQuery } from '../queries/useGetMvxTokensBalances.query';
 
-export const useFetchTokens = () => {
+export const useFetchTokens = ({
+  mvxAddress,
+  mvxApiURL
+}: {
+  mvxAddress?: string;
+  mvxApiURL: string;
+}) => {
   const {
-    data,
+    data: tokens,
     isLoading: isTokensLoading,
     isError: isTokensError,
     refetch: refetchTokens
   } = useGetAllTokensQuery();
 
-  const tokens = useMemo(
+  const evmTokens = useMemo(
     () =>
-      data?.filter(
+      tokens?.filter(
         (token) => !mvxChainIds.includes(Number(token.chainId.toString()))
       ),
-    [data]
+    [tokens]
+  );
+
+  const mvxTokens = useMemo(
+    () =>
+      tokens?.filter((token) =>
+        mvxChainIds.includes(Number(token.chainId.toString()))
+      ),
+    [tokens]
   );
 
   const {
-    data: tokensBalances,
-    isLoading: isLoadingTokensBalances,
-    isError: isErrorTokensBalances,
-    refetch: refetchTokensBalances
-  } = useGetTokensBalancesQuery({
-    tokenIdentifiers: tokens?.map(({ address }) => address) ?? []
+    data: evmTokensBalances,
+    isLoading: isLoadingEvmTokensBalances,
+    isError: isErrorEvmTokensBalances,
+    refetch: refetchEvmTokensBalances
+  } = useGetEvmTokensBalancesQuery({
+    tokens: evmTokens ?? []
   });
 
-  const tokensWithBalances = useMemo(
-    () =>
-      tokens?.map((token) => {
-        const tokenBalance = tokensBalances?.find(
-          ({ tokenId }) => tokenId === token.address
-        );
-
-        return {
-          ...token,
-          balance: tokenBalance?.balance.value.toString()
-        };
-      }),
-    [tokens, tokensBalances]
-  );
-
-  console.log({
-    tokensWithBalances
+  const {
+    data: mvxTokensBalances,
+    isLoading: isLoadingMvxTokensBalances,
+    isError: isErrorMvxTokensBalances,
+    refetch: refetchMvxTokensBalances
+  } = useGetMvxTokensBalancesQuery({
+    tokens: mvxTokens ?? [],
+    mvxAddress,
+    apiURL: mvxApiURL
   });
 
   return {
-    tokens: useMemo(
-      () =>
-        tokens?.filter(
-          (token) => !mvxChainIds.includes(Number(token.chainId.toString()))
-        ),
-      [tokens]
-    ),
     isTokensLoading,
     isTokensError,
     refetchTokens,
-    tokensBalances,
-    isLoadingTokensBalances,
-    isErrorTokensBalances,
-    refetchTokensBalances,
-    tokensWithBalances: useMemo(
-      () =>
-        tokensWithBalances?.filter(
-          (token) => !mvxChainIds.includes(Number(token.chainId.toString()))
-        ),
-      [tokensWithBalances]
-    ),
-    mvxTokens: useMemo(
-      () =>
-        tokens?.filter((token) =>
-          mvxChainIds.includes(Number(token.chainId.toString()))
-        ),
-      [tokens]
-    ),
-    mvxTokensWithBalances: useMemo(
-      () =>
-        tokensWithBalances?.filter((token) =>
-          mvxChainIds.includes(Number(token.chainId.toString()))
-        ),
-      [tokensWithBalances]
-    )
+    isLoadingEvmTokensBalances,
+    isErrorEvmTokensBalances,
+    refetchEvmTokensBalances,
+    evmTokensBalances,
+    isLoadingMvxTokensBalances,
+    isErrorMvxTokensBalances,
+    refetchMvxTokensBalances,
+    mvxTokensBalances
   };
 };

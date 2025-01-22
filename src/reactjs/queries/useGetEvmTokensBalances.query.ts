@@ -1,17 +1,23 @@
 import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useBalances } from '../hooks/useBalances.ts';
+import { useMemo } from 'react';
+import { TokenType } from '../../types/token';
+import { useBalances } from '../hooks/useBalances';
 import { useGetChainId } from '../hooks/useGetChainId';
 
-export const useGetTokensBalancesQuery = ({
-  tokenIdentifiers
+export const useGetEvmTokensBalancesQuery = ({
+  tokens
 }: {
-  tokenIdentifiers: string[];
+  tokens: TokenType[];
 }) => {
   const { address } = useAppKitAccount();
   const chainId = useGetChainId();
   const { fetchBalances } = useBalances();
+
+  const tokenIdentifiers = useMemo(() => {
+    return tokens.map(({ address: tokenId }) => tokenId);
+  }, [tokens]);
 
   const queryFn = async () => {
     try {
@@ -23,15 +29,28 @@ export const useGetTokensBalancesQuery = ({
         throw new Error('Chain ID is required');
       }
 
-      const balances = await fetchBalances({
+      const assets = await fetchBalances({
         address: address as `0x${string}`,
         chainId: chainId.toString(),
         tokenIdentifiers
       });
 
-      console.log({ balances });
+      console.log({ assets });
 
-      return balances;
+      return assets.map((asset) => {
+        const foundToken = tokens.find(
+          (token) => token.address === asset.tokenId
+        );
+
+        if (!foundToken) {
+          throw new Error('Token not found');
+        }
+
+        return {
+          ...foundToken,
+          balance: asset.balance.toString()
+        };
+      });
     } catch (error) {
       throw error;
     }

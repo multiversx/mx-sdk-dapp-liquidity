@@ -29,13 +29,14 @@ import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
 
 interface BridgeFormProps {
+  mvxApiURL: string;
   mvxAddress?: string;
   username?: string;
   nativeAuthToken?: string;
   callbackRoute?: string;
   showTokenPriceDetails?: boolean;
   explorerAddress: string;
-  refetchTrigger?: boolean;
+  refetchTrigger?: number;
   TrimAddressComponent: (props: {
     text: string;
     color?: 'muted' | 'secondary' | string;
@@ -45,6 +46,7 @@ interface BridgeFormProps {
 }
 
 export const BridgeForm = ({
+  mvxApiURL,
   mvxAddress,
   username,
   nativeAuthToken,
@@ -64,18 +66,24 @@ export const BridgeForm = ({
   );
 
   const {
-    tokensWithBalances,
-    mvxTokensWithBalances,
+    evmTokensBalances,
+    mvxTokensBalances,
     isTokensLoading: tokensLoading,
-    isLoadingTokensBalances,
+    isLoadingEvmTokensBalances,
+    isLoadingMvxTokensBalances,
     chains = [],
     isChainsLoading
   } = useFetchBridgeData({
-    refetchTrigger
+    refetchTrigger,
+    mvxAddress,
+    mvxApiURL
   });
 
   const isTokensLoading =
-    tokensLoading || isLoadingTokensBalances || isChainsLoading;
+    tokensLoading ||
+    isLoadingEvmTokensBalances ||
+    isLoadingMvxTokensBalances ||
+    isChainsLoading;
 
   const activeChain = useMemo(() => {
     return sdkChains.find((chain) => chain.id === chainId);
@@ -111,8 +119,8 @@ export const BridgeForm = ({
 
   const fromOptions = useMemo(
     () =>
-      (tokensWithBalances &&
-        tokensWithBalances.map((token) => {
+      (evmTokensBalances &&
+        evmTokensBalances.map((token) => {
           return {
             ...token,
             identifier: token.address,
@@ -120,13 +128,13 @@ export const BridgeForm = ({
           };
         })) ??
       [],
-    [tokensWithBalances]
+    [evmTokensBalances]
   );
 
   const toOptions = useMemo(
     () =>
-      (mvxTokensWithBalances &&
-        mvxTokensWithBalances.map((token) => {
+      (mvxTokensBalances &&
+        mvxTokensBalances.map((token) => {
           return {
             ...token,
             identifier: token.address,
@@ -134,8 +142,13 @@ export const BridgeForm = ({
           };
         })) ??
       [],
-    [mvxTokensWithBalances]
+    [mvxTokensBalances]
   );
+
+  console.log({
+    fromOptions,
+    toOptions
+  });
 
   const selectedChainOption = useMemo(
     () =>
@@ -187,6 +200,7 @@ export const BridgeForm = ({
     }
     setFirstToken(option);
   };
+
   const handleOnChangeSecondSelect = (option?: OptionType) => {
     if (!option) {
       return;
@@ -274,8 +288,10 @@ export const BridgeForm = ({
     if (!selectOption) {
       return;
     }
-
     updateUrlParams({ firstTokenId: selectOption?.value });
+
+    const mvxToken = toOptions.find((x) => x.name === selectOption.token.name);
+    onChangeSecondSelect(mvxToken);
   };
 
   const onChangeSecondSelect = (option?: TokenType) => {
@@ -309,9 +325,12 @@ export const BridgeForm = ({
     const secondOption =
       getDefaultOption(
         toOptions?.find(
-          ({ identifier }) => identifier === initialTokens?.secondTokenId
+          ({ address }) => address === initialTokens?.secondTokenId
         )
-      ) ?? getDefaultOption(toOptions?.[0]);
+      ) ??
+      getDefaultOption(
+        toOptions.find((x) => x.name === firstOption?.token.name)
+      );
 
     if (hasOptionsSelected) {
       return;
@@ -330,7 +349,11 @@ export const BridgeForm = ({
     });
   };
 
-  useEffect(setInitialSelectedTokens, [isTokensLoading]);
+  useEffect(setInitialSelectedTokens, [
+    isTokensLoading,
+    evmTokensBalances,
+    mvxTokensBalances
+  ]);
 
   useEffect(() => {
     setFirstToken((prevState) => {
@@ -356,7 +379,7 @@ export const BridgeForm = ({
 
       return token ? { ...prevState, token } : prevState;
     });
-  }, [tokensWithBalances]);
+  }, [evmTokensBalances, mvxTokensBalances]);
 
   const firstSelectOptions =
     useMemo(

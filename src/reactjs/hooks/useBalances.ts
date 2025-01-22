@@ -25,7 +25,7 @@ export const useBalances = () => {
 
           return {
             tokenId: tokenIdentifier,
-            balance
+            balance: balance.value.toString()
           };
         })
       );
