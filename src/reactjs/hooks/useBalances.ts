@@ -1,21 +1,21 @@
 import { getBalance } from '@wagmi/core';
 import { useCallback } from 'react';
-import { useAccount } from './useAccount';
-import { useGetChainId } from './useGetChainId';
 import { useWeb3App } from './useWeb3App';
 
 export const useBalances = () => {
   const { config } = useWeb3App();
-  const { address } = useAccount();
-  const chainId = useGetChainId();
 
   const fetchBalances = useCallback(
-    async ({ tokenIdentifiers }: { tokenIdentifiers: string[] }) => {
-      if (!address) {
-        throw new Error('Address not found');
-      }
-
-      const balances = await Promise.all(
+    async ({
+      address,
+      chainId,
+      tokenIdentifiers
+    }: {
+      address: `0x${string}`;
+      chainId: string;
+      tokenIdentifiers: string[];
+    }) => {
+      return await Promise.all(
         tokenIdentifiers.map(async (tokenIdentifier) => {
           const balance = await getBalance(config, {
             address: address as `0x${string}`,
@@ -24,15 +24,13 @@ export const useBalances = () => {
           });
 
           return {
-            token: tokenIdentifier,
+            tokenId: tokenIdentifier,
             balance
           };
         })
       );
-
-      return balances;
     },
-    [config, address, chainId]
+    [config]
   );
 
   return {

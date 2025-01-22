@@ -1,13 +1,17 @@
 import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { getTokensBalances } from '../../api/getTokensBalances';
-import { getApiURL } from '../../helpers/getApiURL';
+import { useBalances } from '../hooks/useBalances.ts';
 import { useGetChainId } from '../hooks/useGetChainId';
 
-export const useGetTokensBalancesQuery = () => {
+export const useGetTokensBalancesQuery = ({
+  tokenIdentifiers
+}: {
+  tokenIdentifiers: string[];
+}) => {
   const { address } = useAppKitAccount();
   const chainId = useGetChainId();
+  const { fetchBalances } = useBalances();
 
   const queryFn = async () => {
     try {
@@ -19,12 +23,15 @@ export const useGetTokensBalancesQuery = () => {
         throw new Error('Chain ID is required');
       }
 
-      const { data } = await getTokensBalances({
-        url: getApiURL(),
-        userAddress: address,
-        chainId: chainId.toString()
+      const balances = await fetchBalances({
+        address: address as `0x${string}`,
+        chainId: chainId.toString(),
+        tokenIdentifiers
       });
-      return data;
+
+      console.log({ balances });
+
+      return balances;
     } catch (error) {
       throw error;
     }

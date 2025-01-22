@@ -1,37 +1,51 @@
 import { useMemo } from 'react';
-import { useFetchTokensBalances } from './useFetchTokensBalances';
 import { mvxChainIds } from '../constants/general.ts';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
+import { useGetTokensBalancesQuery } from '../queries/useGetTokensBalances.query';
 
 export const useFetchTokens = () => {
   const {
-    data: tokens,
+    data,
     isLoading: isTokensLoading,
     isError: isTokensError,
     refetch: refetchTokens
   } = useGetAllTokensQuery();
 
+  const tokens = useMemo(
+    () =>
+      data?.filter(
+        (token) => !mvxChainIds.includes(Number(token.chainId.toString()))
+      ),
+    [data]
+  );
+
   const {
-    tokensBalances,
-    isLoadingTokensBalances,
-    isErrorTokensBalances,
-    refetchTokensBalances
-  } = useFetchTokensBalances();
+    data: tokensBalances,
+    isLoading: isLoadingTokensBalances,
+    isError: isErrorTokensBalances,
+    refetch: refetchTokensBalances
+  } = useGetTokensBalancesQuery({
+    tokenIdentifiers: tokens?.map(({ address }) => address) ?? []
+  });
 
   const tokensWithBalances = useMemo(
     () =>
       tokens?.map((token) => {
         const tokenBalance = tokensBalances?.find(
-          ({ address }) => address === token.address
+          ({ tokenId }) => tokenId === token.address
         );
 
         return {
           ...token,
-          balance: tokenBalance?.balance ?? '0'
+          balance: tokenBalance?.balance.value.toString()
         };
       }),
     [tokens, tokensBalances]
   );
+
+  console.log({
+    tokensWithBalances
+  });
 
   return {
     tokens: useMemo(
