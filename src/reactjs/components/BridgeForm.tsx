@@ -152,12 +152,31 @@ export const BridgeForm = ({
     toOptions
   });
 
+  const firstSelectOptions =
+    useMemo(
+      () =>
+        fromOptions?.filter(
+          (option) => option.identifier !== secondToken?.token?.address
+        ),
+      [secondToken, fromOptions]
+    ) ?? fromOptions?.[0];
+
+  const secondSelectOptions = useMemo(
+    () =>
+      toOptions.filter(
+        (option) => option.identifier !== firstToken?.token?.address
+      ),
+    [firstToken, toOptions]
+  );
+
   const selectedChainOption = useMemo(
     () =>
       chains?.find((option) => option.chainId === activeChain?.id) ??
       chains?.[0],
     [activeChain?.id, chains]
   );
+
+  const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
   const fetchRate = useCallback(() => {
     if (
@@ -189,128 +208,102 @@ export const BridgeForm = ({
     nativeAuthToken
   ]);
 
-  const handleOnChangeFirstAmount = (amount: string) => {
+  const handleOnChangeFirstAmount = useCallback((amount: string) => {
     setFirstAmount(() => amount);
-  };
-  const handleOnChangeSecondAmount = (amount: string) => {
+  }, []);
+
+  const handleOnChangeSecondAmount = useCallback((amount: string) => {
     setSecondAmount(amount);
-  };
+  }, []);
 
-  const handleOnChangeFirstSelect = (option?: OptionType) => {
-    if (!option) {
-      return;
-    }
-    setFirstToken(option);
-  };
-
-  const handleOnChangeSecondSelect = (option?: OptionType) => {
-    if (!option) {
-      return;
-    }
-    setSecondToken(option);
-  };
-
-  const handleOnFirstMaxBtnChange = () => {
+  const handleOnFirstMaxBtnChange = useCallback(() => {
     handleOnChangeFirstAmount(firstToken?.token?.balance ?? '0');
-  };
+  }, [firstToken?.token?.balance, handleOnChangeFirstAmount]);
 
-  const onSuccess = () => {
+  const onSuccess = useCallback(() => {
     handleOnChangeFirstAmount('');
     handleOnChangeSecondAmount('');
-  };
+  }, [handleOnChangeFirstAmount, handleOnChangeSecondAmount]);
 
-  const onSubmit = async (transaction: ServerTransaction) => {
-    console.log('Signing and sending transaction', { transaction });
-    try {
-      const hash = await signTransaction({
-        ...transaction,
-        value: BigInt(transaction.value),
-        gas: BigInt(transaction.gasLimit),
-        account: bridgeAddress as `0x${string}`
-      });
-      console.log({ hash });
-
-      if (!hash) {
-        console.error('Error signing transaction');
+  const updateUrlParams = useCallback(
+    ({ firstTokenId, secondTokenId }: InitialTokensType) => {
+      if (isTokensLoading || !bridgeAddress) {
         return;
       }
 
-      const sentTransaction = await sendTransactions({
-        transactions: [
-          {
-            ...transaction,
-            hash
-          }
-        ],
-        url: getApiURL() ?? '',
-        token: nativeAuthToken ?? ''
-      });
+      const currentUrl = getCompletePathname();
+      const searchParams = new URLSearchParams(window.location.search);
 
-      console.log('sentTransaction', sentTransaction.data);
-      toast(
-        (props) => (
-          <TransactionToastComponent
-            {...props}
-            TrimAddressComponent={TrimAddressComponent}
-          />
-        ),
-        {
-          data: {
-            hash: sentTransaction?.data.transactions[0].hash ?? ''
-          }
-        }
+      if (firstTokenId) {
+        searchParams.set('firstToken', firstTokenId);
+      }
+
+      if (secondTokenId) {
+        searchParams.set('secondToken', secondTokenId);
+      }
+
+      const newUrl = `${callbackRoute}?${searchParams.toString()}`;
+
+      if (currentUrl === newUrl) {
+        return;
+      }
+      navigate(newUrl, { replace: true });
+    },
+    [bridgeAddress, callbackRoute, isTokensLoading, navigate]
+  );
+
+  const onChangeFirstSelect = useCallback(
+    (option?: TokenType) => {
+      const selectOption = getDefaultOption(option);
+
+      if (!selectOption) {
+        return;
+      }
+
+      setFirstToken(selectOption);
+      updateUrlParams({ firstTokenId: selectOption?.value });
+
+      const secondOption = getDefaultOption(
+        toOptions.find((x) => x.name === selectOption?.token.name)
       );
-      onSuccess();
-    } catch (e) {
-      console.error(e);
-    }
-  };
 
-  const {
-    firstAmountError,
-    secondAmountError,
-    fromChainError,
-    handleBlur,
-    handleSubmit
-  } = useBridgeFormik({
-    nativeAuthToken,
-    mvxAccountAddress: mvxAddress,
-    firstToken,
-    firstAmount,
-    fromChainId: chainId.toString(),
-    toChainId: mvxChainId,
-    secondToken,
-    secondAmount,
-    onSubmit
-  });
+      if (!secondOption) {
+        return;
+      }
 
-  const onChangeFirstSelect = (option?: TokenType) => {
-    const selectOption = getDefaultOption(option);
-    handleOnChangeFirstSelect(selectOption);
+      setSecondToken(secondOption);
+      updateUrlParams({ secondTokenId: secondOption?.value });
+    },
+    [toOptions, updateUrlParams]
+  );
 
-    if (!selectOption) {
-      return;
-    }
-    updateUrlParams({ firstTokenId: selectOption?.value });
+  const onChangeSecondSelect = useCallback(
+    (option?: TokenType) => {
+      const selectOption = getDefaultOption(option);
 
-    const mvxToken = toOptions.find((x) => x.name === selectOption.token.name);
-    onChangeSecondSelect(mvxToken);
-  };
+      if (!selectOption) {
+        return;
+      }
 
-  const onChangeSecondSelect = (option?: TokenType) => {
-    const selectOption = getDefaultOption(option);
-    handleOnChangeSecondSelect(selectOption);
-    if (!selectOption) {
-      return;
-    }
+      setSecondToken(selectOption);
+      updateUrlParams({ secondTokenId: selectOption?.value });
 
-    updateUrlParams({ secondTokenId: selectOption?.value });
-  };
+      const firstOption = getDefaultOption(
+        fromOptions.find((x) => x.name === selectOption?.token.name)
+      );
 
-  const hasAmounts = firstAmount !== '' && secondAmount !== '';
+      if (!firstOption) {
+        return;
+      }
 
-  const setInitialSelectedTokens = () => {
-    if (isTokensLoading) {
+      setFirstToken(firstOption);
+      updateUrlParams({ firstTokenId: firstOption?.value });
+    },
+    [fromOptions, updateUrlParams]
+  );
+
+  const setInitialSelectedTokens = useCallback(() => {
+    if (isTokensLoading || !bridgeAddress) {
       return;
     }
 
@@ -343,108 +336,104 @@ export const BridgeForm = ({
       return;
     }
 
-    handleOnChangeFirstSelect(firstOption);
-    handleOnChangeSecondSelect(secondOption);
+    setFirstToken(firstOption);
+    setSecondToken(secondOption);
 
     updateUrlParams({
       firstTokenId: firstOption?.value,
       secondTokenId: secondOption?.value
     });
-  };
-
-  useEffect(setInitialSelectedTokens, [
+  }, [
+    bridgeAddress,
+    firstToken,
+    fromOptions,
     isTokensLoading,
-    // bridgeAddress
-    evmTokensBalances,
-    mvxTokensWithBalances
+    secondToken,
+    toOptions,
+    updateUrlParams
   ]);
 
-  useEffect(() => {
-    setFirstToken((prevState) => {
-      if (!prevState) {
-        // const token = fromOptions.find(
-        //   (option) => option.identifier === fromOptions[0].identifier
-        // );
-        //
-        // return token ? getDefaultOption(token) : prevState;
-        return;
+  const onSubmit = useCallback(
+    async (transaction: ServerTransaction) => {
+      console.log('Signing and sending transaction', { transaction });
+      try {
+        const hash = await signTransaction({
+          ...transaction,
+          value: BigInt(transaction.value),
+          gas: BigInt(transaction.gasLimit),
+          account: bridgeAddress as `0x${string}`
+        });
+        console.log({ hash });
+
+        if (!hash) {
+          console.error('Error signing transaction');
+          return;
+        }
+
+        const sentTransaction = await sendTransactions({
+          transactions: [
+            {
+              ...transaction,
+              hash
+            }
+          ],
+          url: getApiURL() ?? '',
+          token: nativeAuthToken ?? ''
+        });
+
+        console.log('sentTransaction', sentTransaction.data);
+        toast(
+          (props) => (
+            <TransactionToastComponent
+              {...props}
+              TrimAddressComponent={TrimAddressComponent}
+            />
+          ),
+          {
+            data: {
+              hash: sentTransaction?.data.transactions[0].hash ?? ''
+            }
+          }
+        );
+        onSuccess();
+      } catch (e) {
+        console.error(e);
       }
-
-      const token = fromOptions.find(
-        (option) => option.identifier === prevState.token.address
-      );
-
-      return token ? { ...prevState, token } : prevState;
-    });
-
-    setSecondToken((prevState) => {
-      if (!prevState) {
-        // const token = toOptions.find(
-        //   (option) => option.identifier === toOptions[0].identifier
-        // );
-        //
-        // return token ? getDefaultOption(token) : prevState;
-        return;
-      }
-
-      const token = toOptions.find(
-        (option) => option.identifier === prevState.token.address
-      );
-
-      return token ? { ...prevState, token } : prevState;
-    });
-  }, [evmTokensBalances, mvxTokensWithBalances, bridgeAddress]);
-
-  const firstSelectOptions =
-    useMemo(
-      () =>
-        fromOptions?.filter(
-          (option) => option.identifier !== secondToken?.token?.address
-        ),
-      [secondToken, fromOptions]
-    ) ?? fromOptions?.[0];
-
-  const secondSelectOptions = useMemo(
-    () =>
-      toOptions.filter(
-        (option) => option.identifier !== firstToken?.token?.address
-      ),
-    [firstToken, toOptions]
+    },
+    [
+      TransactionToastComponent,
+      TrimAddressComponent,
+      bridgeAddress,
+      nativeAuthToken,
+      onSuccess,
+      sendTransactions,
+      signTransaction
+    ]
   );
 
-  const updateUrlParams = ({
-    firstTokenId,
-    secondTokenId
-  }: InitialTokensType) => {
-    if (isTokensLoading) {
-      return;
-    }
-
-    const currentUrl = getCompletePathname();
-    const searchParams = new URLSearchParams(window.location.search);
-
-    if (firstToken) {
-      searchParams.set('firstToken', firstTokenId ?? firstToken?.token.address);
-    }
-
-    if (secondToken) {
-      searchParams.set(
-        'secondToken',
-        secondTokenId ?? secondToken.token.address
-      );
-    }
-
-    const newUrl = `${callbackRoute}?${searchParams.toString()}`;
-
-    if (currentUrl === newUrl) {
-      return;
-    }
-    navigate(newUrl, { replace: true });
-  };
+  const {
+    firstAmountError,
+    secondAmountError,
+    fromChainError,
+    handleBlur,
+    handleSubmit
+  } = useBridgeFormik({
+    nativeAuthToken,
+    mvxAccountAddress: mvxAddress,
+    firstToken,
+    firstAmount,
+    fromChainId: chainId.toString(),
+    toChainId: mvxChainId,
+    secondToken,
+    secondAmount,
+    onSubmit
+  });
 
   useEffect(() => {
     fetchRate();
   }, [fetchRate]);
+
+  useEffect(setInitialSelectedTokens, [setInitialSelectedTokens]);
 
   return (
     <>
