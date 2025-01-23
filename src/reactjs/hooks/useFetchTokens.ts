@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { mvxChainIds } from '../constants/general';
-import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import { useGetEvmTokensBalancesQuery } from '../queries/useGetEvmTokensBalances.query';
 import { useGetMvxTokensBalancesQuery } from '../queries/useGetMvxTokensBalances.query';
+import { useGetTokensQuery } from '../queries/useGetTokens.query.ts';
 
 export const useFetchTokens = ({
   mvxAddress,
@@ -16,7 +16,7 @@ export const useFetchTokens = ({
     isLoading: isTokensLoading,
     isError: isTokensError,
     refetch: refetchTokens
-  } = useGetAllTokensQuery();
+  } = useGetTokensQuery();
 
   const evmTokens = useMemo(
     () =>
