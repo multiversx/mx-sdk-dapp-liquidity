@@ -17,16 +17,28 @@ export const useBalances = () => {
     }) => {
       return await Promise.all(
         tokenIdentifiers.map(async (tokenIdentifier) => {
-          const balance = await getBalance(config, {
-            address: address as `0x${string}`,
-            chainId: Number(chainId),
-            token: tokenIdentifier as `0x${string}`
-          });
+          try {
+            const balance = await getBalance(config, {
+              address: address as `0x${string}`,
+              chainId: Number(chainId),
+              token: tokenIdentifier as `0x${string}`
+            });
 
-          return {
-            tokenId: tokenIdentifier,
-            balance: balance.value.toString()
-          };
+            return {
+              tokenId: tokenIdentifier,
+              balance: balance.value.toString()
+            };
+          } catch (error) {
+            console.warn(
+              'Error fetching balance for: ',
+              tokenIdentifier,
+              error
+            );
+            return {
+              tokenId: tokenIdentifier,
+              balance: '0'
+            };
+          }
         })
       );
     },

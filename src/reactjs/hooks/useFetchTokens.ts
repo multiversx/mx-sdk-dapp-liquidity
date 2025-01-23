@@ -54,6 +54,28 @@ export const useFetchTokens = ({
     apiURL: mvxApiURL
   });
 
+  const mvxTokensWithBalances = useMemo(() => {
+    return mvxTokens?.map((token) => {
+      const foundToken = mvxTokensBalances?.find(
+        (mvxToken) => mvxToken.address === token.address
+      );
+
+      if (!foundToken) {
+        return {
+          ...token,
+          balance: '0'
+        };
+      }
+
+      return {
+        ...foundToken,
+        balance: foundToken.balance.toString()
+      };
+    });
+  }, [mvxTokens, mvxTokensBalances]);
+
+  console.log({ evmTokensBalances, mvxTokens, mvxTokensBalances });
+
   return {
     isTokensLoading,
     isTokensError,
@@ -65,6 +87,6 @@ export const useFetchTokens = ({
     isLoadingMvxTokensBalances,
     isErrorMvxTokensBalances,
     refetchMvxTokensBalances,
-    mvxTokensBalances
+    mvxTokensWithBalances
   };
 };

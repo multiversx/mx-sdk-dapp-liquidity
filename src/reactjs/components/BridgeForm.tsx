@@ -67,7 +67,7 @@ export const BridgeForm = ({
 
   const {
     evmTokensBalances,
-    mvxTokensBalances,
+    mvxTokensWithBalances,
     isTokensLoading: tokensLoading,
     isLoadingEvmTokensBalances,
     isLoadingMvxTokensBalances,
@@ -133,8 +133,8 @@ export const BridgeForm = ({
 
   const toOptions = useMemo(
     () =>
-      (mvxTokensBalances &&
-        mvxTokensBalances.map((token) => {
+      (mvxTokensWithBalances &&
+        mvxTokensWithBalances.map((token) => {
           return {
             ...token,
             identifier: token.address,
@@ -142,7 +142,7 @@ export const BridgeForm = ({
           };
         })) ??
       [],
-    [mvxTokensBalances]
+    [mvxTokensWithBalances]
   );
 
   console.log({
@@ -352,13 +352,17 @@ export const BridgeForm = ({
   useEffect(setInitialSelectedTokens, [
     isTokensLoading,
     evmTokensBalances,
-    mvxTokensBalances
+    mvxTokensWithBalances
   ]);
 
   useEffect(() => {
     setFirstToken((prevState) => {
       if (!prevState) {
-        return;
+        const token = fromOptions.find(
+          (option) => option.identifier === fromOptions[0].identifier
+        );
+
+        return token ? getDefaultOption(token) : prevState;
       }
 
       const token = fromOptions.find(
@@ -370,7 +374,11 @@ export const BridgeForm = ({
 
     setSecondToken((prevState) => {
       if (!prevState) {
-        return;
+        const token = toOptions.find(
+          (option) => option.identifier === toOptions[0].identifier
+        );
+
+        return token ? getDefaultOption(token) : prevState;
       }
 
       const token = toOptions.find(
@@ -379,7 +387,7 @@ export const BridgeForm = ({
 
       return token ? { ...prevState, token } : prevState;
     });
-  }, [evmTokensBalances, mvxTokensBalances]);
+  }, [evmTokensBalances, mvxTokensWithBalances]);
 
   const firstSelectOptions =
     useMemo(
