@@ -16,8 +16,8 @@ describe('confirmRate', () => {
       fee: '100',
       amountIn: '1000',
       amountOut: '900',
-      fromChain: 'ETH',
-      toChain: 'MVX',
+      fromChainId: '97',
+      toChainId: '44',
       sender: '0x123',
       receiver: '0x456'
     };
@@ -66,8 +66,8 @@ describe('confirmRate', () => {
       fee: '100',
       amountIn: '1000',
       amountOut: '900',
-      fromChain: 'ETH',
-      toChain: 'MVX',
+      fromChainId: '97',
+      toChainId: '44',
       sender: '0x123',
       receiver: '0x456'
     };
@@ -114,8 +114,8 @@ describe('confirmRate', () => {
       fee: '100',
       amountIn: '1000',
       amountOut: '900',
-      fromChain: 'ETH',
-      toChain: 'MVX',
+      fromChainId: '97',
+      toChainId: '44',
       sender: '0x123',
       receiver: '0x456'
     };

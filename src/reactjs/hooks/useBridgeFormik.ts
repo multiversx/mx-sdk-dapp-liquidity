@@ -7,12 +7,13 @@ import { getApiURL } from '../../helpers/getApiURL';
 import { OptionType } from '../../types/form';
 import { ServerTransaction } from '../../types/transaction';
 
-export enum TradeFormikValuesEnum {
+export enum BridgeFormikValuesEnum {
   firstToken = 'firstToken',
   firstAmount = 'firstAmount',
   secondToken = 'secondToken',
   secondAmount = 'secondAmount',
-  fromChain = 'fromChain'
+  fromChainId = 'fromChainId',
+  toChainId = 'toChainId'
 }
 
 export interface TradeFormikValuesType {
@@ -20,7 +21,8 @@ export interface TradeFormikValuesType {
   secondAmount?: string;
   firstToken?: OptionType;
   secondToken?: OptionType;
-  fromChain?: string;
+  fromChainId?: string;
+  toChainId?: string;
 }
 
 export const useBridgeFormik = ({
@@ -30,14 +32,16 @@ export const useBridgeFormik = ({
   firstAmount,
   secondToken,
   secondAmount,
-  fromChain,
+  fromChainId,
+  toChainId,
   onSubmit
 }: {
   mvxAccountAddress?: string;
   nativeAuthToken?: string;
   firstAmount?: string;
   secondAmount?: string;
-  fromChain?: string;
+  fromChainId?: string;
+  toChainId?: string;
   firstToken?: OptionType;
   secondToken?: OptionType;
   onSubmit: (transaction: ServerTransaction) => void;
@@ -47,13 +51,14 @@ export const useBridgeFormik = ({
   const initialValues: TradeFormikValuesType = {
     firstAmount: '',
     secondAmount: '',
-    fromChain: fromChain ?? ''
+    fromChainId: fromChainId ?? '',
+    toChainId: toChainId ?? ''
   };
 
   const resetSwapForm = () => {
     formik.setTouched({}, false);
-    setFieldValue(TradeFormikValuesEnum.firstAmount, '');
-    setFieldValue(TradeFormikValuesEnum.secondAmount, '');
+    setFieldValue(BridgeFormikValuesEnum.firstAmount, '');
+    setFieldValue(BridgeFormikValuesEnum.secondAmount, '');
   };
 
   const onSubmitFormik = async (values: TradeFormikValuesType) => {
@@ -74,9 +79,9 @@ export const useBridgeFormik = ({
       body: {
         tokenIn: values.firstToken?.token?.address ?? '',
         amountIn: firstAmount?.toString() ?? '',
-        fromChain: values.fromChain ?? '',
+        fromChainId: values.fromChainId ?? '',
         tokenOut: values.secondToken?.token?.address ?? '',
-        toChain: 'mvx',
+        toChainId: values.toChainId ?? '',
         fee: '0',
         amountOut: secondAmount?.toString() ?? '',
         sender: account.address ?? '',
@@ -97,9 +102,9 @@ export const useBridgeFormik = ({
   const formik = useFormik({
     initialValues,
     validationSchema: object().shape({
-      [TradeFormikValuesEnum.firstToken]: object().required(),
-      [TradeFormikValuesEnum.secondToken]: object().required(),
-      [TradeFormikValuesEnum.fromChain]: string().required()
+      [BridgeFormikValuesEnum.firstToken]: object().required(),
+      [BridgeFormikValuesEnum.secondToken]: object().required(),
+      [BridgeFormikValuesEnum.fromChainId]: string().required()
     }),
     onSubmit: onSubmitFormik
   });
@@ -115,41 +120,45 @@ export const useBridgeFormik = ({
   } = formik;
 
   useEffect(() => {
-    setFieldValue(TradeFormikValuesEnum.firstAmount, firstAmount, true);
+    setFieldValue(BridgeFormikValuesEnum.firstAmount, firstAmount, true);
   }, [firstAmount]);
 
   useEffect(() => {
-    setFieldValue(TradeFormikValuesEnum.secondAmount, secondAmount, true);
+    setFieldValue(BridgeFormikValuesEnum.secondAmount, secondAmount, true);
   }, [secondAmount]);
 
   useEffect(() => {
-    setFieldValue(TradeFormikValuesEnum.firstToken, firstToken, true);
+    setFieldValue(BridgeFormikValuesEnum.firstToken, firstToken, true);
   }, [firstToken]);
 
   useEffect(() => {
-    setFieldValue(TradeFormikValuesEnum.secondToken, secondToken, true);
+    setFieldValue(BridgeFormikValuesEnum.secondToken, secondToken, true);
   }, [secondToken]);
 
   useEffect(() => {
-    setFieldValue(TradeFormikValuesEnum.fromChain, fromChain, true);
-  }, [fromChain]);
+    setFieldValue(BridgeFormikValuesEnum.fromChainId, fromChainId, true);
+  }, [fromChainId]);
+
+  useEffect(() => {
+    setFieldValue(BridgeFormikValuesEnum.toChainId, toChainId, true);
+  }, [toChainId]);
 
   const secondAmountError =
-    TradeFormikValuesEnum.secondAmount in errors &&
-    TradeFormikValuesEnum.secondAmount in touched
+    BridgeFormikValuesEnum.secondAmount in errors &&
+    BridgeFormikValuesEnum.secondAmount in touched
       ? errors.secondAmount
       : undefined;
 
   const firstAmountError =
-    TradeFormikValuesEnum.firstAmount in errors &&
-    TradeFormikValuesEnum.firstAmount in touched
+    BridgeFormikValuesEnum.firstAmount in errors &&
+    BridgeFormikValuesEnum.firstAmount in touched
       ? errors.firstAmount
       : undefined;
 
   const fromChainError =
-    TradeFormikValuesEnum.fromChain in errors &&
-    TradeFormikValuesEnum.fromChain in touched
-      ? errors.fromChain
+    BridgeFormikValuesEnum.fromChainId in errors &&
+    BridgeFormikValuesEnum.fromChainId in touched
+      ? errors.fromChainId
       : undefined;
 
   return {

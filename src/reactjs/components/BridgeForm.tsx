@@ -30,6 +30,7 @@ import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
 
 interface BridgeFormProps {
   mvxApiURL: string;
+  mvxChainId: string;
   mvxAddress?: string;
   username?: string;
   nativeAuthToken?: string;
@@ -47,6 +48,7 @@ interface BridgeFormProps {
 
 export const BridgeForm = ({
   mvxApiURL,
+  mvxChainId,
   mvxAddress,
   username,
   nativeAuthToken,
@@ -275,7 +277,8 @@ export const BridgeForm = ({
     mvxAccountAddress: mvxAddress,
     firstToken,
     firstAmount,
-    fromChain: selectedChainOption?.chainType,
+    fromChainId: chainId.toString(),
+    toChainId: mvxChainId,
     secondToken,
     secondAmount,
     onSubmit
@@ -351,6 +354,7 @@ export const BridgeForm = ({
 
   useEffect(setInitialSelectedTokens, [
     isTokensLoading,
+    // bridgeAddress
     evmTokensBalances,
     mvxTokensWithBalances
   ]);
@@ -358,11 +362,12 @@ export const BridgeForm = ({
   useEffect(() => {
     setFirstToken((prevState) => {
       if (!prevState) {
-        const token = fromOptions.find(
-          (option) => option.identifier === fromOptions[0].identifier
-        );
-
-        return token ? getDefaultOption(token) : prevState;
+        // const token = fromOptions.find(
+        //   (option) => option.identifier === fromOptions[0].identifier
+        // );
+        //
+        // return token ? getDefaultOption(token) : prevState;
+        return;
       }
 
       const token = fromOptions.find(
@@ -374,11 +379,12 @@ export const BridgeForm = ({
 
     setSecondToken((prevState) => {
       if (!prevState) {
-        const token = toOptions.find(
-          (option) => option.identifier === toOptions[0].identifier
-        );
-
-        return token ? getDefaultOption(token) : prevState;
+        // const token = toOptions.find(
+        //   (option) => option.identifier === toOptions[0].identifier
+        // );
+        //
+        // return token ? getDefaultOption(token) : prevState;
+        return;
       }
 
       const token = toOptions.find(
@@ -387,7 +393,7 @@ export const BridgeForm = ({
 
       return token ? { ...prevState, token } : prevState;
     });
-  }, [evmTokensBalances, mvxTokensWithBalances]);
+  }, [evmTokensBalances, mvxTokensWithBalances, bridgeAddress]);
 
   const firstSelectOptions =
     useMemo(

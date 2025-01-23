@@ -18,8 +18,6 @@ export const TokenItem = ({
     digits: 4
   });
 
-  console.log({ token, formattedBalance });
-
   return (
     <div
       className={`token-item ${
