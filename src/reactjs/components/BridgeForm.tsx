@@ -303,7 +303,17 @@ export const BridgeForm = ({
   );
 
   const setInitialSelectedTokens = useCallback(() => {
-    if (isTokensLoading || !bridgeAddress) {
+    if (isTokensLoading) {
+      return;
+    }
+
+    if (!bridgeAddress) {
+      if (firstToken?.token && secondToken?.token) {
+        setFirstToken(undefined);
+        setSecondToken(undefined);
+        updateUrlParams({ firstTokenId: '', secondTokenId: '' });
+      }
+
       return;
     }
 
