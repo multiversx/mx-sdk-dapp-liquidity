@@ -18,7 +18,7 @@ export const useFetchBridgeData = ({
     isTokensError,
     isTokensLoading,
     refetchTokens,
-    evmTokensBalances,
+    evmTokensWithBalances,
     isLoadingEvmTokensBalances,
     isErrorMvxTokensBalances,
     refetchEvmTokensBalances,
@@ -45,7 +45,7 @@ export const useFetchBridgeData = ({
   return {
     isTokensError,
     isTokensLoading,
-    evmTokensBalances,
+    evmTokensWithBalances,
     isLoadingEvmTokensBalances,
     isErrorMvxTokensBalances,
     refetchEvmTokensBalances,

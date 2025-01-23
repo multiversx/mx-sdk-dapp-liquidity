@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import { useGetChainId } from './useGetChainId.ts';
 import { mvxChainIds } from '../constants/general';
+import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import { useGetEvmTokensBalancesQuery } from '../queries/useGetEvmTokensBalances.query';
 import { useGetMvxTokensBalancesQuery } from '../queries/useGetMvxTokensBalances.query';
-import { useGetTokensQuery } from '../queries/useGetTokens.query.ts';
 
 export const useFetchTokens = ({
   mvxAddress,
@@ -11,12 +12,14 @@ export const useFetchTokens = ({
   mvxAddress?: string;
   mvxApiURL: string;
 }) => {
+  const chainId = useGetChainId();
+
   const {
     data: tokens,
     isLoading: isTokensLoading,
     isError: isTokensError,
     refetch: refetchTokens
-  } = useGetTokensQuery();
+  } = useGetAllTokensQuery();
 
   const evmTokens = useMemo(
     () =>
@@ -54,6 +57,10 @@ export const useFetchTokens = ({
     apiURL: mvxApiURL
   });
 
+  const evmTokensWithBalances = useMemo(() => {
+    return evmTokensBalances?.filter((x) => x.chainId === chainId);
+  }, [evmTokens, evmTokensBalances]);
+
   const mvxTokensWithBalances = useMemo(() => {
     return mvxTokens?.map((token) => {
       const foundToken = mvxTokensBalances?.find(
@@ -83,7 +90,7 @@ export const useFetchTokens = ({
     isLoadingEvmTokensBalances,
     isErrorEvmTokensBalances,
     refetchEvmTokensBalances,
-    evmTokensBalances,
+    evmTokensWithBalances,
     isLoadingMvxTokensBalances,
     isErrorMvxTokensBalances,
     refetchMvxTokensBalances,

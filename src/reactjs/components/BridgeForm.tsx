@@ -68,7 +68,7 @@ export const BridgeForm = ({
   );
 
   const {
-    evmTokensBalances,
+    evmTokensWithBalances,
     mvxTokensWithBalances,
     isTokensLoading: tokensLoading,
     isLoadingEvmTokensBalances,
@@ -121,8 +121,8 @@ export const BridgeForm = ({
 
   const fromOptions = useMemo(
     () =>
-      (evmTokensBalances &&
-        evmTokensBalances.map((token) => {
+      (evmTokensWithBalances &&
+        evmTokensWithBalances.map((token) => {
           return {
             ...token,
             identifier: token.address,
@@ -130,7 +130,7 @@ export const BridgeForm = ({
           };
         })) ??
       [],
-    [evmTokensBalances]
+    [evmTokensWithBalances]
   );
 
   const toOptions = useMemo(
