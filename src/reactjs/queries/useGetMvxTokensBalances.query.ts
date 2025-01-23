@@ -48,7 +48,7 @@ export const useGetMvxTokensBalancesQuery = ({
     queryKey: ['mvx-tokens', 'account', tokenIdentifiers.sort()],
     queryFn,
     retry,
-    enabled: Boolean(mvxAddress),
+    enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,
     refetchInterval: false,
     refetchIntervalInBackground: true,
     refetchOnWindowFocus: false
