@@ -1,5 +1,15 @@
 import type { AppKitOptions } from '@reown/appkit';
-import { createAppKit } from '@reown/appkit/react';
+import {
+  createAppKit,
+  useAppKit,
+  useAppKitAccount,
+  useAppKitEvents,
+  useAppKitNetwork,
+  useAppKitState,
+  useAppKitTheme,
+  useDisconnect,
+  useWalletInfo
+} from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
@@ -34,7 +44,7 @@ export type InitOptions = {
   bridgeURL: string;
 };
 
-export function init(options: InitOptions) {
+function init(options: InitOptions) {
   const store = InMemoryStore.getInstance();
   store.setItem('apiURL', options.apiURL);
 
@@ -65,3 +75,15 @@ export function init(options: InitOptions) {
     options
   };
 }
+
+export {
+  init,
+  useAppKit,
+  useAppKitAccount,
+  useAppKitEvents,
+  useAppKitNetwork,
+  useAppKitState,
+  useAppKitTheme,
+  useDisconnect,
+  useWalletInfo
+};

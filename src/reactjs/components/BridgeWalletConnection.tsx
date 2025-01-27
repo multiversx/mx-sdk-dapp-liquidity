@@ -1,11 +1,11 @@
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useDisconnect } from '@reown/appkit/react';
 import { SwitchChainButton } from './Connect/SwitchChainButton';
 import { MxLink } from './MxLink';
 import { ChainDTO } from '../../dto/Chain.dto';
 import { useAccount } from '../hooks/useAccount';
-import { useAuth } from '../hooks/useAuth';
 import { useChainIcon } from '../hooks/useChainIcon';
 
 export const BridgeWalletConnection = ({
@@ -22,8 +22,16 @@ export const BridgeWalletConnection = ({
   }) => JSX.Element;
 }) => {
   const account = useAccount();
-  const { disconnect } = useAuth();
+  const { disconnect } = useDisconnect();
   const selectedChainIcon = useChainIcon(activeChain?.chainName ?? 'default');
+
+  const handleDisconnect = async () => {
+    try {
+      await disconnect();
+    } catch (error) {
+      console.error('Failed to disconnect:', error);
+    }
+  };
 
   return (
     <div className="flex items-center">
@@ -77,7 +85,7 @@ export const BridgeWalletConnection = ({
         <div className={`ml-auto mr-0 flex items-center gap-1`}>
           <button
             className="focus-primary flex items-center gap-1 rounded-xl px-0 py-2 text-sm font-semibold text-neutral-400 transition-colors duration-200 hover:enabled:text-white disabled:opacity-50"
-            onClick={disconnect}
+            onClick={handleDisconnect}
           >
             <FontAwesomeIcon icon={faPowerOff} />
           </button>

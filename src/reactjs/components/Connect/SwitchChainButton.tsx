@@ -1,4 +1,4 @@
-import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import { ReactNode } from 'react';
 
 export const SwitchChainButton = ({
@@ -10,7 +10,8 @@ export const SwitchChainButton = ({
   className?: string;
   disabled?: boolean;
 }) => {
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
+  const { isConnected } = useAppKitAccount();
 
   const baseStyle = `font-bold text-white rounded-lg ${
     disabled ? 'cursor-not-allowed' : 'cursor-pointer'
@@ -21,7 +22,7 @@ export const SwitchChainButton = ({
       onClick={(e) => {
         e.preventDefault();
         open({
-          view: 'Networks'
+          view: isConnected ? 'Networks' : 'Connect'
         });
       }}
       className={`${baseStyle} ${className}`}

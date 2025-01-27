@@ -1,4 +1,4 @@
-import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useAppKit } from '@reown/appkit/react';
 import { ReactNode } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 
@@ -11,7 +11,7 @@ export const CustomConnectButton = ({
   className?: string;
   children?: ReactNode;
 }) => {
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
   const { isConnected, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
 
@@ -32,7 +32,7 @@ export const CustomConnectButton = ({
     <button
       onClick={() =>
         open({
-          view: 'Networks'
+          view: 'Connect'
         })
       }
       className={`${baseStyle} ${className}`}
