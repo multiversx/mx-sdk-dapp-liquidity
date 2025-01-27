@@ -6,11 +6,13 @@ import { MvxTokenType, TokenType } from '../../types/token';
 export const useGetMvxTokensBalancesQuery = ({
   tokens,
   mvxAddress,
-  apiURL
+  apiURL,
+  refetchTrigger
 }: {
   tokens: TokenType[];
   mvxAddress?: string;
   apiURL: string;
+  refetchTrigger?: number;
 }) => {
   const tokenIdentifiers = useMemo(() => {
     return tokens.map(({ address }) => address);
@@ -45,7 +47,13 @@ export const useGetMvxTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['mvx-tokens', 'account', tokenIdentifiers.sort()],
+    queryKey: [
+      'mvx-tokens',
+      'account',
+      mvxAddress,
+      refetchTrigger,
+      tokenIdentifiers.sort()
+    ],
     queryFn,
     retry,
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,

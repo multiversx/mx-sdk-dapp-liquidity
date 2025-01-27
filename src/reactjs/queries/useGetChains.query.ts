@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { getChains } from '../../api/getChains.ts';
+import { getChains } from '../../api/getChains';
 import { getApiURL } from '../../helpers/getApiURL';
 
 export const useGetChainsQuery = () => {

@@ -21,14 +21,13 @@ export const useFetchBridgeData = ({
     evmTokensWithBalances,
     isLoadingEvmTokensBalances,
     isErrorMvxTokensBalances,
-    refetchEvmTokensBalances,
     mvxTokensWithBalances,
     isLoadingMvxTokensBalances,
-    isErrorEvmTokensBalances,
-    refetchMvxTokensBalances
+    isErrorEvmTokensBalances
   } = useFetchTokens({
     mvxApiURL,
-    mvxAddress
+    mvxAddress,
+    refetchTrigger
   });
   const {
     data: chains,
@@ -38,8 +37,6 @@ export const useFetchBridgeData = ({
 
   useEffect(() => {
     refetchTokens();
-    refetchEvmTokensBalances();
-    refetchMvxTokensBalances();
   }, [refetchTrigger, chainId, refetchTokens]);
 
   return {
@@ -48,11 +45,9 @@ export const useFetchBridgeData = ({
     evmTokensWithBalances,
     isLoadingEvmTokensBalances,
     isErrorMvxTokensBalances,
-    refetchEvmTokensBalances,
     mvxTokensWithBalances,
     isLoadingMvxTokensBalances,
     isErrorEvmTokensBalances,
-    refetchMvxTokensBalances,
     chains,
     isChainsLoading,
     isChainsError

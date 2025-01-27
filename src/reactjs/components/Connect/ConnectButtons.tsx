@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ConnectButton } from './ConnectButton.tsx';
-import { useResolveConnectorIcon } from '../../hooks/useResolveConnectorIcon.ts';
-import { useSupportedConnectors } from '../../hooks/useSupportedConnectors.ts';
+import { useResolveConnectorIcon } from '../../hooks/useResolveConnectorIcon';
+import { useSupportedConnectors } from '../../hooks/useSupportedConnectors';
 
 export const ConnectButtons = () => {
   const supportedConnectors = useSupportedConnectors();

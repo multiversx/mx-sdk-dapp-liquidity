@@ -4,15 +4,15 @@ import { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { TokenType } from '../../types/token';
 import { useBalances } from '../hooks/useBalances';
-import { useGetChainId } from '../hooks/useGetChainId';
 
 export const useGetEvmTokensBalancesQuery = ({
-  tokens
+  tokens,
+  chainId
 }: {
   tokens: TokenType[];
+  chainId: string;
 }) => {
   const { address } = useAppKitAccount();
-  const chainId = useGetChainId();
   const { fetchBalances } = useBalances();
 
   const tokenIdentifiers = useMemo(() => {
@@ -61,7 +61,7 @@ export const useGetEvmTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['tokens-balances', address],
+    queryKey: ['tokens-balances', address, chainId, tokenIdentifiers.sort()],
     queryFn,
     retry,
     enabled: Boolean(address),

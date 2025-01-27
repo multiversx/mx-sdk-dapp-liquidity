@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import { useEffect } from 'react';
 import { object, string } from 'yup';
-import { useAccount } from './useAccount.ts';
+import { useAccount } from './useAccount';
 import { confirmRate } from '../../api/confirmRate';
 import { getApiURL } from '../../helpers/getApiURL';
 import { OptionType } from '../../types/form';

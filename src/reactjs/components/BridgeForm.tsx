@@ -19,10 +19,10 @@ import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
 import { useAccount } from '../hooks/useAccount';
 import { useBridgeFormik } from '../hooks/useBridgeFormik';
-import { useFetchBridgeData } from '../hooks/useFetchBridgeData.ts';
+import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
+import { useGetChainId } from '../hooks/useGetChainId';
 import { useSendTransactions } from '../hooks/useSendTransactions';
-import { useSignTransaction } from '../hooks/useSignTransaction.ts';
-import { useWeb3App } from '../hooks/useWeb3App';
+import { useSignTransaction } from '../hooks/useSignTransaction';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
@@ -62,10 +62,7 @@ export const BridgeForm = ({
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
 
-  const { appKit } = useWeb3App();
-  const chainId = Number(
-    account.caipAddress?.split(':')[1] ?? appKit.getChainId()
-  );
+  const chainId = useGetChainId();
 
   const {
     evmTokensWithBalances,
@@ -331,7 +328,9 @@ export const BridgeForm = ({
     const secondOption =
       getDefaultOption(
         toOptions?.find(
-          ({ address }) => address === initialTokens?.secondTokenId
+          ({ address }) =>
+            address ===
+            (firstOption?.token.name ?? initialTokens?.secondTokenId)
         )
       ) ??
       getDefaultOption(
@@ -443,7 +442,13 @@ export const BridgeForm = ({
     fetchRate();
   }, [fetchRate]);
 
-  useEffect(setInitialSelectedTokens, [setInitialSelectedTokens]);
+  useEffect(() => {
+    setFirstToken(undefined);
+    setSecondToken(undefined);
+    updateUrlParams({ firstTokenId: '', secondTokenId: '' });
+  }, [chainId]);
+
+  useEffect(setInitialSelectedTokens, [setInitialSelectedTokens, chainId]);
 
   return (
     <>

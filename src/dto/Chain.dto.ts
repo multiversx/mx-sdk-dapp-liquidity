@@ -1,4 +1,4 @@
-import { ChainNameType } from '../reactjs/types/chains.ts';
+import { ChainNameType } from '../reactjs/types/chains';
 
 export interface ChainDTO {
   chainId: number;

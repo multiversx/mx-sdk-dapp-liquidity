@@ -5,7 +5,7 @@ import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
 import * as networks from 'viem/chains';
 import { InMemoryStore } from '../../store/inMemoryStore';
-import { mvxChainIds } from '../constants/general.ts';
+import { mvxChainIds } from '../constants/general';
 
 export type InitOptions = {
   /**

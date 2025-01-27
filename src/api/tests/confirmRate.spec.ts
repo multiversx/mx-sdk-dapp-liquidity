@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ConfirmRateDTO } from 'dto/ConfirmRateDTO';
-import { ServerTransaction } from '../../types/transaction.ts';
+import { ServerTransaction } from '../../types/transaction';
 import { confirmRate } from '../confirmRate';
 
 jest.mock('axios');

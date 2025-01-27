@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { sendTransactions } from 'api/sendTransactions';
-import { serializeTransaction } from '../../helpers/serializeTransaction.ts';
+import { serializeTransaction } from '../../helpers/serializeTransaction';
 import { ServerTransaction } from '../../types/transaction';
 
 jest.mock('axios');
