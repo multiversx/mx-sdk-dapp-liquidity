@@ -13,6 +13,7 @@ export const useFetchTokens = ({
   mvxApiURL: string;
 }) => {
   const chainId = useGetChainId();
+  console.log({ chainId });
 
   const {
     data: tokens,
@@ -58,7 +59,9 @@ export const useFetchTokens = ({
   });
 
   const evmTokensWithBalances = useMemo(() => {
-    return evmTokensBalances?.filter((x) => x.chainId === chainId);
+    return evmTokensBalances?.filter(
+      (x) => x.chainId.toString() === chainId?.toString()
+    );
   }, [evmTokens, evmTokensBalances]);
 
   const mvxTokensWithBalances = useMemo(() => {
