@@ -453,6 +453,13 @@ export const BridgeForm = ({
     onSubmit
   });
 
+  const hasError = Boolean(
+    firstAmountError ||
+      secondAmountError ||
+      fromChainError ||
+      rateValidationError
+  );
+
   useEffect(() => {
     fetchRate();
   }, [fetchRate]);
@@ -586,7 +593,11 @@ export const BridgeForm = ({
               variant="primary"
               className="w-full bg-neutral-850/50 py-3 font-medium text-primary-200"
               disabled={
-                !hasAmounts || isPendingRate || !mvxAddress || !account.address
+                !hasAmounts ||
+                isPendingRate ||
+                !mvxAddress ||
+                !account.address ||
+                hasError
               }
             >
               <span className="text-neutral-100">Enter amount</span>
