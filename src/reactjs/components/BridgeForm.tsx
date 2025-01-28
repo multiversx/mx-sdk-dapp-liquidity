@@ -1,5 +1,6 @@
 import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -94,8 +95,14 @@ export const BridgeForm = ({
   const {
     mutate: getRate,
     data: rate,
-    isPending: isPendingRate
+    isPending: isPendingRate,
+    error: rateError
   } = useGetRateMutation();
+
+  const rateValidationError =
+    (rateError as AxiosError)?.response?.status === 400
+      ? (rateError as AxiosError<{ message: string }>)?.response?.data.message
+      : undefined;
 
   const ref = useRef(null);
 
@@ -175,7 +182,7 @@ export const BridgeForm = ({
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
-  const fetchRate = useCallback(() => {
+  const fetchRate = useCallback(async () => {
     if (
       !firstToken ||
       !secondToken ||
@@ -468,7 +475,7 @@ export const BridgeForm = ({
             <EnterAmountInput
               inputName="firstAmount"
               inputValue={firstAmount}
-              amountError={firstAmountError}
+              amountError={rateValidationError ?? firstAmountError}
               disabled={isPendingRate}
               onInputDebounceChange={handleOnChangeFirstAmount}
               onBlur={handleBlur}

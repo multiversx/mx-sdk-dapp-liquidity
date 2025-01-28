@@ -44,7 +44,9 @@ export const EnterAmountInput = ({
         {...restProps}
       />
       <div className="flex min-h-[2rem] items-end">
-        {amountError && <div className="text-danger">{amountError}</div>}
+        {amountError && (
+          <div className="text-danger text-xs">{amountError}</div>
+        )}
       </div>
     </div>
   );
