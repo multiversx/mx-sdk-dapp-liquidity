@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { TestContext } from 'yup';
-import { TokenType } from '../../../types/token.ts';
+import { OptionType } from '../../../types/form';
 import { testNumber } from '../../utils/testNumber';
 
 export const useTestMaximum = () => {
@@ -9,20 +9,20 @@ export const useTestMaximum = () => {
       if (!testNumber(value)) {
         return false;
       }
-      const asset = context.parent.firstToken as TokenType;
+      const asset = context.parent.firstToken as OptionType;
 
       return (
         parseFloat(value ?? '0') >
-        parseFloat(asset?.metadata.maxBridgeAmount ?? '0')
+        parseFloat(asset?.token?.metadata.maxBridgeAmount ?? '0')
       );
     },
     []
   );
 
   const getMessage = useCallback((context: TestContext) => {
-    const asset = context.parent.firstToken as TokenType;
-    const max = asset?.metadata.maxBridgeAmount ?? '0';
-    const currency = asset?.name ?? '';
+    const asset = context.parent.firstToken as OptionType;
+    const max = asset?.token?.metadata.maxBridgeAmount ?? '0';
+    const currency = asset?.token?.name ?? '';
 
     return `Must be lower than ${max} ${currency}`;
   }, []);

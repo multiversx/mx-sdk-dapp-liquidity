@@ -4,7 +4,7 @@ import { MAX_INPUT_DECIMALS } from '../../constants/general';
 
 export const useTestDecimals = () => {
   const shouldThrow = useCallback(<T extends string | undefined>(value: T) => {
-    const actualDecimals = value?.split('.')[1].length ?? 0;
+    const actualDecimals = value?.split('.')[1]?.length ?? 0;
     return actualDecimals > MAX_INPUT_DECIMALS;
   }, []);
 
