@@ -2,6 +2,7 @@ import { useFormik } from 'formik';
 import { useEffect } from 'react';
 import { object, string } from 'yup';
 import { useAccount } from './useAccount';
+import { useAmountSchema } from './validation/useAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
 import { getApiURL } from '../../helpers/getApiURL';
 import { OptionType } from '../../types/form';
@@ -101,10 +102,13 @@ export const useBridgeFormik = ({
 
   const formik = useFormik({
     initialValues,
-    validationSchema: object().shape({
+    validationSchema: object<TradeFormikValuesType>().shape({
+      [BridgeFormikValuesEnum.firstAmount]: useAmountSchema(),
       [BridgeFormikValuesEnum.firstToken]: object().required(),
+      [BridgeFormikValuesEnum.secondAmount]: string().required(),
       [BridgeFormikValuesEnum.secondToken]: object().required(),
-      [BridgeFormikValuesEnum.fromChainId]: string().required()
+      [BridgeFormikValuesEnum.fromChainId]: string().required(),
+      [BridgeFormikValuesEnum.toChainId]: string().required()
     }),
     onSubmit: onSubmitFormik
   });

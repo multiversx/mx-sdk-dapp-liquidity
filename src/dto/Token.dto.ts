@@ -7,4 +7,8 @@ export interface TokenDTO {
   crosschain: boolean;
   pngUrl: string;
   svgUrl: string;
+  metadata: {
+    minBridgeAmount: string;
+    maxBridgeAmount: string;
+  };
 }

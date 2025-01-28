@@ -1,6 +1,6 @@
-import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { TokenIcon } from './TokenIcon';
 import { TokenType } from '../../../../types/token';
+import { formatAmount } from '../../../utils/dappCoreFormatAmount';
 
 export const TokenItem = ({
   token,

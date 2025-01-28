@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useGetChainId } from './useGetChainId';
-import { mvxChainIds } from '../constants/general';
+import { MVX_CHAIN_IDS } from '../constants/general';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import { useGetEvmTokensBalancesQuery } from '../queries/useGetEvmTokensBalances.query';
 import { useGetMvxTokensBalancesQuery } from '../queries/useGetMvxTokensBalances.query';
@@ -26,7 +26,7 @@ export const useFetchTokens = ({
   const evmTokens = useMemo(
     () =>
       tokens?.filter(
-        (token) => !mvxChainIds.includes(Number(token.chainId.toString()))
+        (token) => !MVX_CHAIN_IDS.includes(Number(token.chainId.toString()))
       ),
     [tokens]
   );
@@ -34,7 +34,7 @@ export const useFetchTokens = ({
   const mvxTokens = useMemo(
     () =>
       tokens?.filter((token) =>
-        mvxChainIds.includes(Number(token.chainId.toString()))
+        MVX_CHAIN_IDS.includes(Number(token.chainId.toString()))
       ),
     [tokens]
   );

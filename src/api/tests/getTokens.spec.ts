@@ -18,7 +18,11 @@ describe('getTokens', () => {
         decimals: 18,
         crosschain: true,
         pngUrl: 'https://example.com/logo.png',
-        svgUrl: 'https://example.com/logo.svg'
+        svgUrl: 'https://example.com/logo.svg',
+        metadata: {
+          minBridgeAmount: '1',
+          maxBridgeAmount: '100'
+        }
       }
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
@@ -40,7 +44,11 @@ describe('getTokens', () => {
         decimals: 18,
         crosschain: true,
         pngUrl: 'https://example.com/logo.png',
-        svgUrl: 'https://example.com/logo.svg'
+        svgUrl: 'https://example.com/logo.svg',
+        metadata: {
+          minBridgeAmount: '1',
+          maxBridgeAmount: '100'
+        }
       }
     ];
     mockedAxios.get.mockResolvedValue({ data: response });

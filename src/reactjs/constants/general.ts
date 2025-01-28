@@ -4,4 +4,5 @@ export const safeWindow =
 export const safeDocument =
   typeof document !== 'undefined' ? safeWindow.document : ({} as never);
 
-export const mvxChainIds = [31, 44, 54];
+export const MVX_CHAIN_IDS = [31, 44, 54];
+export const MAX_INPUT_DECIMALS = 4;
