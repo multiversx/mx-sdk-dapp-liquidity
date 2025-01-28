@@ -25,6 +25,7 @@ import { useGetChainId } from '../hooks/useGetChainId';
 import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
+import { formatAmount } from '../utils/dappCoreFormatAmount';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
@@ -221,7 +222,14 @@ export const BridgeForm = ({
   }, []);
 
   const handleOnFirstMaxBtnChange = useCallback(() => {
-    handleOnChangeFirstAmount(firstToken?.token?.balance ?? '0');
+    const formattedBalance = formatAmount({
+      decimals: firstToken?.token?.decimals,
+      input: firstToken?.token?.balance ?? '0',
+      addCommas: true,
+      digits: 4
+    });
+
+    handleOnChangeFirstAmount(formattedBalance);
   }, [firstToken?.token?.balance, handleOnChangeFirstAmount]);
 
   const onSuccess = useCallback(() => {
