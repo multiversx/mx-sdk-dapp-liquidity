@@ -225,7 +225,7 @@ export const BridgeForm = ({
     const formattedBalance = formatAmount({
       decimals: firstToken?.token?.decimals,
       input: firstToken?.token?.balance ?? '0',
-      addCommas: true,
+      addCommas: false,
       digits: 4
     });
 
