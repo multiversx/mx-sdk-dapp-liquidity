@@ -191,9 +191,9 @@ export const BridgeForm = ({
       body: {
         tokenIn: firstToken.token.address,
         amountIn: firstAmount,
-        fromChain: selectedChainOption?.chainType,
+        fromChainId: chainId.toString(),
         tokenOut: secondToken.token.address,
-        toChain: 'mvx'
+        toChainId: mvxChainId
       }
     });
   }, [

@@ -12,8 +12,8 @@ describe('getRate', () => {
     const body = {
       tokenIn: 'wUSDC',
       tokenOut: 'wETH',
-      fromChain: 'ETH',
-      toChain: 'MVX',
+      fromChainId: '97',
+      toChainId: '44',
       amountIn: '1000000000000000000'
     };
     const nativeAuthToken =
@@ -46,8 +46,8 @@ describe('getRate', () => {
     const body = {
       tokenIn: 'wUSDC',
       tokenOut: 'wETH',
-      fromChain: 'ETH',
-      toChain: 'MVX',
+      fromChainId: '97',
+      toChainId: '44',
       amountIn: '1000000000000000000'
     };
     const nativeAuthToken = '';
@@ -77,8 +77,8 @@ describe('getRate', () => {
     const body = {
       tokenIn: 'wUSDC',
       tokenOut: 'wETH',
-      fromChain: 'ETH',
-      toChain: 'MVX',
+      fromChainId: '97',
+      toChainId: '44',
       amountIn: '1000000000000000000'
     };
     const nativeAuthToken = '';

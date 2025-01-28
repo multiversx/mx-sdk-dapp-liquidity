@@ -1,9 +1,9 @@
 export interface RateRequestBody {
   tokenIn: string;
   amountIn: string;
-  fromChain: string;
+  fromChainId: string;
   tokenOut: string;
-  toChain: string;
+  toChainId: string;
 }
 
 export interface RateRequestResponse {
