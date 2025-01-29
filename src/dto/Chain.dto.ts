@@ -3,6 +3,8 @@ import { ChainNameType } from '../reactjs/types/chains';
 export interface ChainDTO {
   chainId: number;
   chainName: ChainNameType;
+  pngUrl: string;
+  svgUrl: string;
   chainType: string;
   rpc: string;
   networkName: string;

@@ -59,6 +59,7 @@ export const useGetMvxTokensBalancesQuery = ({
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,
     refetchInterval: false,
     refetchIntervalInBackground: true,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    gcTime: 0
   });
 };

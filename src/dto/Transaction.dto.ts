@@ -1,16 +1,18 @@
 export interface TransactionDTO {
-  transactionId: string;
-  userWalletAddress: string;
-  providerId: string;
-  fromChain: string;
-  toChain: string;
-  fromToken: string;
-  toToken: string;
-  fromAmount: number;
-  toAmount: number;
-  fee: number;
+  sourceChain: string;
+  destinationChain: string;
+  tokenSource: string;
+  tokenDestination: string;
+  amountSource: string;
+  amountDestination: string;
+  depositTimestamp: number;
+  executionTimestamp: number;
+  sender: string;
   status: string;
-  transactionHash: string;
-  timestamp: string;
-  transactionDetails: string;
+  nonce: number;
+  receiver: string;
+  batchId: number;
+  depositTxHash: string;
+  version: string;
+  executeTxHash: string;
 }

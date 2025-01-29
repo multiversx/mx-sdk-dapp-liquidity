@@ -13,6 +13,10 @@ describe('getChains', () => {
       {
         chainId: 1,
         chainName: 'msx',
+        pngUrl:
+          'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.png',
+        svgUrl:
+          'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.svg',
         chainType: 'type1',
         rpc: 'rpc1',
         blockExplorerUrls: ['explorer1'],
