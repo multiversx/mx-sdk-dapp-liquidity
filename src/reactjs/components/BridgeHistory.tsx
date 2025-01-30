@@ -143,78 +143,104 @@ export const BridgeHistory = ({
       </div>
 
       <div className="scrollbar-thin scrollbar-thin flex flex-1 flex-col gap-1 overflow-y-scroll">
-        {transactions?.map((transaction) => {
-          return (
-            <MxCard
-              key={transaction.depositTxHash}
-              cardSize="lg"
-              variant="neutral-750"
-              className={mxClsx(
-                'flex flex-col gap-4 outline outline-transparent focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80',
-                'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4'
-              )}
-            >
-              <div className="align-center flex justify-between gap-1">
-                <div
-                  className={mxClsx('flex items-center gap-1', {
-                    'text-yellow-200': transaction.status === 'pending',
-                    'text-green-200': transaction.status === 'success',
-                    'text-red-200': transaction.status === 'failed'
-                  })}
-                >
-                  {transaction.statusIcon}
-                  <span>
-                    {transaction.destinationChain === 'msx'
-                      ? 'Deposit'
-                      : 'Transfer'}
-                  </span>
-                  <img
-                    src={
-                      transaction.destinationChain === 'msx'
-                        ? tokensMap[transaction.tokenDestination]?.svgUrl
-                        : tokensMap[transaction.tokenSource]?.svgUrl
-                    }
-                    alt=""
-                    className="h-[1.5rem] w-[1.5rem]"
-                  />
-                  <span>
-                    {formatAmount({
-                      decimals: tokensMap[transaction.tokenSource]?.decimals,
-                      amount: transaction.amountSource,
-                      addCommas: false,
-                      digits: 2
-                    })}
-                  </span>
-                  <span>{tokensMap[transaction.tokenSource]?.name}</span>
-                  <span>from</span>
-                  <img
-                    src={
-                      chainIdentifier[
-                        chainsMap[transaction.sourceChain]?.chainName ?? ''
-                      ]
-                    }
-                    alt=""
-                    className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
-                  />
-                </div>
-                <div className="ml-auto mr-0 flex items-center gap-1">
-                  <MxLink
-                    to={`${bridgeURL}/status/${transaction.depositTxHash}`}
-                    target="_blank"
-                    showExternalIcon={false}
-                  >
-                    View
-                  </MxLink>
-                  <img
-                    src={ArrowUpRight}
-                    alt=""
-                    className="flex items-center justify-center rounded-full text-neutral-200"
-                  />
-                </div>
+        {transactions?.length === 0 && (
+          <MxCard
+            cardSize="lg"
+            variant="neutral-750"
+            className={mxClsx(
+              'flex flex-col gap-4 outline outline-transparent focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80',
+              'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4'
+            )}
+          >
+            <div className="align-center flex flex-col justify-between gap-1">
+              <FontAwesomeIcon icon={faClock} size="10x" />
+              <div className={mxClsx('flex flex-col items-center')}>
+                <div className="text-lg">No deposit found</div>
+                <div>Your deposit history will appear here</div>
               </div>
-            </MxCard>
-          );
-        })}
+            </div>
+          </MxCard>
+        )}
+        {transactions &&
+          transactions?.length > 0 &&
+          transactions.map((transaction) => {
+            return (
+              <MxCard
+                key={transaction.depositTxHash}
+                cardSize="lg"
+                variant="neutral-750"
+                className={mxClsx(
+                  'flex flex-col gap-4 outline outline-transparent focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80',
+                  'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4'
+                )}
+              >
+                <div className="align-center flex justify-between gap-1">
+                  <div
+                    className={mxClsx('flex items-center gap-1', {
+                      'text-yellow-200': transaction.status === 'pending',
+                      'text-green-200': transaction.status === 'success',
+                      'text-red-200': transaction.status === 'failed'
+                    })}
+                  >
+                    {transaction.statusIcon}
+                    <span>
+                      {transaction.destinationChain === 'msx'
+                        ? 'Deposit'
+                        : 'Transfer'}
+                    </span>
+                    <img
+                      src={
+                        transaction.destinationChain === 'msx'
+                          ? tokensMap[transaction.tokenDestination]?.svgUrl
+                          : tokensMap[transaction.tokenSource]?.svgUrl
+                      }
+                      alt=""
+                      className="h-[1.5rem] w-[1.5rem]"
+                    />
+                    <span>
+                      {formatAmount({
+                        decimals: tokensMap[transaction.tokenSource]?.decimals,
+                        amount: transaction.amountSource,
+                        addCommas: false,
+                        digits: 2
+                      })}
+                    </span>
+                    <span>{tokensMap[transaction.tokenSource]?.name}</span>
+                    <span>
+                      {transaction.destinationChain === 'msx' ? 'From' : 'To'}
+                    </span>
+                    <img
+                      src={
+                        chainIdentifier[
+                          chainsMap[
+                            transaction.destinationChain === 'msx'
+                              ? transaction.sourceChain
+                              : transaction.destinationChain
+                          ]?.chainName ?? ''
+                        ]
+                      }
+                      alt=""
+                      className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
+                    />
+                  </div>
+                  <div className="ml-auto mr-0 flex items-center gap-1">
+                    <MxLink
+                      to={`${bridgeURL}/status/${transaction.depositTxHash}`}
+                      target="_blank"
+                      showExternalIcon={false}
+                    >
+                      View
+                    </MxLink>
+                    <img
+                      src={ArrowUpRight}
+                      alt=""
+                      className="flex items-center justify-center rounded-full text-neutral-200"
+                    />
+                  </div>
+                </div>
+              </MxCard>
+            );
+          })}
       </div>
     </MxCard>
   );

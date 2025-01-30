@@ -1,6 +1,6 @@
+import { formatAmount as dappCoreFormatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { stringIsInteger } from '@multiversx/sdk-dapp-utils/out/helpers/stringIsInteger';
 import { roundAmount } from './roundAmount';
-import { formatAmount as dappCoreFormatAmount } from '../utils/dappCoreFormatAmount';
 
 export const formatAmount = ({
   amount = '0',

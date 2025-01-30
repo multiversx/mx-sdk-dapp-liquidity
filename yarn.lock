@@ -1519,10 +1519,10 @@
     classnames "2.3.2"
     react-select "5.4.0"
 
-"@multiversx/sdk-dapp-utils@1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@multiversx/sdk-dapp-utils/-/sdk-dapp-utils-1.0.4.tgz#b9cdb71a2693b6550f2d9038dd462e74d3886db6"
-  integrity sha512-MBnkOMJc8tWJTEuiG8S0m7sLiRzOjd0PbDKdGDj1H+Ky1TghSM1AzUbdYRI6i0edbEhVap1qaEP+zL/4DKcQhA==
+"@multiversx/sdk-dapp-utils@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@multiversx/sdk-dapp-utils/-/sdk-dapp-utils-1.0.5.tgz#e72501fa92ca4977b270405c1e2fe17724d4e88b"
+  integrity sha512-RiylwKK4JPgD67UV8SpK/szN/2L04/Q20qGbvKpQUZr7Sfhjukw0A8xmC4k2gp/MF8WWwnfxPLMVkToKw6Qv/w==
 
 "@multiversx/sdk-transaction-decoder@1.0.2":
   version "1.0.2"

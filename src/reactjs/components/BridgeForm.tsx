@@ -1,5 +1,6 @@
 import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,8 +25,9 @@ import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
 import { useGetChainId } from '../hooks/useGetChainId';
 import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction';
+import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
-import { formatAmount } from '../utils/dappCoreFormatAmount';
+import { delay } from '../utils/delay.ts';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
@@ -232,9 +234,13 @@ export const BridgeForm = ({
     handleOnChangeFirstAmount(formattedBalance);
   }, [firstToken?.token?.balance, handleOnChangeFirstAmount]);
 
-  const onSuccess = useCallback(() => {
+  const onSuccess = useCallback(async () => {
     handleOnChangeFirstAmount('');
     handleOnChangeSecondAmount('');
+
+    await delay(2000);
+
+    invalidateHistoryQuery();
   }, [handleOnChangeFirstAmount, handleOnChangeSecondAmount]);
 
   const updateUrlParams = useCallback(

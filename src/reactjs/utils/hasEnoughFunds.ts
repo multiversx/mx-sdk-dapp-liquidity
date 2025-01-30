@@ -1,5 +1,5 @@
+import { parseAmount } from '@multiversx/sdk-dapp-utils/out/helpers/parseAmount';
 import BigNumber from 'bignumber.js';
-import { parseAmount } from './parseAmount';
 import { testNumber } from './testNumber';
 
 export function hasEnoughFunds({

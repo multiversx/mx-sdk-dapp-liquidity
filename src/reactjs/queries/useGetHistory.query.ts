@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
+import { getQueryClient } from '../contexts/queryClient.ts';
 import { useAccount } from '../hooks/useAccount';
 
 export const useGetHistoryQuery = () => {
@@ -34,5 +35,12 @@ export const useGetHistoryQuery = () => {
     enabled: Boolean(address),
     refetchOnWindowFocus: false,
     gcTime: 0
+  });
+};
+
+export const invalidateHistoryQuery = () => {
+  const queryClient = getQueryClient();
+  queryClient.invalidateQueries({
+    queryKey: ['user-history']
   });
 };
