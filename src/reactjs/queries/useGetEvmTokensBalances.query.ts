@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { TokenType } from '../../types/token';
+import { getQueryClient } from '../contexts/queryClient';
 import { useBalances } from '../hooks/useBalances';
 
 export const useGetEvmTokensBalancesQuery = ({
@@ -61,7 +62,12 @@ export const useGetEvmTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['tokens-balances', address, chainId, tokenIdentifiers.sort()],
+    queryKey: [
+      'evm-tokens-balances',
+      address,
+      chainId,
+      tokenIdentifiers.sort()
+    ],
     queryFn,
     retry,
     enabled: Boolean(address),
@@ -69,3 +75,11 @@ export const useGetEvmTokensBalancesQuery = ({
     gcTime: 0
   });
 };
+
+export function invalidateEvmTokensBalances() {
+  const queryKey = ['evm-tokens-balances'];
+  const queryClient = getQueryClient();
+  queryClient.invalidateQueries({
+    queryKey
+  });
+}

@@ -1,9 +1,15 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useGetChainId } from './useGetChainId';
 import { MVX_CHAIN_IDS } from '../constants/general';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
-import { useGetEvmTokensBalancesQuery } from '../queries/useGetEvmTokensBalances.query';
-import { useGetMvxTokensBalancesQuery } from '../queries/useGetMvxTokensBalances.query';
+import {
+  invalidateEvmTokensBalances,
+  useGetEvmTokensBalancesQuery
+} from '../queries/useGetEvmTokensBalances.query';
+import {
+  invalidateMvxTokensBalancesQuery,
+  useGetMvxTokensBalancesQuery
+} from '../queries/useGetMvxTokensBalances.query';
 
 export const useFetchTokens = ({
   mvxAddress,
@@ -55,8 +61,7 @@ export const useFetchTokens = ({
   } = useGetMvxTokensBalancesQuery({
     tokens: mvxTokens ?? [],
     mvxAddress,
-    apiURL: mvxApiURL,
-    refetchTrigger: refetchTrigger ?? chainId
+    apiURL: mvxApiURL
   });
 
   const evmTokensWithBalances = useMemo(() => {
@@ -86,6 +91,11 @@ export const useFetchTokens = ({
   }, [mvxTokens, mvxTokensBalances]);
 
   console.log({ evmTokensBalances, mvxTokens, mvxTokensBalances });
+
+  useEffect(() => {
+    invalidateEvmTokensBalances();
+    invalidateMvxTokensBalancesQuery();
+  }, [refetchTrigger, chainId]);
 
   return {
     isTokensLoading,

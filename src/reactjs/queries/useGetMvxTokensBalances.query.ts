@@ -2,17 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
+import { getQueryClient } from '../contexts/queryClient';
 
 export const useGetMvxTokensBalancesQuery = ({
   tokens,
   mvxAddress,
-  apiURL,
-  refetchTrigger
+  apiURL
 }: {
   tokens: TokenType[];
   mvxAddress?: string;
   apiURL: string;
-  refetchTrigger?: number;
 }) => {
   const tokenIdentifiers = useMemo(() => {
     return tokens.map(({ address }) => address);
@@ -47,13 +46,7 @@ export const useGetMvxTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: [
-      'mvx-tokens',
-      'account',
-      mvxAddress,
-      refetchTrigger,
-      tokenIdentifiers.sort()
-    ],
+    queryKey: ['mvx-tokens-balances', mvxAddress, tokenIdentifiers.sort()],
     queryFn,
     retry,
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,
@@ -63,3 +56,11 @@ export const useGetMvxTokensBalancesQuery = ({
     gcTime: 0
   });
 };
+
+export function invalidateMvxTokensBalancesQuery() {
+  const queryKey = ['mvx-tokens-balances'];
+  const queryClient = getQueryClient();
+  queryClient.invalidateQueries({
+    queryKey
+  });
+}

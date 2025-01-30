@@ -64,6 +64,7 @@ export const BridgeForm = ({
   TransactionToastComponent,
   onSuccessfullySentTransaction
 }: BridgeFormProps) => {
+  const pendingSigningRef = useRef<boolean>();
   const navigate = useNavigate();
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
@@ -234,7 +235,11 @@ export const BridgeForm = ({
     });
 
     handleOnChangeFirstAmount(formattedBalance);
-  }, [firstToken?.token?.balance, handleOnChangeFirstAmount]);
+  }, [
+    firstToken?.token?.balance,
+    firstToken?.token?.decimals,
+    handleOnChangeFirstAmount
+  ]);
 
   const onSuccess = useCallback(
     async (txHash: string) => {
@@ -249,7 +254,11 @@ export const BridgeForm = ({
       invalidateHistoryQuery();
       onSuccessfullySentTransaction?.(txHash);
     },
-    [handleOnChangeFirstAmount, handleOnChangeSecondAmount]
+    [
+      handleOnChangeFirstAmount,
+      handleOnChangeSecondAmount,
+      onSuccessfullySentTransaction
+    ]
   );
 
   const updateUrlParams = useCallback(
@@ -394,7 +403,12 @@ export const BridgeForm = ({
 
   const onSubmit = useCallback(
     async (transaction: ServerTransaction) => {
+      if (pendingSigningRef.current) {
+        return;
+      }
+
       console.log('Signing and sending transaction', { transaction });
+      pendingSigningRef.current = true;
       try {
         const hash = await signTransaction({
           ...transaction,
@@ -435,14 +449,20 @@ export const BridgeForm = ({
           }
         );
         onSuccess(sentTransaction?.data.transactions[0].hash ?? '');
+        pendingSigningRef.current = false;
       } catch (e) {
         console.error(e);
+        pendingSigningRef.current = false;
+        handleOnChangeFirstAmount('');
+        handleOnChangeSecondAmount('');
       }
     },
     [
       TransactionToastComponent,
       TrimAddressComponent,
       bridgeAddress,
+      handleOnChangeFirstAmount,
+      handleOnChangeSecondAmount,
       nativeAuthToken,
       onSuccess,
       sendTransactions,
@@ -484,6 +504,13 @@ export const BridgeForm = ({
     setSecondToken(undefined);
     updateUrlParams({ firstTokenId: '', secondTokenId: '' });
   }, [chainId]);
+
+  useEffect(() => {
+    const selectedOption = fromOptions?.find(
+      (option) => option.address === firstToken?.token?.address
+    );
+    onChangeFirstSelect(selectedOption);
+  }, [firstToken?.token?.address, fromOptions, refetchTrigger]);
 
   useEffect(setInitialSelectedTokens, [setInitialSelectedTokens, chainId]);
 
@@ -612,7 +639,8 @@ export const BridgeForm = ({
                 isPendingRate ||
                 !mvxAddress ||
                 !account.address ||
-                hasError
+                hasError ||
+                pendingSigningRef.current
               }
             >
               <span className="text-neutral-100">Enter amount</span>

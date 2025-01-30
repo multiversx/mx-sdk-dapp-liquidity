@@ -14,6 +14,7 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
 import * as networks from 'viem/chains';
+import { useWaitForTransactionReceipt } from 'wagmi';
 import { InMemoryStore } from '../../store/inMemoryStore';
 import { MVX_CHAIN_IDS } from '../constants/general';
 
@@ -85,5 +86,6 @@ export {
   useAppKitState,
   useAppKitTheme,
   useDisconnect,
-  useWalletInfo
+  useWalletInfo,
+  useWaitForTransactionReceipt
 };
