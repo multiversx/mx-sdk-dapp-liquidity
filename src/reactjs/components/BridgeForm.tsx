@@ -64,7 +64,7 @@ export const BridgeForm = ({
   TransactionToastComponent,
   onSuccessfullySentTransaction
 }: BridgeFormProps) => {
-  const pendingSigningRef = useRef<boolean>();
+  const [pendingSigning, setPendingSigning] = useState(false);
   const navigate = useNavigate();
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
@@ -403,12 +403,9 @@ export const BridgeForm = ({
 
   const onSubmit = useCallback(
     async (transaction: ServerTransaction) => {
-      if (pendingSigningRef.current) {
-        return;
-      }
-
       console.log('Signing and sending transaction', { transaction });
-      pendingSigningRef.current = true;
+      setPendingSigning(true);
+
       try {
         const hash = await signTransaction({
           ...transaction,
@@ -449,10 +446,10 @@ export const BridgeForm = ({
           }
         );
         onSuccess(sentTransaction?.data.transactions[0].hash ?? '');
-        pendingSigningRef.current = false;
+        setPendingSigning(false);
       } catch (e) {
         console.error(e);
-        pendingSigningRef.current = false;
+        setPendingSigning(false);
         handleOnChangeFirstAmount('');
         handleOnChangeSecondAmount('');
       }
@@ -640,7 +637,7 @@ export const BridgeForm = ({
                 !mvxAddress ||
                 !account.address ||
                 hasError ||
-                pendingSigningRef.current
+                pendingSigning
               }
             >
               <span className="text-neutral-100">Enter amount</span>

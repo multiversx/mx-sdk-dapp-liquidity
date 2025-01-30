@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { object, string } from 'yup';
 import { useAccount } from './useAccount';
 import { useAmountSchema } from './validation/useAmountSchema';
@@ -47,6 +47,7 @@ export const useBridgeFormik = ({
   secondToken?: OptionType;
   onSubmit: (transaction: ServerTransaction) => void;
 }) => {
+  const pendingSigningRef = useRef<boolean>();
   const account = useAccount();
 
   const initialValues: TradeFormikValuesType = {
@@ -63,6 +64,11 @@ export const useBridgeFormik = ({
   };
 
   const onSubmitFormik = async (values: TradeFormikValuesType) => {
+    if (pendingSigningRef.current) {
+      return;
+    }
+    pendingSigningRef.current = true;
+
     if (firstToken && secondToken) {
       sessionStorage.setItem(
         'prevFirstTokenId',
@@ -93,11 +99,13 @@ export const useBridgeFormik = ({
     const transaction = data?.[0];
 
     if (!transaction) {
+      pendingSigningRef.current = false;
       return;
     }
 
     resetSwapForm();
     onSubmit(transaction);
+    pendingSigningRef.current = false;
   };
 
   const formik = useFormik({
