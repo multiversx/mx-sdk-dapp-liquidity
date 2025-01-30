@@ -48,6 +48,7 @@ interface BridgeFormProps {
     className?: string;
   }) => JSX.Element;
   TransactionToastComponent: typeof TransactionToast;
+  onSuccessfullySentTransaction?: (txHash?: string) => void;
 }
 
 export const BridgeForm = ({
@@ -60,7 +61,8 @@ export const BridgeForm = ({
   explorerAddress,
   refetchTrigger,
   TrimAddressComponent,
-  TransactionToastComponent
+  TransactionToastComponent,
+  onSuccessfullySentTransaction
 }: BridgeFormProps) => {
   const navigate = useNavigate();
   const account = useAccount();
@@ -234,14 +236,21 @@ export const BridgeForm = ({
     handleOnChangeFirstAmount(formattedBalance);
   }, [firstToken?.token?.balance, handleOnChangeFirstAmount]);
 
-  const onSuccess = useCallback(async () => {
-    handleOnChangeFirstAmount('');
-    handleOnChangeSecondAmount('');
+  const onSuccess = useCallback(
+    async (txHash: string) => {
+      handleOnChangeFirstAmount('');
+      handleOnChangeSecondAmount('');
 
-    await delay(2000);
-
-    invalidateHistoryQuery();
-  }, [handleOnChangeFirstAmount, handleOnChangeSecondAmount]);
+      // TODO rework this when the API cache will be fixed
+      invalidateHistoryQuery();
+      await delay(2000);
+      invalidateHistoryQuery();
+      await delay(2000);
+      invalidateHistoryQuery();
+      onSuccessfullySentTransaction?.(txHash);
+    },
+    [handleOnChangeFirstAmount, handleOnChangeSecondAmount]
+  );
 
   const updateUrlParams = useCallback(
     ({ firstTokenId, secondTokenId }: InitialTokensType) => {
@@ -425,7 +434,7 @@ export const BridgeForm = ({
             }
           }
         );
-        onSuccess();
+        onSuccess(sentTransaction?.data.transactions[0].hash ?? '');
       } catch (e) {
         console.error(e);
       }

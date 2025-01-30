@@ -4,6 +4,7 @@ import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
 import { faClose } from '@fortawesome/free-solid-svg-icons/faClose';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MxButton } from './MxButton';
 import { MxCard } from './MxCard';
 import { MxLink } from './MxLink';
@@ -27,6 +28,7 @@ export const BridgeHistory = ({
   mvxApiURL: string;
 }) => {
   const { data, isLoading, isError } = useGetHistoryQuery();
+  const navigate = useNavigate();
 
   const resolveTransactionIcon = useCallback((transaction: TransactionDTO) => {
     switch (transaction.status) {
@@ -137,6 +139,9 @@ export const BridgeHistory = ({
           btnSize="md"
           className="ml-auto mr-0 border-none p-0"
           variant="link-neutral-500"
+          onClick={() => {
+            navigate(-1);
+          }}
         >
           <FontAwesomeIcon icon={faClose} size="xl" />
         </MxButton>

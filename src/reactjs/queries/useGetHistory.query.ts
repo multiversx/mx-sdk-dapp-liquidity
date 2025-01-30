@@ -34,6 +34,9 @@ export const useGetHistoryQuery = () => {
     retry,
     enabled: Boolean(address),
     refetchOnWindowFocus: false,
+    // TODO check if the refetch is still needed after API ccache is fjxed or the refetch interval should be increased
+    refetchIntervalInBackground: true,
+    refetchInterval: 10000,
     gcTime: 0
   });
 };
