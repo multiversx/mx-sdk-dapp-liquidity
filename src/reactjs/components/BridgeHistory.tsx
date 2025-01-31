@@ -147,7 +147,7 @@ export const BridgeHistory = ({
         </MxButton>
       </div>
 
-      <div className="flex flex-1 flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-1 overflow-y-scroll">
         {transactions?.length === 0 && (
           <MxCard
             cardSize="lg"
@@ -186,7 +186,7 @@ export const BridgeHistory = ({
                   'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4'
                 )}
               >
-                <div className="align-center flex justify-between gap-1 overflow-y-scroll">
+                <div className="align-center flex justify-between gap-1">
                   <div
                     className={mxClsx('flex items-center gap-1', {
                       'text-yellow-200': transaction.status === 'pending',
