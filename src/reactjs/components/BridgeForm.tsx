@@ -27,6 +27,7 @@ import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction';
 import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
+import { chainIdentifier } from '../types/chains.ts';
 import { delay } from '../utils/delay.ts';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
@@ -640,7 +641,32 @@ export const BridgeForm = ({
                 pendingSigning
               }
             >
-              <span className="text-neutral-100">Enter amount</span>
+              {hasAmounts && !pendingSigning && (
+                <div className="flex justify-center gap-2 text-neutral-100">
+                  <div>Deposit on </div>
+                  <img
+                    src={chainIdentifier['msx']}
+                    alt=""
+                    className="h-[1.5rem] w-[1.5rem]"
+                  />
+                  <div>MultiversX</div>
+                </div>
+              )}
+              {!hasAmounts && !pendingSigning && (
+                <span className="text-neutral-100">Enter amount</span>
+              )}
+
+              {pendingSigning && (
+                <div className="flex justify-center gap-2 text-neutral-100">
+                  <div>Depositing on</div>
+                  <img
+                    src={chainIdentifier['msx']}
+                    alt=""
+                    className="h-[1.5rem] w-[1.5rem]"
+                  />
+                  <div>MultiversX</div>
+                </div>
+              )}
             </MxButton>
           )}
         </div>
