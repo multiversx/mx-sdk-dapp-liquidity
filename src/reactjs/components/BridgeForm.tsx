@@ -432,7 +432,7 @@ export const BridgeForm = ({
         });
 
         console.log('sentTransaction', sentTransaction.data);
-        toast(
+        toast.info(
           (props) => (
             <TransactionToastComponent
               {...props}
