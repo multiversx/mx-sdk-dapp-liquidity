@@ -147,21 +147,28 @@ export const BridgeHistory = ({
         </MxButton>
       </div>
 
-      <div className="scrollbar-thin scrollbar-thin flex flex-1 flex-col gap-1 overflow-y-scroll">
+      <div className="flex flex-1 flex-col gap-1">
         {transactions?.length === 0 && (
           <MxCard
             cardSize="lg"
-            variant="neutral-750"
-            className={mxClsx(
-              'flex flex-col gap-4 outline outline-transparent focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80',
-              'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4'
-            )}
+            variant="transparent"
+            className={
+              'align-center flex h-full flex-col justify-center gap-4 border-0 pb-8 pt-6 sm:pb-6 lg:p-4'
+            }
           >
-            <div className="align-center flex flex-col justify-between gap-1">
-              <FontAwesomeIcon icon={faClock} size="10x" />
+            <div className="align-center flex flex-col justify-center gap-8">
+              <div className="flex items-center justify-center">
+                <FontAwesomeIcon
+                  icon={faClock}
+                  size="6x"
+                  className="rounded-full bg-primary-400 text-[#2b617a]"
+                />
+              </div>
               <div className={mxClsx('flex flex-col items-center')}>
-                <div className="text-lg">No deposit found</div>
-                <div>Your deposit history will appear here</div>
+                <div className="text-xl">No deposit yet</div>
+                <div className="text-neutral-400">
+                  Your deposit history will appear here
+                </div>
               </div>
             </div>
           </MxCard>
