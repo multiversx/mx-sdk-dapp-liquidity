@@ -450,6 +450,7 @@ export const BridgeForm = ({
         setPendingSigning(false);
       } catch (e) {
         console.error(e);
+        toast.error('Transaction cancelled');
         setPendingSigning(false);
         handleOnChangeFirstAmount('');
         handleOnChangeSecondAmount('');
