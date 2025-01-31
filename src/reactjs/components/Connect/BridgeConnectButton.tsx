@@ -1,7 +1,6 @@
 import { CustomConnectButton } from './CustomConnectButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { useAccount } from '../../hooks/useAccount';
-import { useChainIcon } from '../../hooks/useChainIcon';
 
 export const BridgeConnectButton = ({
   activeChain,
@@ -13,7 +12,6 @@ export const BridgeConnectButton = ({
   className?: string;
 }) => {
   const account = useAccount();
-  const selectedChainIcon = useChainIcon(activeChain?.chainName ?? 'default');
 
   return (
     <CustomConnectButton className={className} disabled={disabled}>
@@ -28,7 +26,7 @@ export const BridgeConnectButton = ({
           )}
           {activeChain && (
             <img
-              src={selectedChainIcon}
+              src={activeChain.svgUrl}
               alt={activeChain.chainName}
               className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
             />

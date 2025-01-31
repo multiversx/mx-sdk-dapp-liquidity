@@ -27,7 +27,6 @@ import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction';
 import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
-import { chainIdentifier } from '../types/chains.ts';
 import { delay } from '../utils/delay.ts';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
@@ -93,8 +92,16 @@ export const BridgeForm = ({
     isChainsLoading;
 
   const activeChain = useMemo(() => {
-    return sdkChains.find((chain) => chain.id === chainId);
+    return sdkChains.find(
+      (chain) => chain.id.toString() === chainId.toString()
+    );
   }, [chainId, sdkChains]);
+
+  const mvxChain = useMemo(() => {
+    return chains.find(
+      (chain) => chain.chainId.toString() === mvxChainId.toString()
+    );
+  }, [chainId, chains]);
 
   const { signTransaction } = useSignTransaction();
   const sendTransactions = useSendTransactions();
@@ -646,7 +653,7 @@ export const BridgeForm = ({
                 <div className="flex justify-center gap-2 text-neutral-100">
                   <div>Deposit on </div>
                   <img
-                    src={chainIdentifier['msx']}
+                    src={mvxChain?.svgUrl ?? ''}
                     alt=""
                     className="h-[1.5rem] w-[1.5rem]"
                   />
@@ -661,7 +668,7 @@ export const BridgeForm = ({
                 <div className="flex justify-center gap-2 text-neutral-100">
                   <div>Depositing on</div>
                   <img
-                    src={chainIdentifier['msx']}
+                    src={mvxChain?.svgUrl ?? ''}
                     alt=""
                     className="h-[1.5rem] w-[1.5rem]"
                   />

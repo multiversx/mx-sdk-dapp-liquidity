@@ -14,7 +14,6 @@ import { TokenType } from '../../types/token';
 import ArrowUpRight from '../assets/arrow-up-right.svg';
 import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
 import { useGetHistoryQuery } from '../queries/useGetHistory.query';
-import { chainIdentifier } from '../types/chains';
 import { formatAmount } from '../utils/formatAmount';
 import { mxClsx } from '../utils/mxClsx';
 
@@ -223,13 +222,11 @@ export const BridgeHistory = ({
                     </span>
                     <img
                       src={
-                        chainIdentifier[
-                          chainsMap[
-                            transaction.destinationChain === 'msx'
-                              ? transaction.sourceChain
-                              : transaction.destinationChain
-                          ]?.chainName ?? ''
-                        ]
+                        chainsMap[
+                          transaction.destinationChain === 'msx'
+                            ? transaction.sourceChain
+                            : transaction.destinationChain
+                        ]?.svgUrl ?? ''
                       }
                       alt=""
                       className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"

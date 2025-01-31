@@ -6,7 +6,6 @@ import { SwitchChainButton } from './Connect/SwitchChainButton';
 import { MxLink } from './MxLink';
 import { ChainDTO } from '../../dto/Chain.dto';
 import { useAccount } from '../hooks/useAccount';
-import { useChainIcon } from '../hooks/useChainIcon';
 
 export const BridgeWalletConnection = ({
   activeChain,
@@ -23,7 +22,6 @@ export const BridgeWalletConnection = ({
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
-  const selectedChainIcon = useChainIcon(activeChain?.chainName ?? 'default');
 
   const handleDisconnect = async () => {
     try {
@@ -50,7 +48,7 @@ export const BridgeWalletConnection = ({
           )}
           {activeChain && (
             <img
-              src={selectedChainIcon}
+              src={activeChain.svgUrl}
               alt={activeChain.chainName}
               className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
             />
