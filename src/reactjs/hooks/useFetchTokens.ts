@@ -64,11 +64,11 @@ export const useFetchTokens = ({
     apiURL: mvxApiURL
   });
 
-  const evmTokensWithBalances = useMemo(() => {
-    return evmTokensBalances?.filter(
-      (x) => x.chainId.toString() === chainId?.toString()
-    );
-  }, [evmTokens, evmTokensBalances]);
+  // const evmTokensWithBalances = useMemo(() => {
+  //   return evmTokensBalances?.filter(
+  //     (x) => x.chainId.toString() === chainId?.toString()
+  //   );
+  // }, [evmTokens, evmTokensBalances]);
 
   const mvxTokensWithBalances = useMemo(() => {
     return mvxTokens?.map((token) => {
@@ -90,7 +90,32 @@ export const useFetchTokens = ({
     });
   }, [mvxTokens, mvxTokensBalances]);
 
-  console.log({ evmTokensBalances, mvxTokens, mvxTokensBalances });
+  const evmTokensWithBalances = useMemo(() => {
+    return evmTokens?.map((token) => {
+      const foundToken = evmTokensBalances?.find(
+        (evmToken) => evmToken.address === token.address
+      );
+
+      if (!foundToken) {
+        return {
+          ...token,
+          balance: '0'
+        };
+      }
+
+      return {
+        ...foundToken,
+        balance: foundToken.balance.toString()
+      };
+    });
+  }, [evmTokens, evmTokensBalances]);
+
+  console.log({
+    evmTokens,
+    evmTokensWithBalances,
+    mvxTokens,
+    mvxTokensWithBalances
+  });
 
   useEffect(() => {
     invalidateEvmTokensBalances();

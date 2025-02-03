@@ -352,16 +352,6 @@ export const BridgeForm = ({
       return;
     }
 
-    if (!bridgeAddress) {
-      if (firstToken?.token && secondToken?.token) {
-        setFirstToken(undefined);
-        setSecondToken(undefined);
-        updateUrlParams({ firstTokenId: '', secondTokenId: '' });
-      }
-
-      return;
-    }
-
     const initialTokens = getInitialTokens();
 
     const hasOptionsSelected = Boolean(firstToken) && Boolean(secondToken);
@@ -547,7 +537,7 @@ export const BridgeForm = ({
             <div className="flex flex-col items-end justify-between gap-4">
               <TokenSelector
                 name={'firstToken'}
-                disabled={isPendingRate || !bridgeAddress}
+                disabled={isPendingRate}
                 options={firstSelectOptions}
                 areOptionsLoading={isTokensLoading}
                 color="neutral-850"
