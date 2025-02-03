@@ -49,6 +49,7 @@ interface BridgeFormProps {
   }) => JSX.Element;
   TransactionToastComponent: typeof TransactionToast;
   onSuccessfullySentTransaction?: (txHash?: string) => void;
+  onFailedSentTransaction?: (message?: string) => void;
 }
 
 export const BridgeForm = ({

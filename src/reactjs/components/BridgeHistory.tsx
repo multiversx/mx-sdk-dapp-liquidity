@@ -108,7 +108,7 @@ export const BridgeHistory = ({
 
   console.log({ transactions, isLoading, isError, tokensMap, chainsMap });
 
-  const className = mxClsx(`min-h-96 max-h-96 text-base lg:text-base p-2`, {
+  const className = mxClsx(`h-96 max-h-96 text-base lg:text-base p-2`, {
     'disabled animate-pulse': isLoading || tokensLoading || isChainsLoading
   });
 
@@ -146,7 +146,7 @@ export const BridgeHistory = ({
         </MxButton>
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 overflow-y-scroll">
+      <div className="scrollbar-thin flex flex-1 flex-col gap-1 overflow-y-scroll">
         {transactions?.length === 0 && (
           <MxCard
             cardSize="lg"
