@@ -6,7 +6,6 @@ import { createContext } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { getQueryClient } from './queryClient';
 import { InitOptions } from '../bootstrap/init';
-import '../index.css';
 
 export type Web3AppContextProps = {
   config: ResolvedRegister['config'];

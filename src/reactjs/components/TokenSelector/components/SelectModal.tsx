@@ -1,6 +1,7 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons/faClose';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import { ChainSelect } from './ChainSelect/ChainSelect.tsx';
 import { TokenList } from './TokenList';
 import { TokenType } from '../../../../types/token';
 import { MxButton } from '../../MxButton';
@@ -67,6 +68,7 @@ export const SelectModal = ({
           inputClassName="bg-neutral-750 border border-neutral-750"
           onChange={handleSearch}
         />
+        <ChainSelect />
       </div>
 
       <div className="scrollbar-thin flex flex-col gap-2 overflow-y-scroll border-t border-neutral-750 pb-3">
