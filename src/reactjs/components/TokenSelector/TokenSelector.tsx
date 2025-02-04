@@ -1,9 +1,10 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SelectedOption } from './components/SelectedOption';
 import { SelectModal } from './components/SelectModal';
 import { TokenType } from '../../../types/token';
+import { MVX_CHAIN_IDS } from '../../constants/general.ts';
 import { useGetChainsQuery } from '../../queries/useGetChains.query';
 import { mxClsx } from '../../utils/mxClsx';
 
@@ -30,8 +31,15 @@ export const TokenSelector = ({
 }) => {
   const [show, setShow] = useState(false);
 
-  const { data: chains = [], isLoading: areChainsLoading } =
-    useGetChainsQuery();
+  const { data, isLoading: areChainsLoading } = useGetChainsQuery();
+
+  const chains = useMemo(() => {
+    return (
+      data?.filter(
+        (chain) => !MVX_CHAIN_IDS.includes(Number(chain.chainId.toString()))
+      ) ?? []
+    );
+  }, [data]);
 
   const handleOnClick = () => setShow(true);
 

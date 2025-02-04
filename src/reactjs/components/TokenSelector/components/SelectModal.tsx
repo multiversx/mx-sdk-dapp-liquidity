@@ -1,6 +1,6 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons/faClose';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChainSelect } from './ChainSelect/ChainSelect.tsx';
 import { TokenList } from './TokenList';
 import { ChainDTO } from '../../../../dto/Chain.dto.ts';
@@ -27,8 +27,20 @@ export const SelectModal = ({
   selectedToken?: TokenType;
 }) => {
   const [filteredTokens, setFilteredTokens] = useState(tokens);
-  const [selectedChain, setSelectedChain] = useState(chains[0]);
+  const [selectedChainId, setSelectedChainId] = useState('0');
   const [selected, setSelected] = useState(selectedToken);
+
+  const filteredTokensText = useMemo(() => {
+    const selectedChain = chains.find(
+      (chain) => chain.chainId.toString() === selectedChainId
+    );
+
+    if (!selectedChain) {
+      return `Tokens on all networks (${tokens.length})`;
+    }
+
+    return `Tokens on ${selectedChain.chainName} (${filteredTokens.length})`;
+  }, [chains, filteredTokens.length, selectedChainId, tokens.length]);
 
   const handleSelect = (token: TokenType) => {
     setSelected(token);
@@ -50,11 +62,22 @@ export const SelectModal = ({
     setFilteredTokens(filtered);
   };
 
+  useEffect(() => {
+    if (selectedChainId === '0') {
+      setFilteredTokens(tokens);
+    } else {
+      const filtered = tokens.filter(
+        (token) => token.chainId.toString() === selectedChainId.toString()
+      );
+      setFilteredTokens(filtered);
+    }
+  }, [selectedChainId, tokens]);
+
   return (
     <MxModal
       show={visible}
       onClose={onClose}
-      className="relative flex max-h-screen max-w-full flex-col rounded-none p-0 md:max-h-[80vh] md:w-[28rem] md:rounded-2xl"
+      className="relative flex max-h-[4776px] max-w-full flex-col rounded-none p-0 md:max-h-[80vh] md:w-[28rem] md:rounded-2xl min-h-[476px]"
     >
       <div className="flex flex-col gap-3 rounded-t-2xl border border-b-0 border-dashed border-primary border-opacity-40 p-6">
         <div className="absolute -ml-5 -mt-5 h-10 w-full origin-top bg-primary bg-opacity-80 opacity-20 blur-3xl" />
@@ -73,16 +96,14 @@ export const SelectModal = ({
         <div className="flex gap-2">
           <MxSearch
             inputClassName="bg-neutral-750 border border-neutral-750"
+            placeholder="Search token"
             onChange={handleSearch}
           />
           <ChainSelect
             chains={chains}
-            selectedChainId={selectedChain.chainId.toString()}
+            selectedChainId={selectedChainId}
             onChange={(chainId) => {
-              setSelectedChain(
-                chains.find((chain) => chain.chainId.toString() === chainId) ??
-                  chains[0]
-              );
+              setSelectedChainId(chainId);
             }}
             isLoading={areChainsLoading}
           />
@@ -90,6 +111,9 @@ export const SelectModal = ({
       </div>
 
       <div className="scrollbar-thin flex flex-col gap-2 overflow-y-scroll border-t border-neutral-750 pb-3">
+        <div className="flex text-left text-neutral-300 ml-7">
+          {filteredTokensText}
+        </div>
         <TokenList
           tokens={filteredTokens}
           onSelect={handleSelect}

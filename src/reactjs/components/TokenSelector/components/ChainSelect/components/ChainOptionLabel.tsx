@@ -1,3 +1,5 @@
+import { faGlobe } from '@fortawesome/free-solid-svg-icons/faGlobe';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { mxClsx } from '../../../../../utils/mxClsx';
 
 export interface ChainOptionLabelType {
@@ -25,12 +27,16 @@ export const ChainOptionLabel = ({
               'h-6 w-6 flex-shrink-0 overflow-hidden rounded-full'
             )}
           >
-            <img
-              src={chain.svgUrl}
-              alt={''}
-              loading="lazy"
-              className="h-full w-full"
-            />
+            {chain.svgUrl ? (
+              <img
+                src={chain.svgUrl}
+                alt={''}
+                loading="lazy"
+                className="h-full w-full"
+              />
+            ) : (
+              <FontAwesomeIcon icon={faGlobe} className="h-full w-full" />
+            )}
           </div>
         </div>
 

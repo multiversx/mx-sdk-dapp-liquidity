@@ -45,9 +45,10 @@
 @layer components {
     .styled-chain-select {
         .styled-chain-select__control {
-            @apply !bg-neutral-750;
+            @apply !bg-neutral-750 !p-0.5 !rounded-xl;
             border-color: transparent !important;
             cursor: pointer !important;
+
 
             &:hover {
                 border-color: transparent !important;

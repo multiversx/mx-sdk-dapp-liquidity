@@ -4,6 +4,16 @@ import { FormatChainOptionLabel } from './components/FormatChainOptionLabel';
 import { IndicatorSeparator } from './components/IndicatorSeparator';
 import { ChainDTO } from '../../../../../dto/Chain.dto';
 
+type PartialChainOptionType = {
+  label: string;
+  value: string;
+  chain: {
+    id: string;
+    name: string;
+    svgUrl: string;
+  };
+};
+
 export const ChainSelect = ({
   isLoading,
   selectedChainId,
@@ -16,7 +26,7 @@ export const ChainSelect = ({
   chains: ChainDTO[];
 }) => {
   const chainOptions = useMemo(() => {
-    return chains.map((chain) => ({
+    const options: PartialChainOptionType[] = chains.map((chain) => ({
       label: chain.chainName,
       value: chain.chainId.toString(),
       chain: {
@@ -25,6 +35,18 @@ export const ChainSelect = ({
         svgUrl: chain.svgUrl
       }
     }));
+
+    options.unshift({
+      label: 'All',
+      value: '0',
+      chain: {
+        id: '0',
+        name: 'All',
+        svgUrl: ''
+      }
+    });
+
+    return options;
   }, [chains]);
 
   const selectedChain = useMemo(() => {
