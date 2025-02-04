@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useMemo } from 'react';
 import { TokenType } from '../../../../types/token';
 import DefaultIcon from '../../../assets/default.svg';
-import { useGetChainsQuery } from '../../../queries/useGetChains.query.ts';
-import { chainIdentifier } from '../../../types/chains.ts';
 import { mxClsx } from '../../../utils/mxClsx';
 
 export type TokenIconSize =
@@ -27,14 +25,6 @@ export const TokenIcon = ({
   size?: TokenIconSize;
   token?: TokenType;
 }) => {
-  const { data: chains, isLoading } = useGetChainsQuery();
-
-  const tokenChain = useMemo(() => {
-    return chains?.find(
-      (chain) => chain.chainId.toString() === token?.chainId.toString()
-    );
-  }, [chains, token]);
-
   const getIconComponent = useCallback(
     (assetTicker?: string) => {
       if (!assetTicker || !token) {
@@ -48,20 +38,12 @@ export const TokenIcon = ({
             alt={assetTicker.split('-')[0]}
             className="asset-icon sm p-0"
           />
-
-          {tokenChain && !isLoading ? (
-            <img
-              src={chainIdentifier[tokenChain.chainName] ?? tokenChain?.svgUrl}
-              alt={tokenChain.chainName}
-              className="absolute right-0 bottom-0 chain-icon sm w-6 h-6"
-            />
-          ) : null}
         </>
       ) : (
         <img src={DefaultIcon} alt="" />
       );
     },
-    [token, tokenChain, isLoading]
+    [token]
   );
 
   const IconComponent = useMemo(

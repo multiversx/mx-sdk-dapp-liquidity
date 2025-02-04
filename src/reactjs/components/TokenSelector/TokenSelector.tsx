@@ -5,6 +5,7 @@ import { SelectedOption } from './components/SelectedOption';
 import { SelectModal } from './components/SelectModal';
 import { TokenType } from '../../../types/token';
 import { MVX_CHAIN_IDS } from '../../constants/general.ts';
+import { useResolveTokenChain } from '../../hooks/useResolveTokenChain.ts';
 import { useGetChainsQuery } from '../../queries/useGetChains.query';
 import { mxClsx } from '../../utils/mxClsx';
 
@@ -34,6 +35,9 @@ export const TokenSelector = ({
   const [show, setShow] = useState(false);
 
   const { data, isLoading: areChainsLoading } = useGetChainsQuery();
+  const { tokenChain, chainIcon } = useResolveTokenChain({
+    token: selectedOption
+  });
 
   const chains = useMemo(() => {
     return (
@@ -82,7 +86,7 @@ export const TokenSelector = ({
         type="button"
         role="combobox"
         className={mxClsx(
-          'focus-primary group flex cursor-pointer items-center gap-2 transition-colors duration-200',
+          'focus-primary group flex cursor-pointer items-center gap-2 transition-colors duration-200 relative',
           {
             'rounded-e-lg rounded-s-3xl px-1 py-1 pr-3': true
           },
@@ -108,6 +112,14 @@ export const TokenSelector = ({
           icon={faChevronDown}
           className="text-neutral-200 group-hover:text-neutral-50"
         />
+
+        {chainIcon && (
+          <img
+            src={chainIcon}
+            alt={tokenChain?.chainName}
+            className="absolute left-5 bottom-0.5 chain-icon sm w-6 h-6"
+          />
+        )}
       </button>
     </>
   );
