@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { ChainSelect } from './ChainSelect/ChainSelect.tsx';
 import { TokenList } from './TokenList';
+import { ChainDTO } from '../../../../dto/Chain.dto.ts';
 import { TokenType } from '../../../../types/token';
 import { MxButton } from '../../MxButton';
 import { MxModal } from '../../MxModal';
@@ -13,15 +14,20 @@ export const SelectModal = ({
   onClose,
   onSelect,
   tokens = [],
+  chains = [],
+  areChainsLoading,
   selectedToken
 }: {
   visible: boolean;
   onClose: () => void;
   onSelect: (token: TokenType) => void;
   tokens: TokenType[];
+  chains: ChainDTO[];
+  areChainsLoading?: boolean;
   selectedToken?: TokenType;
 }) => {
   const [filteredTokens, setFilteredTokens] = useState(tokens);
+  const [selectedChain, setSelectedChain] = useState(chains[0]);
   const [selected, setSelected] = useState(selectedToken);
 
   const handleSelect = (token: TokenType) => {
@@ -64,11 +70,23 @@ export const SelectModal = ({
           </MxButton>
         </div>
 
-        <MxSearch
-          inputClassName="bg-neutral-750 border border-neutral-750"
-          onChange={handleSearch}
-        />
-        <ChainSelect />
+        <div className="flex gap-2">
+          <MxSearch
+            inputClassName="bg-neutral-750 border border-neutral-750"
+            onChange={handleSearch}
+          />
+          <ChainSelect
+            chains={chains}
+            selectedChainId={selectedChain.chainId.toString()}
+            onChange={(chainId) => {
+              setSelectedChain(
+                chains.find((chain) => chain.chainId.toString() === chainId) ??
+                  chains[0]
+              );
+            }}
+            isLoading={areChainsLoading}
+          />
+        </div>
       </div>
 
       <div className="scrollbar-thin flex flex-col gap-2 overflow-y-scroll border-t border-neutral-750 pb-3">

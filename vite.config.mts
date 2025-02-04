@@ -21,8 +21,8 @@ export default defineConfig({
   build: {
     minify: false,
     lib: {
-      name: 'mx-proofs',
-      entry: resolve(__dirname, 'src/main.ts'),
+      name: 'sdk-dapp-liquidity',
+      entry: resolve(__dirname, 'src/index.ts'),
       fileName: (format, entryName) =>
         `${entryName}.${format === 'es' ? 'mjs' : 'js'}`,
       formats: ['es', 'cjs']

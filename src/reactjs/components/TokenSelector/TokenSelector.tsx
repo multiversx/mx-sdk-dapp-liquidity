@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { SelectedOption } from './components/SelectedOption';
 import { SelectModal } from './components/SelectModal';
 import { TokenType } from '../../../types/token';
+import { useGetChainsQuery } from '../../queries/useGetChains.query';
 import { mxClsx } from '../../utils/mxClsx';
 
 export const TokenSelector = ({
@@ -29,9 +30,12 @@ export const TokenSelector = ({
 }) => {
   const [show, setShow] = useState(false);
 
+  const { data: chains = [], isLoading: areChainsLoading } =
+    useGetChainsQuery();
+
   const handleOnClick = () => setShow(true);
 
-  if (areOptionsLoading) {
+  if (areOptionsLoading || areChainsLoading) {
     return (
       <div
         className={mxClsx(
@@ -59,6 +63,8 @@ export const TokenSelector = ({
         onClose={() => setShow(false)}
         onSelect={onChange}
         tokens={options}
+        chains={chains}
+        areChainsLoading={areChainsLoading}
         selectedToken={selectedOption}
       />
       <button

@@ -2,10 +2,107 @@
 @tailwind utilities;
 @tailwind components;
 
-/*@import "./components/TokenSelector/components/ChainSelect/chainSelect.css";*/
+@layer utilities {
+    .scrollbar-thin {
+        scrollbar-width: thin;
+
+        &:hover {
+            --fix: ; /* This custom property invalidates styles on hover, thereby enforcing a style recomputation. This is needed to work around a bug in Safari. */
+        }
+
+        /* Legacy browsers with `::-webkit-scrollbar-*` support */
+        @supports selector(::-webkit-scrollbar) {
+            &::-webkit-scrollbar,
+            &::-webkit-scrollbar-track,
+            &::-webkit-scrollbar-track:hover,
+            &::-webkit-scrollbar-corner,
+            &::-webkit-scrollbar:horizontal {
+                @apply bg-transparent;
+            }
+            &::-webkit-scrollbar {
+                @apply h-2 w-2;
+            }
+            &::-webkit-scrollbar:horizontal {
+                @apply h-2;
+            }
+            &::-webkit-scrollbar-thumb,
+            &::-webkit-scrollbar-thumb:horizontal {
+                @apply rounded-lg border-2 border-solid border-transparent bg-neutral-700;
+            }
+            &::-webkit-scrollbar-thumb:hover {
+                @apply border-2 border-solid border-transparent bg-neutral-600;
+            }
+            &::-webkit-scrollbar-button {
+                @apply hidden;
+            }
+            &::-webkit-resizer {
+                @apply bg-transparent;
+            }
+        }
+    }
+}
 
 @layer components {
-    .test-dapp-liquidity {
-        background: red;
+    .styled-chain-select {
+        .styled-chain-select__control {
+            @apply !bg-neutral-750;
+            border-color: transparent !important;
+            cursor: pointer !important;
+
+            &:hover {
+                border-color: transparent !important;
+                @apply !bg-neutral-700;
+            }
+
+            &:hover .styled-chain-select__indicator {
+                @apply !fill-neutral-200 !text-neutral-200;
+            }
+        }
+
+        .styled-chain-select__control--is-focused {
+            border-color: transparent !important;
+        }
+
+        .styled-chain-select__placeholder {
+            @apply text-neutral-300;
+        }
+
+        .styled-chain-select__single-value {
+            @apply !text-neutral-200 bg-transparent;
+        }
+
+        .styled-chain-select__menu {
+            @apply !bg-neutral-700 !w-auto min-w-full border border-neutral-600 !rounded shadow-none;
+        }
+
+        .styled-chain-select-notice--no-options {
+            font-size: 1rem;
+        }
+
+        .styled-chain-select__menu-list {
+            @apply scrollbar-thin;
+        }
+
+        .styled-chain-select__option--is-selected,
+        .styled-chain-select__option--is-focused {
+            &:not(.styled-chain-select__option--is-disabled) {
+                @apply !bg-neutral-650;
+            }
+            @apply !bg-neutral-500;
+        }
+
+        .styled-chain-select__option--is-disabled {
+            @apply !text-neutral-400;
+        }
+
+        .styled-chain-select__indicator {
+            @apply !fill-neutral-400 !text-neutral-400 transition;
+        }
+
+        .styled-chain-select-container {
+            .styled-chain-select__control {
+                @apply shadow-none bg-neutral-700 border border-neutral-700 cursor-pointer;
+            }
+        }
     }
 }

@@ -1,72 +1,72 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import Select from 'react-select';
 import { FormatChainOptionLabel } from './components/FormatChainOptionLabel';
 import { IndicatorSeparator } from './components/IndicatorSeparator';
-import { ChainSelectOptionType } from './types/chainSelectOption';
+import { ChainDTO } from '../../../../../dto/Chain.dto';
 
-export const ChainSelect = ({ isLoading }: { isLoading?: boolean }) => {
-  const chainOptions: ChainSelectOptionType[] = [
-    {
-      label: 'All',
-      value: 'all',
+export const ChainSelect = ({
+  isLoading,
+  selectedChainId,
+  onChange,
+  chains
+}: {
+  isLoading?: boolean;
+  selectedChainId?: string;
+  onChange?: (chainId: string) => void;
+  chains: ChainDTO[];
+}) => {
+  const chainOptions = useMemo(() => {
+    return chains.map((chain) => ({
+      label: chain.chainName,
+      value: chain.chainId.toString(),
       chain: {
-        id: '0',
-        name: 'All',
-        svgUrl: ''
+        id: chain.chainId.toString(),
+        name: chain.chainName,
+        svgUrl: chain.svgUrl
       }
-    },
-    {
-      label: 'Ethereum',
-      value: 'ethereum',
-      chain: {
-        id: '1',
-        name: 'Ethereum',
-        svgUrl:
-          'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.svg'
-      }
-    },
-    {
-      label: 'Binance Smart Chain',
-      value: 'bsc',
-      chain: {
-        id: '56',
-        name: 'Binance Smart Chain',
-        svgUrl: 'https://devnet-tools.multiversx.com/liquidity-sdk/bsc/icon.svg'
-      }
-    },
-    {
-      label: 'Polygon',
-      value: 'polygon',
-      chain: {
-        id: '137',
-        name: 'Polygon',
-        svgUrl:
-          'https://devnet-tools.multiversx.com/liquidity-sdk/polygon/icon.svg'
-      }
-    }
-  ];
+    }));
+  }, [chains]);
 
-  const [selectedChain, setSelectedChain] = useState<ChainSelectOptionType>(
-    chainOptions[0]
-  );
+  const selectedChain = useMemo(() => {
+    return (
+      chainOptions.find(
+        (chainOption) =>
+          chainOption.value.toString() === selectedChainId?.toString()
+      ) ?? chainOptions?.[0]
+    );
+  }, [chainOptions, selectedChainId]);
 
   return (
-    <div className={`select-holder`} data-testid="chainDropdown">
+    <div className={`styled-chain-select min-w-36`} data-testid="chainDropdown">
       <Select
-        className="basic-single z-50 styled-chain-select"
+        className="basic-single"
         classNamePrefix="styled-chain-select"
         maxMenuHeight={260}
         value={selectedChain}
         isLoading={isLoading}
         styles={{
-          indicatorSeparator: IndicatorSeparator
+          indicatorSeparator: IndicatorSeparator,
+          control: (css) => ({
+            ...css,
+            width: 'max-content',
+            minWidth: '100%'
+          }),
+          menu: (css) => ({
+            ...css,
+            zIndex: 9999,
+            width: 'max-content',
+            minWidth: '100%',
+            right: 0
+          })
         }}
         isSearchable={true}
         name="chain"
         options={chainOptions}
-        onChange={(selectedOption) =>
-          setSelectedChain(selectedOption as ChainSelectOptionType)
-        }
+        onChange={(selectedOption) => {
+          if (selectedOption?.chain.id) {
+            onChange?.(selectedOption.chain.id.toString());
+          }
+        }}
         formatOptionLabel={FormatChainOptionLabel}
       />
     </div>
