@@ -166,11 +166,6 @@ export const BridgeForm = ({
     [mvxTokensWithBalances]
   );
 
-  console.log({
-    fromOptions,
-    toOptions
-  });
-
   const firstSelectOptions =
     useMemo(
       () =>
@@ -402,7 +397,6 @@ export const BridgeForm = ({
 
   const onSubmit = useCallback(
     async (transaction: ServerTransaction) => {
-      console.log('Signing and sending transaction', { transaction });
       setPendingSigning(true);
 
       try {
@@ -412,7 +406,6 @@ export const BridgeForm = ({
           gas: BigInt(transaction.gasLimit),
           account: bridgeAddress as `0x${string}`
         });
-        console.log({ hash });
 
         if (!hash) {
           console.error('Error signing transaction');
@@ -430,7 +423,6 @@ export const BridgeForm = ({
           token: nativeAuthToken ?? ''
         });
 
-        console.log('sentTransaction', sentTransaction.data);
         toast.info(
           (props) => (
             <TransactionToastComponent

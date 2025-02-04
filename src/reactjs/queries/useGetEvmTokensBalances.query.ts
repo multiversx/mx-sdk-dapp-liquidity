@@ -36,8 +36,6 @@ export const useGetEvmTokensBalancesQuery = ({
         tokenIdentifiers
       });
 
-      console.log({ assets });
-
       return assets.map((asset) => {
         const foundToken = tokens.find(
           (token) => token.address === asset.tokenId

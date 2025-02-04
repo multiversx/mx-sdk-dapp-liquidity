@@ -106,8 +106,6 @@ export const BridgeHistory = ({
     );
   }, [chains]);
 
-  console.log({ transactions, isLoading, isError, tokensMap, chainsMap });
-
   const className = mxClsx(`h-96 max-h-96 text-base lg:text-base p-2`, {
     'disabled animate-pulse': isLoading || tokensLoading || isChainsLoading
   });

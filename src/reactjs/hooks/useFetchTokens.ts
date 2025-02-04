@@ -110,13 +110,6 @@ export const useFetchTokens = ({
     });
   }, [evmTokens, evmTokensBalances]);
 
-  console.log({
-    evmTokens,
-    evmTokensWithBalances,
-    mvxTokens,
-    mvxTokensWithBalances
-  });
-
   useEffect(() => {
     invalidateEvmTokensBalances();
     invalidateMvxTokensBalancesQuery();
