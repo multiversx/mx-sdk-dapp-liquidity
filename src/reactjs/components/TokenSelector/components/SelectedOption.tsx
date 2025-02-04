@@ -8,7 +8,7 @@ export const SelectedOption = ({ value }: { value?: TokenType }) => {
       <TokenIcon
         size="lg"
         token={value}
-        className="flex items-center justify-center"
+        className="flex items-center justify-center relative"
       />
 
       <div className="flex-1 truncate text-left">

@@ -25,13 +25,13 @@ export const TokenItem = ({
       } flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-neutral-700`}
       onClick={() => onClick(token)}
     >
-      <div className="ml-2 flex w-full items-center">
+      <div className="mx-4 flex w-full items-center">
         <TokenIcon
-          size="xl"
+          size="lg"
           token={token}
-          className="mx-2 flex items-center justify-center"
+          className="flex items-center justify-center relative"
         />
-        <div>
+        <div className="ml-2">
           <div className="text-sm font-bold">{token.symbol}</div>
           <div className="text-xs text-gray-400">{token.name}</div>
         </div>
