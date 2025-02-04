@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import { SelectedOption } from './components/SelectedOption';
 import { SelectModal } from './components/SelectModal';
 import { TokenType } from '../../../types/token';
-import { MVX_CHAIN_IDS } from '../../constants/general.ts';
-import { useResolveTokenChain } from '../../hooks/useResolveTokenChain.ts';
+import { MVX_CHAIN_IDS } from '../../constants/general';
+import { useResolveTokenChain } from '../../hooks/useResolveTokenChain';
 import { useGetChainsQuery } from '../../queries/useGetChains.query';
 import { mxClsx } from '../../utils/mxClsx';
 

@@ -27,7 +27,7 @@ import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction';
 import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
-import { delay } from '../utils/delay.ts';
+import { delay } from '../utils/delay';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';

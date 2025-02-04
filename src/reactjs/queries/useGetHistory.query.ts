@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
-import { getQueryClient } from '../contexts/queryClient.ts';
+import { getQueryClient } from '../contexts/queryClient';
 import { useAccount } from '../hooks/useAccount';
 
 export const useGetHistoryQuery = () => {

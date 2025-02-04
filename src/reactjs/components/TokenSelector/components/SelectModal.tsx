@@ -1,9 +1,9 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons/faClose';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useMemo, useState } from 'react';
-import { ChainSelect } from './ChainSelect/ChainSelect.tsx';
+import { ChainSelect } from './ChainSelect/ChainSelect';
 import { TokenList } from './TokenList';
-import { ChainDTO } from '../../../../dto/Chain.dto.ts';
+import { ChainDTO } from '../../../../dto/Chain.dto';
 import { TokenType } from '../../../../types/token';
 import { MxButton } from '../../MxButton';
 import { MxModal } from '../../MxModal';

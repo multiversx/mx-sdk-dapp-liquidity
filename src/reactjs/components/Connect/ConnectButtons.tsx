@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ConnectButton } from './ConnectButton.tsx';
+import { ConnectButton } from './ConnectButton';
 import { useResolveConnectorIcon } from '../../hooks/useResolveConnectorIcon';
 import { useSupportedConnectors } from '../../hooks/useSupportedConnectors';
 
