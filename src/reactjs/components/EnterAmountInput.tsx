@@ -7,6 +7,8 @@ export const EnterAmountInput = ({
   inputValue,
   disabled,
   amountError,
+  omitDisableClass = false,
+  className,
   onBlur,
   onInputDebounceChange,
   onInputChange
@@ -15,6 +17,8 @@ export const EnterAmountInput = ({
   inputValue: string;
   disabled?: boolean;
   amountError?: string;
+  omitDisableClass?: boolean;
+  className?: string;
   onBlur: (e: FocusEvent<HTMLElement>) => void;
   onInputDebounceChange?: (amount: string) => void;
   onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -23,8 +27,10 @@ export const EnterAmountInput = ({
     className: mxClsx(
       `dapp-form-input-wrapper amount-input text-base lg:text-base`,
       {
-        'disabled animate-pulse': disabled
-      }
+        'disabled animate-pulse':
+          (disabled && !omitDisableClass) || inputValue === ''
+      },
+      className
     )
   };
 

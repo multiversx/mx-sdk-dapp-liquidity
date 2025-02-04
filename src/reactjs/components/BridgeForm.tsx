@@ -583,6 +583,7 @@ export const BridgeForm = ({
               inputValue={secondAmount}
               amountError={fromChainError ? fromChainError : secondAmountError}
               disabled={true}
+              omitDisableClass={true}
               onInputDebounceChange={handleOnChangeSecondAmount}
               onBlur={handleBlur}
             />
@@ -590,6 +591,7 @@ export const BridgeForm = ({
               <TokenSelector
                 name={'secondToken'}
                 disabled={true}
+                omitDisableClass={true}
                 options={secondSelectOptions}
                 areOptionsLoading={isTokensLoading}
                 color="neutral-850"

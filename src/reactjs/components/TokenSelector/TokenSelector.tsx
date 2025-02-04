@@ -15,6 +15,7 @@ export const TokenSelector = ({
   areOptionsLoading = false,
   className = '',
   disabled = false,
+  omitDisableClass = false,
   color = 'neutral-750',
   onBlur,
   onChange
@@ -24,6 +25,7 @@ export const TokenSelector = ({
   selectedOption?: TokenType;
   areOptionsLoading?: boolean;
   disabled?: boolean;
+  omitDisableClass?: boolean;
   className?: string;
   color?: 'neutral-750' | 'neutral-850';
   onChange: (option?: TokenType) => void;
@@ -80,7 +82,7 @@ export const TokenSelector = ({
         type="button"
         role="combobox"
         className={mxClsx(
-          'focus-primary group flex cursor-pointer items-center gap-2 transition-colors duration-200 disabled:opacity-50',
+          'focus-primary group flex cursor-pointer items-center gap-2 transition-colors duration-200',
           {
             'rounded-e-lg rounded-s-3xl px-1 py-1 pr-3': true
           },
@@ -91,7 +93,8 @@ export const TokenSelector = ({
               color === 'neutral-850'
           },
           {
-            'cursor-not-allowed': disabled
+            'cursor-not-allowed disabled:opacity-50':
+              disabled && !omitDisableClass
           },
           className
         )}
