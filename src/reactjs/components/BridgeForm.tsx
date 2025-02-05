@@ -1,6 +1,7 @@
 import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
+import { waitForTransactionReceipt } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
 import { useGetChainId } from '../hooks/useGetChainId';
 import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction';
+import { useWeb3App } from '../hooks/useWeb3App.ts';
 import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
 import { delay } from '../utils/delay';
@@ -48,7 +50,7 @@ interface BridgeFormProps {
     className?: string;
   }) => JSX.Element;
   TransactionToastComponent: typeof TransactionToast;
-  onSuccessfullySentTransaction?: (txHash?: string) => void;
+  onSuccessfullySentTransaction?: (txHashes?: string[]) => void;
   onFailedSentTransaction?: (message?: string) => void;
 }
 
@@ -69,6 +71,7 @@ export const BridgeForm = ({
   const navigate = useNavigate();
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
+  const { config } = useWeb3App();
 
   const chainId = useGetChainId();
 
@@ -246,7 +249,7 @@ export const BridgeForm = ({
   ]);
 
   const onSuccess = useCallback(
-    async (txHash: string) => {
+    async (txHashes: string[]) => {
       handleOnChangeFirstAmount('');
       handleOnChangeSecondAmount('');
 
@@ -256,7 +259,7 @@ export const BridgeForm = ({
       invalidateHistoryQuery();
       await delay(2000);
       invalidateHistoryQuery();
-      onSuccessfullySentTransaction?.(txHash);
+      onSuccessfullySentTransaction?.(txHashes);
     },
     [
       handleOnChangeFirstAmount,
@@ -401,7 +404,9 @@ export const BridgeForm = ({
       const signedTransactions: ServerTransaction[] = [];
 
       try {
+        let txIndex = -1;
         for (const transaction of transactions) {
+          ++txIndex;
           try {
             const hash = await signTransaction({
               ...transaction,
@@ -414,6 +419,20 @@ export const BridgeForm = ({
               ...transaction,
               hash
             });
+
+            if (txIndex === transactions.length - 1) {
+              continue;
+            }
+
+            const transactionReceipt = await waitForTransactionReceipt(config, {
+              confirmations: 1,
+              hash
+            });
+
+            console.log({
+              transactionReceipt,
+              hash
+            });
           } catch (e) {
             toast.error('Failed to sign transaction');
             setPendingSigning(false);
@@ -421,11 +440,14 @@ export const BridgeForm = ({
           }
         }
 
-        const sentTransaction = await sendTransactions({
+        // TODO check what is receiving in case of multiple transactions
+        await sendTransactions({
           transactions: signedTransactions,
           url: getApiURL() ?? '',
           token: nativeAuthToken ?? ''
         });
+
+        const txHashes = signedTransactions.map((tx) => tx.hash);
 
         toast.info(
           (props) => (
@@ -436,11 +458,11 @@ export const BridgeForm = ({
           ),
           {
             data: {
-              hash: sentTransaction?.data.transactions[0].hash ?? ''
+              hashes: txHashes
             }
           }
         );
-        onSuccess(sentTransaction?.data.transactions[0].hash ?? '');
+        onSuccess(txHashes);
         setPendingSigning(false);
       } catch (e) {
         console.error(e);
