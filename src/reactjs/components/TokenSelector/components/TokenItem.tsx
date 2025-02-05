@@ -28,14 +28,6 @@ export const TokenItem = ({
     );
   }, [chainId, sdkChains]);
 
-  // useEffect(() => {
-  //   if (tokenChain?.chainId && activeChain?.id !== tokenChain?.chainId) {
-  //     switchChain({
-  //       chainId: Number(tokenChain.chainId)
-  //     });
-  //   }
-  // }, [tokenChain?.chainId, activeChain]);
-
   const formattedBalance = formatAmount({
     decimals: token.decimals,
     input: token.balance ?? '0',
