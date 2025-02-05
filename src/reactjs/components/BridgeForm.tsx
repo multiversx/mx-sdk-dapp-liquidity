@@ -317,7 +317,7 @@ export const BridgeForm = ({
       setSecondToken(secondOption);
       updateUrlParams({ secondTokenId: secondOption?.value });
     },
-    [toOptions, updateUrlParams]
+    [toOptions]
   );
 
   const onChangeSecondSelect = useCallback(
@@ -342,7 +342,7 @@ export const BridgeForm = ({
       setFirstToken(firstOption);
       updateUrlParams({ firstTokenId: firstOption?.value });
     },
-    [fromOptions, updateUrlParams]
+    [fromOptions]
   );
 
   const setInitialSelectedTokens = useCallback(() => {
@@ -394,8 +394,7 @@ export const BridgeForm = ({
     fromOptions,
     isTokensLoading,
     secondToken,
-    toOptions,
-    updateUrlParams
+    toOptions
   ]);
 
   const onSubmit = useCallback(
