@@ -17,8 +17,10 @@ export const useGetEvmTokensBalancesQuery = ({
   const { fetchBalances } = useBalances();
 
   const tokenIdentifiers = useMemo(() => {
-    return tokens.map(({ address: tokenId }) => tokenId);
-  }, [tokens]);
+    return tokens
+      .filter((token) => token.chainId.toString() === chainId.toString())
+      .map(({ address: tokenId }) => tokenId);
+  }, [tokens, chainId]);
 
   const queryFn = async () => {
     try {
