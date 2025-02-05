@@ -493,17 +493,22 @@ export const BridgeForm = ({
   }, [fetchRate]);
 
   useEffect(() => {
-    setFirstToken(undefined);
-    setSecondToken(undefined);
     updateUrlParams({ firstTokenId: '', secondTokenId: '' });
-  }, [chainId]);
 
-  useEffect(() => {
-    const selectedOption = fromOptions?.find(
+    const persistedOption = fromOptions?.find(
       (option) => option.address === firstToken?.token?.address
     );
-    onChangeFirstSelect(selectedOption);
-  }, [firstToken?.token?.address, fromOptions, refetchTrigger]);
+
+    const firstChainSpecificOption = fromOptions?.find(
+      (option) => option.chainId.toString() === chainId.toString()
+    );
+
+    onChangeFirstSelect(
+      persistedOption?.chainId.toString() === chainId.toString()
+        ? persistedOption
+        : firstChainSpecificOption
+    );
+  }, [chainId, fromOptions, onChangeFirstSelect, refetchTrigger]);
 
   useEffect(setInitialSelectedTokens, [setInitialSelectedTokens, chainId]);
 

@@ -1,6 +1,9 @@
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
+import { useMemo } from 'react';
+import { useSwitchChain } from 'wagmi';
 import { TokenIcon } from './TokenIcon';
 import { TokenType } from '../../../../types/token';
+import { useGetChainId } from '../../../hooks/useGetChainId.ts';
 import { useResolveTokenChain } from '../../../hooks/useResolveTokenChain';
 
 export const TokenItem = ({
@@ -16,6 +19,23 @@ export const TokenItem = ({
     token
   });
 
+  const { chains: sdkChains, switchChain } = useSwitchChain();
+  const chainId = useGetChainId();
+
+  const activeChain = useMemo(() => {
+    return sdkChains.find(
+      (chain) => chain.id.toString() === chainId.toString()
+    );
+  }, [chainId, sdkChains]);
+
+  // useEffect(() => {
+  //   if (tokenChain?.chainId && activeChain?.id !== tokenChain?.chainId) {
+  //     switchChain({
+  //       chainId: Number(tokenChain.chainId)
+  //     });
+  //   }
+  // }, [tokenChain?.chainId, activeChain]);
+
   const formattedBalance = formatAmount({
     decimals: token.decimals,
     input: token.balance ?? '0',
@@ -28,7 +48,15 @@ export const TokenItem = ({
       className={`token-item ${
         selected ? 'selected' : ''
       } flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-neutral-700`}
-      onClick={() => onClick(token)}
+      onClick={() => {
+        if (tokenChain?.chainId && activeChain?.id !== tokenChain?.chainId) {
+          switchChain({
+            chainId: Number(tokenChain.chainId)
+          });
+        }
+
+        onClick(token);
+      }}
     >
       <div className="mx-4 flex w-full items-center relative">
         <TokenIcon
