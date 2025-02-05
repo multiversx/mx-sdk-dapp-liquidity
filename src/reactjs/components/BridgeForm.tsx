@@ -396,29 +396,33 @@ export const BridgeForm = ({
   ]);
 
   const onSubmit = useCallback(
-    async (transaction: ServerTransaction) => {
+    async (transactions: ServerTransaction[]) => {
       setPendingSigning(true);
+      const signedTransactions: ServerTransaction[] = [];
 
       try {
-        const hash = await signTransaction({
-          ...transaction,
-          value: BigInt(transaction.value),
-          gas: BigInt(transaction.gasLimit),
-          account: bridgeAddress as `0x${string}`
-        });
+        for (const transaction of transactions) {
+          try {
+            const hash = await signTransaction({
+              ...transaction,
+              value: BigInt(transaction.value),
+              gas: BigInt(transaction.gasLimit),
+              account: bridgeAddress as `0x${string}`
+            });
 
-        if (!hash) {
-          console.error('Error signing transaction');
-          return;
+            signedTransactions.push({
+              ...transaction,
+              hash
+            });
+          } catch (e) {
+            toast.error('Failed to sign transaction');
+            setPendingSigning(false);
+            throw e;
+          }
         }
 
         const sentTransaction = await sendTransactions({
-          transactions: [
-            {
-              ...transaction,
-              hash
-            }
-          ],
+          transactions: signedTransactions,
           url: getApiURL() ?? '',
           token: nativeAuthToken ?? ''
         });

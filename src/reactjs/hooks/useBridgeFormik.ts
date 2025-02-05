@@ -45,7 +45,7 @@ export const useBridgeFormik = ({
   toChainId?: string;
   firstToken?: OptionType;
   secondToken?: OptionType;
-  onSubmit: (transaction: ServerTransaction) => void;
+  onSubmit: (transactions: ServerTransaction[]) => void;
 }) => {
   const pendingSigningRef = useRef<boolean>();
   const account = useAccount();
@@ -96,15 +96,15 @@ export const useBridgeFormik = ({
       }
     });
 
-    const transaction = data?.[0];
+    const transactions = data;
 
-    if (!transaction) {
+    if (!transactions || transactions.length === 0) {
       pendingSigningRef.current = false;
       return;
     }
 
     resetSwapForm();
-    onSubmit(transaction);
+    onSubmit(transactions);
     pendingSigningRef.current = false;
   };
 
