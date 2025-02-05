@@ -113,7 +113,7 @@ export const useBridgeFormik = ({
     validationSchema: object<TradeFormikValuesType>().shape({
       [BridgeFormikValuesEnum.firstAmount]: useAmountSchema(),
       [BridgeFormikValuesEnum.firstToken]: object().required(),
-      [BridgeFormikValuesEnum.secondAmount]: string().required(),
+      [BridgeFormikValuesEnum.secondAmount]: useAmountSchema(),
       [BridgeFormikValuesEnum.secondToken]: object().required(),
       [BridgeFormikValuesEnum.fromChainId]: string().required(),
       [BridgeFormikValuesEnum.toChainId]: string().required()

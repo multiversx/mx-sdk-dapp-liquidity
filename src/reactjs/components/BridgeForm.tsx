@@ -521,7 +521,11 @@ export const BridgeForm = ({
             <EnterAmountInput
               inputName="firstAmount"
               inputValue={firstAmount}
-              amountError={rateValidationError ?? firstAmountError}
+              amountError={
+                account.address && firstAmount !== ''
+                  ? rateValidationError ?? firstAmountError
+                  : undefined
+              }
               disabled={isPendingRate}
               onInputDebounceChange={handleOnChangeFirstAmount}
               onBlur={handleBlur}
@@ -573,7 +577,11 @@ export const BridgeForm = ({
             <EnterAmountInput
               inputName="secondAmount"
               inputValue={secondAmount}
-              amountError={fromChainError ? fromChainError : secondAmountError}
+              amountError={
+                account.address && secondAmount !== ''
+                  ? fromChainError ?? secondAmountError
+                  : undefined
+              }
               disabled={true}
               omitDisableClass={true}
               onInputDebounceChange={handleOnChangeSecondAmount}
