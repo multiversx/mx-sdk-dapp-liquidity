@@ -9,7 +9,7 @@ export type ServerTransaction = {
   gasLimit: bigint;
   value: bigint;
   account: string;
-  hash: string;
+  txHash: string;
 };
 
 export type TransactionType = TransactionBase & {

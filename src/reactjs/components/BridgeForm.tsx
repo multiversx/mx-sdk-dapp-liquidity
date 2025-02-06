@@ -404,7 +404,7 @@ export const BridgeForm = ({
         for (const transaction of transactions) {
           ++txIndex;
           try {
-            const hash = await signTransaction({
+            const txHash = await signTransaction({
               ...transaction,
               value: BigInt(transaction.value),
               gas: BigInt(transaction.gasLimit),
@@ -413,7 +413,7 @@ export const BridgeForm = ({
 
             signedTransactions.push({
               ...transaction,
-              hash
+              txHash
             });
 
             setSigningTransactionsCount((prevState) => prevState - 1);
@@ -424,12 +424,12 @@ export const BridgeForm = ({
 
             const transactionReceipt = await waitForTransactionReceipt(config, {
               confirmations: 1,
-              hash
+              hash: txHash
             });
 
             console.log({
               transactionReceipt,
-              hash
+              hash: txHash
             });
           } catch (e) {
             toast.error('Failed to sign transaction');
@@ -445,7 +445,7 @@ export const BridgeForm = ({
           token: nativeAuthToken ?? ''
         });
 
-        const txHashes = signedTransactions.map((tx) => tx.hash);
+        const txHashes = signedTransactions.map((tx) => tx.txHash);
 
         toast.info(
           (props) => (
