@@ -1,3 +1,4 @@
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
@@ -689,6 +690,7 @@ export const BridgeForm = ({
 
               {pendingSigning && (
                 <div className="flex justify-center gap-2 text-neutral-100">
+                  <FontAwesomeIcon icon={faSpinner} spin className="mx-1" />
                   <div>Depositing on</div>
                   <img
                     src={mvxChain?.svgUrl ?? ''}
