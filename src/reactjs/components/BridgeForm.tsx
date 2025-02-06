@@ -690,7 +690,11 @@ export const BridgeForm = ({
 
               {pendingSigning && (
                 <div className="flex justify-center gap-2 text-neutral-100">
-                  <FontAwesomeIcon icon={faSpinner} spin className="mx-1" />
+                  <FontAwesomeIcon
+                    icon={faSpinner}
+                    spin
+                    className="mx-1 flex items-center"
+                  />
                   <div>Depositing on</div>
                   <img
                     src={mvxChain?.svgUrl ?? ''}
