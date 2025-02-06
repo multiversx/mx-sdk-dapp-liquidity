@@ -59,6 +59,7 @@ export const useBridgeFormik = ({
 
   const resetSwapForm = () => {
     formik.setTouched({}, false);
+    formik.setErrors({});
     setFieldValue(BridgeFormikValuesEnum.firstAmount, '');
     setFieldValue(BridgeFormikValuesEnum.secondAmount, '');
   };

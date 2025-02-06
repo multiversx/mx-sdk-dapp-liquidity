@@ -65,7 +65,8 @@ export const BridgeForm = ({
   refetchTrigger,
   TrimAddressComponent,
   TransactionToastComponent,
-  onSuccessfullySentTransaction
+  onSuccessfullySentTransaction,
+  onFailedSentTransaction
 }: BridgeFormProps) => {
   const [pendingSigning, setPendingSigning] = useState(false);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
@@ -433,13 +434,13 @@ export const BridgeForm = ({
               hash: txHash
             });
           } catch (e) {
-            toast.error('Failed to sign transaction');
+            toast.error('Transaction aborted');
+            onFailedSentTransaction?.('Transaction aborted');
             setPendingSigning(false);
-            throw e;
+            return;
           }
         }
 
-        // TODO check what is receiving in case of multiple transactions
         await sendTransactions({
           transactions: signedTransactions,
           url: getApiURL() ?? '',
@@ -447,26 +448,12 @@ export const BridgeForm = ({
         });
 
         const txHashes = signedTransactions.map((tx) => tx.txHash);
-
-        toast.info(
-          (props) => (
-            <TransactionToastComponent
-              {...props}
-              TrimAddressComponent={TrimAddressComponent}
-            />
-          ),
-          {
-            data: {
-              // display only the last transaction (swap transaction)
-              hashes: [txHashes[txHashes.length - 1]]
-            }
-          }
-        );
         onSuccess(txHashes);
         setPendingSigning(false);
       } catch (e) {
         console.error(e);
         toast.error('Transaction cancelled');
+        onFailedSentTransaction?.('Transaction cancelled');
         setPendingSigning(false);
         handleOnChangeFirstAmount('');
         handleOnChangeSecondAmount('');
