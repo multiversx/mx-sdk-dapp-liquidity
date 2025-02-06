@@ -1,7 +1,7 @@
 import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
-import { waitForTransactionReceipt } from '@wagmi/core';
+import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +29,6 @@ import { useSignTransaction } from '../hooks/useSignTransaction';
 import { useWeb3App } from '../hooks/useWeb3App.ts';
 import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
-import { delay } from '../utils/delay';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
@@ -68,6 +67,8 @@ export const BridgeForm = ({
   onSuccessfullySentTransaction
 }: BridgeFormProps) => {
   const [pendingSigning, setPendingSigning] = useState(false);
+  const [siginingTransactionsCount, setSigningTransactionsCount] =
+    useState<number>(0);
   const navigate = useNavigate();
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
@@ -253,11 +254,6 @@ export const BridgeForm = ({
       handleOnChangeFirstAmount('');
       handleOnChangeSecondAmount('');
 
-      // TODO rework this when the API cache will be fixed
-      invalidateHistoryQuery();
-      await delay(2000);
-      invalidateHistoryQuery();
-      await delay(2000);
       invalidateHistoryQuery();
       onSuccessfullySentTransaction?.(txHashes);
     },
@@ -399,8 +395,9 @@ export const BridgeForm = ({
 
   const onSubmit = useCallback(
     async (transactions: ServerTransaction[]) => {
-      setPendingSigning(true);
       const signedTransactions: ServerTransaction[] = [];
+      setPendingSigning(true);
+      setSigningTransactionsCount(() => transactions.length);
 
       try {
         let txIndex = -1;
@@ -418,6 +415,8 @@ export const BridgeForm = ({
               ...transaction,
               hash
             });
+
+            setSigningTransactionsCount((prevState) => prevState - 1);
 
             if (txIndex === transactions.length - 1) {
               continue;
@@ -457,7 +456,8 @@ export const BridgeForm = ({
           ),
           {
             data: {
-              hashes: txHashes
+              // display only the last transaction (swap transaction)
+              hashes: [txHashes[txHashes.length - 1]]
             }
           }
         );
@@ -701,6 +701,21 @@ export const BridgeForm = ({
             </MxButton>
           )}
         </div>
+        {account.address && siginingTransactionsCount > 0 && (
+          <div className="flex items-center justify-center text-neutral-300 text-sm">
+            <div>
+              You will be asked to sign {siginingTransactionsCount}{' '}
+              {siginingTransactionsCount > 1 ? 'transactions' : 'transaction'}{' '}
+              on{' '}
+            </div>
+            <img
+              src={getConnections(config)[0]?.connector?.icon}
+              alt=""
+              className="mx-1 h-[1rem] w-[1rem]"
+            />
+            <div>{getConnections(config)[0]?.connector?.name}</div>
+          </div>
+        )}
       </form>
     </>
   );

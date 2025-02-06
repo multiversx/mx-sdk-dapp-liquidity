@@ -12,6 +12,7 @@ import { ChainDTO } from '../../dto/Chain.dto';
 import { TransactionDTO } from '../../dto/Transaction.dto';
 import { TokenType } from '../../types/token';
 import ArrowUpRight from '../assets/arrow-up-right.svg';
+import { MVX_CHAIN_IDS } from '../constants/general.ts';
 import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
 import { useGetHistoryQuery } from '../queries/useGetHistory.query';
 import { formatAmount } from '../utils/formatAmount';
@@ -63,8 +64,8 @@ export const BridgeHistory = ({
       data?.map((transaction) => {
         return {
           ...transaction,
-          tokenDestination: transaction.tokenDestination.toLowerCase(),
-          tokenSource: transaction.tokenSource.toLowerCase(),
+          tokenDestination: transaction.tokenOut.toLowerCase(),
+          tokenSource: transaction.tokenIn.toLowerCase(),
           sender: transaction.sender.toLowerCase(),
           statusIcon: resolveTransactionIcon(transaction)
         };
@@ -99,7 +100,7 @@ export const BridgeHistory = ({
   const chainsMap = useMemo(() => {
     return (chains ?? []).reduce(
       (acc, chain) => {
-        acc[chain.chainName.toLowerCase()] = chain;
+        acc[chain.chainId.toString()] = chain;
         return acc;
       },
       {} as Record<string, ChainDTO>
@@ -172,10 +173,10 @@ export const BridgeHistory = ({
         )}
         {transactions &&
           transactions?.length > 0 &&
-          transactions.map((transaction) => {
+          transactions.map((transaction, index) => {
             return (
               <MxCard
-                key={transaction.depositTxHash}
+                key={`${transaction.txHash}-${index}`}
                 cardSize="lg"
                 variant="neutral-750"
                 className={mxClsx(
@@ -193,13 +194,13 @@ export const BridgeHistory = ({
                   >
                     {transaction.statusIcon}
                     <span>
-                      {transaction.destinationChain === 'msx'
+                      {MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
                         ? 'Deposit'
                         : 'Transfer'}
                     </span>
                     <img
                       src={
-                        transaction.destinationChain === 'msx'
+                        MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
                           ? tokensMap[transaction.tokenDestination]?.svgUrl
                           : tokensMap[transaction.tokenSource]?.svgUrl
                       }
@@ -209,21 +210,23 @@ export const BridgeHistory = ({
                     <span>
                       {formatAmount({
                         decimals: tokensMap[transaction.tokenSource]?.decimals,
-                        amount: transaction.amountSource,
+                        amount: transaction.amountIn,
                         addCommas: false,
                         digits: 2
                       })}
                     </span>
                     <span>{tokensMap[transaction.tokenSource]?.name}</span>
                     <span>
-                      {transaction.destinationChain === 'msx' ? 'From' : 'To'}
+                      {MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
+                        ? 'From'
+                        : 'To'}
                     </span>
                     <img
                       src={
                         chainsMap[
-                          transaction.destinationChain === 'msx'
-                            ? transaction.sourceChain
-                            : transaction.destinationChain
+                          MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
+                            ? transaction.fromChainId.toString()
+                            : transaction.toChainId.toString()
                         ]?.svgUrl ?? ''
                       }
                       alt=""
@@ -232,7 +235,7 @@ export const BridgeHistory = ({
                   </div>
                   <div className="ml-auto mr-0 flex items-center gap-1">
                     <MxLink
-                      to={`${bridgeURL}/status/${transaction.depositTxHash}`}
+                      to={`${bridgeURL}/status/${transaction.txHash}`}
                       target="_blank"
                       showExternalIcon={false}
                     >
