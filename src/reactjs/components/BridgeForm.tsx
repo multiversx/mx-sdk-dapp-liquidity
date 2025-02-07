@@ -41,7 +41,6 @@ interface BridgeFormProps {
   username?: string;
   nativeAuthToken?: string;
   callbackRoute?: string;
-  showTokenPriceDetails?: boolean;
   explorerAddress: string;
   refetchTrigger?: number;
   TrimAddressComponent: (props: {
@@ -455,6 +454,7 @@ export const BridgeForm = ({
         toast.error('Transaction cancelled');
         onFailedSentTransaction?.('Transaction cancelled');
         setPendingSigning(false);
+        resetSwapForm();
         handleOnChangeFirstAmount('');
         handleOnChangeSecondAmount('');
       }
@@ -477,7 +477,8 @@ export const BridgeForm = ({
     secondAmountError,
     fromChainError,
     handleBlur,
-    handleSubmit
+    handleSubmit,
+    resetSwapForm
   } = useBridgeFormik({
     nativeAuthToken,
     mvxAccountAddress: mvxAddress,
@@ -676,7 +677,7 @@ export const BridgeForm = ({
               )}
 
               {pendingSigning && (
-                <div className="flex justify-center gap-2 text-neutral-100">
+                <div className="flex justify-center items-center gap-2 text-neutral-100">
                   <FontAwesomeIcon
                     icon={faSpinner}
                     spin
