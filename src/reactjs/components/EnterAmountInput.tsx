@@ -35,7 +35,7 @@ export const EnterAmountInput = ({
   };
 
   return (
-    <div className="flex w-full flex-col justify-between test-dapp-liquidity">
+    <div className="flex w-full flex-col justify-between">
       <AmountInput
         required
         name={inputName}

@@ -39,7 +39,7 @@ export const TokenItem = ({
     <div
       className={`token-item ${
         selected ? 'selected' : ''
-      } flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-neutral-700`}
+      } flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-neutral-700 border border-neutral-750 bg-neutral-850`}
       onClick={() => {
         if (tokenChain?.chainId && activeChain?.id !== tokenChain?.chainId) {
           switchChain({

@@ -107,9 +107,12 @@ export const BridgeHistory = ({
     );
   }, [chains]);
 
-  const className = mxClsx(`h-96 max-h-96 text-base lg:text-base p-2`, {
-    'disabled animate-pulse': isLoading || tokensLoading || isChainsLoading
-  });
+  const className = mxClsx(
+    `h-[32rem] max-h-[32rem] text-base lg:text-base p-2`,
+    {
+      'disabled animate-pulse': isLoading || tokensLoading || isChainsLoading
+    }
+  );
 
   if (isLoading && !transactions) {
     return <MxCard className={mxClsx('flex', className)} />;
@@ -124,18 +127,19 @@ export const BridgeHistory = ({
   }
 
   return (
-    <MxCard className={mxClsx('flex flex-col gap-1', className)}>
-      <div
-        className={mxClsx(
-          'flex items-center gap-3 border-b border-neutral-750 p-2 font-medium leading-none'
-        )}
-      >
-        <div className="flex items-center justify-center font-medium">
+    <MxCard
+      className={mxClsx(
+        'flex flex-col gap-1 pt-12 lg:order-2 lg:max-w-[27.5rem] lg:pt-0',
+        className
+      )}
+    >
+      <div className={mxClsx('flex items-center justify-between p-2')}>
+        <div className="flex flex-1 items-center justify-center text-center text-lg">
           History
         </div>
         <MxButton
           btnSize="md"
-          className="ml-auto mr-0 border-none p-0"
+          className="border-none p-0"
           variant="link-neutral-500"
           onClick={() => {
             navigate(-1);
@@ -145,7 +149,7 @@ export const BridgeHistory = ({
         </MxButton>
       </div>
 
-      <div className="scrollbar-thin flex flex-1 flex-col gap-1 overflow-y-scroll">
+      <div className="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll">
         {transactions?.length === 0 && (
           <MxCard
             cardSize="lg"
@@ -181,7 +185,7 @@ export const BridgeHistory = ({
                 variant="neutral-750"
                 className={mxClsx(
                   'flex flex-col gap-4 outline outline-transparent focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80',
-                  'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4'
+                  'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4 border border-neutral-750 bg-neutral-850'
                 )}
               >
                 <div className="align-center flex justify-between gap-1">

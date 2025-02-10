@@ -14,7 +14,7 @@ export const EnterAmountCard = ({
       cardSize="lg"
       variant="neutral-750"
       className={mxClsx(
-        'flex flex-col gap-4 outline outline-transparent focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80',
+        'flex flex-col gap-4 outline outline-transparent',
         className
       )}
     >

@@ -1,5 +1,4 @@
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
@@ -10,7 +9,6 @@ import { toast } from 'react-toastify';
 import { useSwitchChain } from 'wagmi';
 import { BridgeWalletConnection } from './BridgeWalletConnection';
 import { BridgeConnectButton } from './Connect/BridgeConnectButton';
-import { DisplayAmount } from './DisplayAmount';
 import { EnterAmountCard } from './EnterAmountCard';
 import { EnterAmountInput } from './EnterAmountInput';
 import { MvxAccountDisplay } from './MvxAccountDisplay';
@@ -33,6 +31,7 @@ import { useGetRateMutation } from '../queries/useGetRate.mutation';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
+import { mxClsx } from '../utils/mxClsx.ts';
 
 interface BridgeFormProps {
   mvxApiURL: string;
@@ -67,6 +66,7 @@ export const BridgeForm = ({
   onSuccessfullySentTransaction,
   onFailedSentTransaction
 }: BridgeFormProps) => {
+  const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
     useState<number>(0);
@@ -527,10 +527,16 @@ export const BridgeForm = ({
       <form
         ref={ref}
         noValidate
-        className="flex flex-col gap-1"
+        className="flex flex-col gap-1 relative"
         onSubmit={handleSubmit}
       >
-        <EnterAmountCard className="pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6">
+        <EnterAmountCard
+          className={mxClsx('pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6', {
+            'pointer-events-none': isTokenSelectorVisible,
+            'focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80':
+              !isTokenSelectorVisible
+          })}
+        >
           <BridgeWalletConnection
             disabled={isPendingRate}
             activeChain={selectedChainOption}
@@ -549,42 +555,27 @@ export const BridgeForm = ({
               onInputDebounceChange={handleOnChangeFirstAmount}
               onBlur={handleBlur}
             />
-            <div className="flex flex-col items-end justify-between gap-4">
-              <TokenSelector
-                name={'firstToken'}
-                disabled={isPendingRate}
-                options={firstSelectOptions}
-                areOptionsLoading={isTokensLoading}
-                color="neutral-850"
-                onChange={onChangeFirstSelect}
-                onBlur={handleBlur}
-                selectedOption={firstToken?.token}
-              />
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <FontAwesomeIcon
-                    icon={faWallet}
-                    className="text-neutral-300"
-                  />
-                  <DisplayAmount
-                    decimals={firstToken?.token?.decimals}
-                    amount={firstToken?.token?.balance ?? '0'}
-                    className="font-medium text-neutral-100"
-                  />
-                </div>
-                <MxButton
-                  btnSize="xs"
-                  variant="neutral-800"
-                  disabled={hasAmounts || isPendingRate}
-                  onClick={handleOnFirstMaxBtnChange}
-                >
-                  <span className="text-neutral-300">MAX</span>
-                </MxButton>
-              </div>
-            </div>
+            <TokenSelector
+              name={'firstToken'}
+              disabled={isPendingRate}
+              options={firstSelectOptions}
+              areOptionsLoading={isTokensLoading}
+              color="neutral-850"
+              onChange={onChangeFirstSelect}
+              onBlur={handleBlur}
+              onMaxBtnClick={handleOnFirstMaxBtnChange}
+              selectedOption={firstToken?.token}
+              onTokenSelectorDisplay={(visible) =>
+                setIsTokenSelectorVisible(visible)
+              }
+            />
           </div>
         </EnterAmountCard>
-        <EnterAmountCard className="pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6">
+        <EnterAmountCard
+          className={mxClsx('pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6', {
+            'pointer-events-none': isTokenSelectorVisible
+          })}
+        >
           <MvxAccountDisplay
             accountAddress={mvxAddress}
             username={username}
@@ -606,32 +597,17 @@ export const BridgeForm = ({
               onInputDebounceChange={handleOnChangeSecondAmount}
               onBlur={handleBlur}
             />
-            <div className="flex flex-col items-end justify-between gap-4">
-              <TokenSelector
-                name={'secondToken'}
-                disabled={true}
-                omitDisableClass={true}
-                options={secondSelectOptions}
-                areOptionsLoading={isTokensLoading}
-                color="neutral-850"
-                onChange={onChangeSecondSelect}
-                onBlur={handleBlur}
-                selectedOption={secondToken?.token}
-              />
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <FontAwesomeIcon
-                    icon={faWallet}
-                    className="text-neutral-300"
-                  />
-                  <DisplayAmount
-                    decimals={secondToken?.token?.decimals}
-                    amount={secondToken?.token?.balance ?? '0'}
-                    className="font-medium text-neutral-100"
-                  />
-                </div>
-              </div>
-            </div>
+            <TokenSelector
+              name={'secondToken'}
+              disabled={true}
+              omitDisableClass={true}
+              options={secondSelectOptions}
+              areOptionsLoading={isTokensLoading}
+              color="neutral-850"
+              onChange={onChangeSecondSelect}
+              onBlur={handleBlur}
+              selectedOption={secondToken?.token}
+            />
           </div>
         </EnterAmountCard>
         {fee && (
