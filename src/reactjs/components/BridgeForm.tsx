@@ -25,13 +25,13 @@ import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
 import { useGetChainId } from '../hooks/useGetChainId';
 import { useSendTransactions } from '../hooks/useSendTransactions';
 import { useSignTransaction } from '../hooks/useSignTransaction';
-import { useWeb3App } from '../hooks/useWeb3App.ts';
+import { useWeb3App } from '../hooks/useWeb3App';
 import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
 import { getCompletePathname } from '../utils/getCompletePathname';
 import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
-import { mxClsx } from '../utils/mxClsx.ts';
+import { mxClsx } from '../utils/mxClsx';
 
 interface BridgeFormProps {
   mvxApiURL: string;

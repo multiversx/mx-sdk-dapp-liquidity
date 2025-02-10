@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useSwitchChain } from 'wagmi';
 import { TokenIcon } from './TokenIcon';
 import { TokenType } from '../../../../types/token';
-import { useGetChainId } from '../../../hooks/useGetChainId.ts';
+import { useGetChainId } from '../../../hooks/useGetChainId';
 import { useResolveTokenChain } from '../../../hooks/useResolveTokenChain';
 
 export const TokenItem = ({

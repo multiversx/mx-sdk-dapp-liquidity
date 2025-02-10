@@ -12,7 +12,7 @@ import { ChainDTO } from '../../dto/Chain.dto';
 import { TransactionDTO } from '../../dto/Transaction.dto';
 import { TokenType } from '../../types/token';
 import ArrowUpRight from '../assets/arrow-up-right.svg';
-import { MVX_CHAIN_IDS } from '../constants/general.ts';
+import { MVX_CHAIN_IDS } from '../constants/general';
 import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
 import { useGetHistoryQuery } from '../queries/useGetHistory.query';
 import { formatAmount } from '../utils/formatAmount';

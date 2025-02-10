@@ -2,10 +2,9 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useMemo, useState } from 'react';
-import { SelectContainer } from './components/SelectContainer.tsx';
-import { SelectContent } from './components/SelectContent.tsx';
+import { SelectContainer } from './components/SelectContainer';
+import { SelectContent } from './components/SelectContent';
 import { SelectedOption } from './components/SelectedOption';
-// import { SelectModal } from './components/SelectModal';
 import { TokenType } from '../../../types/token';
 import { MVX_CHAIN_IDS } from '../../constants/general';
 import { useResolveTokenChain } from '../../hooks/useResolveTokenChain';
@@ -85,16 +84,6 @@ export const TokenSelector = ({
 
   return (
     <>
-      {/*<SelectModal*/}
-      {/*  visible={show}*/}
-      {/*  onClose={() => setShow(false)}*/}
-      {/*  onSelect={onChange}*/}
-      {/*  tokens={options}*/}
-      {/*  chains={chains}*/}
-      {/*  areChainsLoading={areChainsLoading}*/}
-      {/*  selectedToken={selectedOption}*/}
-      {/*/>*/}
-
       {show && (
         <SelectContainer onClose={() => setShow(false)}>
           <SelectContent
