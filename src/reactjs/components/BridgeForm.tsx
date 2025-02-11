@@ -454,6 +454,7 @@ export const BridgeForm = ({
         toast.error('Transaction cancelled');
         onFailedSentTransaction?.('Transaction cancelled');
         setPendingSigning(false);
+        setSigningTransactionsCount(0);
         resetSwapForm();
         handleOnChangeFirstAmount('');
         handleOnChangeSecondAmount('');

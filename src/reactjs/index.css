@@ -40,6 +40,10 @@
             }
         }
     }
+
+    .focus-primary {
+        @apply focus-visible:liq-outline-none focus-visible:liq-ring-2 focus-visible:liq-ring-primary !important;
+    }
 }
 
 @layer components {
