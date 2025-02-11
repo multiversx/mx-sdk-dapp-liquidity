@@ -64,10 +64,10 @@ export const BridgeWalletConnection = ({
               target="_blank"
               showExternalIcon={false}
             >
-              <div className="liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none">
+              <div className="liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none liq-max-w-[10rem]">
                 <TrimAddressComponent
                   text={account.address}
-                  className="liq-flex liq-items-center"
+                  className="liq-flex liq-items-center  liq-text-neutral-100"
                 />
                 <FontAwesomeIcon
                   icon={faChevronRight}

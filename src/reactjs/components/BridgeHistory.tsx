@@ -185,7 +185,7 @@ export const BridgeHistory = ({
                 cardSize="lg"
                 variant="neutral-750"
                 className={
-                  'liq-flex liq-flex-col liq-gap-4 !liq-outline liq-outline-transparent !p-4 liq-border liq-border-neutral-750 liq-bg-neutral-850 hover:!liq-bg-neutral-700 '
+                  'liq-flex liq-flex-col liq-gap-4 !liq-outline liq-outline-transparent !liq-p-4 liq-border liq-border-neutral-750 liq-bg-neutral-850 hover:!liq-bg-neutral-700 '
                 }
               >
                 <div className="liq-align-center liq-flex liq-justify-between liq-gap-1">
@@ -242,7 +242,7 @@ export const BridgeHistory = ({
                       to={`${bridgeURL}/status/${transaction.txHash}`}
                       target="_blank"
                       showExternalIcon={false}
-                      className="flex"
+                      className="liq-flex"
                     >
                       <div className="max-sm:liq-hidden">View</div>
                       <img
