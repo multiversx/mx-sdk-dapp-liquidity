@@ -87,7 +87,10 @@ export const TokenSelector = ({
       {show && (
         <SelectContainer onClose={() => setShow(false)}>
           <SelectContent
-            onSelect={onChange}
+            onSelect={(token) => {
+              onChange(token);
+              setShow(false);
+            }}
             tokens={options}
             chains={chains}
             areChainsLoading={areChainsLoading}
