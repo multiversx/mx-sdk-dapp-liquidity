@@ -20,16 +20,16 @@ export const MvxAccountDisplay = ({
   }) => JSX.Element;
 }) => {
   return (
-    <div className="flex gap-2">
+    <div className="liq-flex liq-gap-2">
       To
       <img
         src="https://cdn.prod.website-files.com/6597cc7be68d63ec0c8ce338/659fac9b8d96a7bdeced582c_X-Favicon-256.png"
         alt="MultiversX"
-        className="w-6"
+        className="liq-w-6"
       />
       {accountAddress && (
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex max-w-[10rem] items-center gap-1">
+        <div className="liq-flex liq-items-center liq-justify-between liq-gap-2">
+          <div className="liq-flex liq-max-w-[10rem] liq-items-center liq-gap-1">
             <MxLink
               to={`${accountExplorerUrl}`}
               target="_blank"
@@ -43,7 +43,7 @@ export const MvxAccountDisplay = ({
               />
             </MxLink>
 
-            <CopyButton text={accountAddress} className="text-sm" />
+            <CopyButton text={accountAddress} className="liq-text-sm" />
           </div>
         </div>
       )}

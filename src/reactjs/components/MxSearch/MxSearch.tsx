@@ -34,12 +34,12 @@ export const MxSearch = forwardRef(
 
     return (
       <div
-        className={`relative flex flex-1 items-center  ${containerClassName}`}
+        className={`liq-relative liq-flex liq-flex-1 liq-items-center  ${containerClassName}`}
       >
         <FontAwesomeIcon
           icon={faSearch}
           className={mxClsx(
-            'pointer-events-none absolute inset-4 top-1/3 h-4 w-4 items-center text-neutral-300',
+            'liq-pointer-events-none liq-absolute liq-inset-4 liq-top-1/3 liq-h-4 liq-w-4 liq-items-center liq-text-neutral-300',
             iconsClassName
           )}
         />
@@ -49,7 +49,7 @@ export const MxSearch = forwardRef(
           onChange={(val) => setInputValue(val.target.value)}
           placeholder={placeholder}
           className={mxClsx(
-            'focus-primary text-medium placeholder:font-medium flex w-full gap-2 rounded-xl border border-neutral-800 bg-neutral-900 px-11 py-2 placeholder:text-neutral-300',
+            'focus-primary liq-text-medium placeholder:liq-font-medium liq-flex liq-w-full liq-gap-2 liq-rounded-xl liq-border liq-border-neutral-800 liq-bg-neutral-900 liq-px-11 liq-py-2 placeholder:liq-text-neutral-300',
             inputClassName
           )}
           tabIndex={1}
@@ -61,7 +61,7 @@ export const MxSearch = forwardRef(
             icon={faClose}
             onClick={onClear}
             className={mxClsx(
-              'absolute inset-4 left-auto top-1/3 h-4 w-4 cursor-pointer items-center text-neutral-300 transition-colors duration-200 hover:text-neutral-400',
+              'liq-absolute liq-inset-4 liq-left-auto liq-top-1/3 liq-h-4 liq-w-4 liq-cursor-pointer liq-items-center liq-text-neutral-300 liq-transition-colors liq-duration-200 hover:liq-text-neutral-400',
               iconsClassName
             )}
           />

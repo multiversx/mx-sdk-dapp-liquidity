@@ -17,7 +17,7 @@ export const FormatChainOptionLabel = (
 
   if (option.value === 'loader') {
     return (
-      <div className="flex justify-center py-5">
+      <div className="liq-flex liq-justify-center liq-py-5">
         <SmallLoader show={true} />
       </div>
     );

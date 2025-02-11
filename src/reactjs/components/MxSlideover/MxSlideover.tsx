@@ -22,42 +22,42 @@ export const MxSlideover = ({
 }) => {
   return (
     <Transition.Root show={show} as={Fragment}>
-      <Dialog as="div" className="relative z-30" onClose={onClose}>
+      <Dialog as="div" className="liq-relative liq-z-30" onClose={onClose}>
         <Transition.Child
           as={Fragment}
-          enter="ease-in-out duration-150"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in-out duration-150"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          enter="liq-ease-in-out liq-duration-150"
+          enterFrom="liq-opacity-0"
+          enterTo="liq-opacity-100"
+          leave="liq-ease-in-out liq-duration-150"
+          leaveFrom="liq-opacity-100"
+          leaveTo="liq-opacity-0"
         >
-          <div className="fixed inset-0 bg-neutral-400 bg-opacity-25 backdrop-blur-sm  backdrop-filter transition-opacity" />
+          <div className="liq-fixed liq-inset-0 liq-bg-neutral-400 liq-bg-opacity-25 liq-backdrop-blur-sm liq- liq-backdrop-filter liq-transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full p-2">
+        <div className="liq-fixed liq-inset-0 liq-overflow-hidden">
+          <div className="liq-absolute liq-inset-0 liq-overflow-hidden">
+            <div className="liq-pointer-events-none liq-fixed liq-inset-y-0 liq-right-0 liq-flex liq-max-w-full liq-p-2">
               <Transition.Child
                 as={Fragment}
-                enter="transform transition ease-in-out duration-150"
-                leave="transform transition ease-in-out duration-150"
+                enter="liq-transform liq-transition liq-ease-in-out liq-duration-150"
+                leave="liq-transform liq-transition liq-ease-in-out liq-duration-150"
                 // enter
-                enterFrom="translate-y-full lg:translate-y-0 lg:translate-x-full"
-                enterTo="translate-y-0 lg:translate-x-0"
+                enterFrom="liq-translate-y-full lg:liq-translate-y-0 lg:liq-translate-x-full"
+                enterTo="liq-translate-y-0 lg:liq-translate-x-0"
                 // leave
-                leaveFrom="translate-y-0 lg:translate-x-0"
-                leaveTo="translate-y-full lg:translate-y-0 lg:translate-x-full"
+                leaveFrom="liq-translate-y-0 lg:liq-translate-x-0"
+                leaveTo="liq-translate-y-full lg:liq-translate-y-0 lg:liq-translate-x-full"
               >
-                <Dialog.Panel className="pointer-events-auto relative flex w-screen lg:max-w-md">
+                <Dialog.Panel className="liq-pointer-events-auto liq-relative liq-flex liq-w-screen liq-lg:max-w-md">
                   <div
                     className={mxClsx(
-                      'relative flex flex-1 flex-col self-end rounded-3xl bg-neutral-850 p-2 shadow-2xl',
+                      'liq-relative liq-flex liq-flex-1 liq-flex-col liq-self-end liq-rounded-3xl liq-bg-neutral-850 liq-p-2 liq-shadow-2xl',
                       {
-                        'h-full md:rounded-3xl': size === 'h-full',
-                        'h-3/5': size === 'h-60',
-                        'h-2/5': size === 'h-40',
-                        'h-1/5': size === 'h-20'
+                        'liq-h-full md:liq-rounded-3xl': size === 'h-full',
+                        'liq-h-3/5': size === 'h-60',
+                        'liq-h-2/5': size === 'h-40',
+                        'liq-h-1/5': size === 'h-20'
                       },
                       className
                     )}
@@ -65,14 +65,14 @@ export const MxSlideover = ({
                     <MxButton
                       variant="transparent"
                       onClick={onClose}
-                      className="absolute -top-12 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full border-none bg-neutral-850"
+                      className="liq-absolute liq-top-12 liq-right-4 liq-z-30 liq-flex liq-h-10 liq-w-10 liq-items-center liq-justify-center liq-rounded-full liq-border-none liq-bg-neutral-850"
                     >
                       <FontAwesomeIcon
                         icon={faClose}
-                        className="h-5 w-5 text-neutral-500"
+                        className="liq-h-5 liq-w-5 liq-text-neutral-500"
                       />
                     </MxButton>
-                    <div className="scrollbar-thin overflow-y-scroll">
+                    <div className="scrollbar-thin liq-overflow-y-scroll">
                       {children}
                     </div>
                   </div>

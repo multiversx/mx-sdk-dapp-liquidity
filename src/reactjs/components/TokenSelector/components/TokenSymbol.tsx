@@ -19,7 +19,12 @@ export const TokenSymbol = ({
   const { symbol } = token;
 
   return (
-    <div className={mxClsx('flex items-center gap-2', wrapperClassName)}>
+    <div
+      className={mxClsx(
+        'liq-flex liq-items-center liq-gap-2',
+        wrapperClassName
+      )}
+    >
       <span className={className}>{symbol}</span>
     </div>
   );

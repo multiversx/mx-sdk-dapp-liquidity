@@ -25,7 +25,7 @@ export const TooltipContent = ({
       style={popperStyles}
       {...popperAttributes}
       className={mxClsx(
-        'z-20 cursor-default rounded-2xl border border-neutral-750 bg-neutral-850 p-4 text-base text-neutral-200',
+        'liq-z-20 liq-cursor-default liq-rounded-2xl liq-border liq-border-neutral-750 liq-bg-neutral-850 liq-p-4 liq-text-base liq-text-neutral-200',
         contentClassName
       )}
     >

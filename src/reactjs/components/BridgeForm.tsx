@@ -527,22 +527,25 @@ export const BridgeForm = ({
       <form
         ref={ref}
         noValidate
-        className="flex flex-col gap-1 relative"
+        className="liq-flex liq-flex-col liq-gap-1 liq-relative"
         onSubmit={handleSubmit}
       >
         <EnterAmountCard
-          className={mxClsx('pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6', {
-            'pointer-events-none': isTokenSelectorVisible,
-            'focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80':
-              !isTokenSelectorVisible
-          })}
+          className={mxClsx(
+            'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
+            {
+              'liq-pointer-events-none': isTokenSelectorVisible,
+              'focus-within:liq-outline-neutral-700/75 hover:liq-outline-neutral-700/55 hover:focus-within:liq-outline-neutral-700/80':
+                !isTokenSelectorVisible
+            }
+          )}
         >
           <BridgeWalletConnection
             disabled={isPendingRate}
             activeChain={selectedChainOption}
             TrimAddressComponent={TrimAddressComponent}
           />
-          <div className="flex justify-between gap-1">
+          <div className="liq-flex liq-justify-between liq-gap-1">
             <EnterAmountInput
               inputName="firstAmount"
               inputValue={firstAmount}
@@ -572,9 +575,12 @@ export const BridgeForm = ({
           </div>
         </EnterAmountCard>
         <EnterAmountCard
-          className={mxClsx('pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6', {
-            'pointer-events-none': isTokenSelectorVisible
-          })}
+          className={mxClsx(
+            'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
+            {
+              'liq-pointer-events-none': isTokenSelectorVisible
+            }
+          )}
         >
           <MvxAccountDisplay
             accountAddress={mvxAddress}
@@ -583,7 +589,7 @@ export const BridgeForm = ({
             TrimAddressComponent={TrimAddressComponent}
             showTag={true}
           />
-          <div className="flex justify-between gap-1">
+          <div className="liq-flex liq-justify-between liq-gap-1">
             <EnterAmountInput
               inputName="secondAmount"
               inputValue={secondAmount}
@@ -611,14 +617,14 @@ export const BridgeForm = ({
           </div>
         </EnterAmountCard>
         {fee && (
-          <div className="my-2 ml-2 flex justify-start rounded-xl border border-neutral-700 px-4 py-2 text-sm text-neutral-600">
+          <div className="liq-my-2 liq-ml-2 liq-flex liq-justify-start liq-rounded-xl liq-border liq-border-neutral-700 liq-px-4 liq-py-2 liq-text-sm liq-text-neutral-600">
             {fee && `Fee: ${fee}`}
           </div>
         )}
-        <div className="flex items-center justify-center">
+        <div className="liq-flex liq-items-center liq-justify-center">
           {!isAuthenticated && (
             <BridgeConnectButton
-              className="focus-primary w-full rounded-xl bg-neutral-850/50 px-8 py-3 font-semibold text-primary-200 transition-colors duration-200 hover:enabled:bg-primary-700/80 disabled:opacity-50"
+              className="focus-primary liq-w-full liq-rounded-xl liq-bg-neutral-850/50 liq-px-8 liq-py-3 liq-font-semibold liq-text-primary-200 liq-transition-colors liq-duration-200 hover:enabled:liq-bg-primary-700/80 disabled:liq-opacity-50"
               disabled={isPendingRate}
               activeChain={selectedChainOption}
             />
@@ -627,7 +633,7 @@ export const BridgeForm = ({
             <MxButton
               type="submit"
               variant="primary"
-              className="w-full bg-neutral-850/50 py-3 font-medium text-primary-200"
+              className="liq-w-full liq-bg-neutral-850/50 liq-py-3 liq-font-medium liq-text-primary-200"
               disabled={
                 !hasAmounts ||
                 isPendingRate ||
@@ -638,32 +644,32 @@ export const BridgeForm = ({
               }
             >
               {hasAmounts && !pendingSigning && (
-                <div className="flex justify-center gap-2 text-neutral-100">
+                <div className="liq-flex liq-justify-center liq-gap-2 liq-text-neutral-100">
                   <div>Deposit on </div>
                   <img
                     src={mvxChain?.svgUrl ?? ''}
                     alt=""
-                    className="h-[1.5rem] w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
                   />
                   <div>MultiversX</div>
                 </div>
               )}
               {!hasAmounts && !pendingSigning && (
-                <span className="text-neutral-100">Enter amount</span>
+                <span className="liq-text-neutral-100">Enter amount</span>
               )}
 
               {pendingSigning && (
-                <div className="flex justify-center items-center gap-2 text-neutral-100">
+                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2 liq-text-neutral-100">
                   <FontAwesomeIcon
                     icon={faSpinner}
                     spin
-                    className="mx-1 flex items-center"
+                    className="liq-mx-1 liq-flex liq-items-center"
                   />
                   <div>Depositing on</div>
                   <img
                     src={mvxChain?.svgUrl ?? ''}
                     alt=""
-                    className="h-[1.5rem] w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
                   />
                   <div>MultiversX</div>
                 </div>
@@ -672,7 +678,7 @@ export const BridgeForm = ({
           )}
         </div>
         {account.address && siginingTransactionsCount > 0 && (
-          <div className="flex items-center justify-center text-neutral-300 text-sm">
+          <div className="liq-flex liq-items-center liq-justify-center liq-text-neutral-300 liq-text-sm">
             <div>
               You will be asked to sign {siginingTransactionsCount}{' '}
               {siginingTransactionsCount > 1 ? 'transactions' : 'transaction'}{' '}
@@ -681,7 +687,7 @@ export const BridgeForm = ({
             <img
               src={getConnections(config)[0]?.connector?.icon}
               alt=""
-              className="mx-1 h-[1rem] w-[1rem]"
+              className="liq-mx-1 liq-h-[1rem] liq-w-[1rem]"
             />
             <div>{getConnections(config)[0]?.connector?.name}</div>
           </div>

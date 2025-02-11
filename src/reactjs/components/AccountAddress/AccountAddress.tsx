@@ -22,12 +22,14 @@ export const AccountAddress = ({
   return (
     <div
       className={mxClsx(
-        'flex min-w-0 flex-grow overflow-hidden leading-none',
+        'liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none',
         className
       )}
     >
       {heroTag && showTag ? (
-        <div className="truncate text-left text-neutral-100">{heroTag}</div>
+        <div className="liq-truncate liq-text-left liq-text-neutral-100">
+          {heroTag}
+        </div>
       ) : (
         <TrimAddressComponent text={address} />
       )}

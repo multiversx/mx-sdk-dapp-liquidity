@@ -48,41 +48,48 @@ export const MxLink = forwardRef(
         {...rest}
         {...(rel ? { rel } : {})}
         className={mxClsx(
-          'focus-primary rounded-xl font-semibold no-underline transition-colors duration-200',
+          'focus-primary liq-rounded-xl liq-font-semibold liq-no-underline liq-transition-colors liq-duration-200',
           {
-            'text-primary-300 hover:text-primary-200':
+            'liq-text-primary-300 hover:liq-text-primary-200':
               variant === 'primary-300',
-            'text-green-300 hover:text-green-200': variant === 'green-300',
-            'text-neutral-100 hover:text-white': variant === 'neutral-100',
-            'text-neutral-200 hover:text-white': variant === 'neutral-200',
-            'text-neutral-300 hover:text-white': variant === 'neutral-300',
-            'text-neutral-400 hover:text-white': variant === 'neutral-400',
-            'text-neutral-500 hover:text-white': variant === 'neutral-500',
-            'text-neutral-750 hover:text-white': variant === 'neutral-750'
+            'liq-text-green-300 hover:liq-text-green-200':
+              variant === 'green-300',
+            'liq-text-neutral-100 hover:liq-text-white':
+              variant === 'neutral-100',
+            'liq-text-neutral-200 hover:liq-text-white':
+              variant === 'neutral-200',
+            'liq-text-neutral-300 hover:liq-text-white':
+              variant === 'neutral-300',
+            'liq-text-neutral-400 hover:liq-text-white':
+              variant === 'neutral-400',
+            'liq-text-neutral-500 hover:liq-text-white':
+              variant === 'neutral-500',
+            'liq-text-neutral-750 hover:liq-text-white':
+              variant === 'neutral-750'
           },
           // button
           {
-            'bg-neutral-600 px-4 py-2 text-center hover:bg-neutral-500':
+            'liq-bg-neutral-600 liq-px-4 liq-py-2 liq-text-center hover:liq-bg-neutral-500':
               variant === 'button-neutral-600',
-            'bg-neutral-700 px-4 py-2 text-center hover:bg-[#3B3D48] hover:bg-opacity-80':
+            'liq-bg-neutral-700 liq-px-4 liq-py-2 liq-text-center hover:liq-bg-[#3B3D48] hover:liq-bg-opacity-80':
               variant === 'button-neutral-700',
-            'bg-neutral-750 px-4 py-2 text-center hover:bg-neutral-650':
+            'liq-bg-neutral-750 liq-px-4 liq-py-2 liq-text-center hover:liq-bg-neutral-650':
               variant === 'button-neutral-750',
-            'bg-neutral-800 px-4 py-2 text-center hover:bg-neutral-700':
+            'liq-bg-neutral-800 liq-px-4 liq-py-2 liq-text-center hover:liq-bg-neutral-700':
               variant === 'button-neutral-800',
-            'bg-neutral-850 px-4 py-2 text-center hover:bg-neutral-800':
+            'liq-bg-neutral-850 liq-px-4 liq-py-2 liq-text-center hover:liq-bg-neutral-800':
               variant === 'button-neutral-850',
-            'bg-primary px-4 py-2 text-center hover:bg-[#1E65E7] hover:bg-opacity-80':
+            'liq-bg-primary liq-px-4 liq-py-2 liq-text-center hover:liq-bg-[#1E65E7] hover:liq-bg-opacity-80':
               variant === 'button-primary',
-            'bg-primary-300 px-4 py-2 text-center text-black hover:bg-primary-200':
+            'liq-bg-primary-300 liq-px-4 liq-py-2 liq-text-center liq-text-black hover:liq-bg-primary-200':
               variant === 'button-primary-300',
-            'bg-neutral-50 px-4 py-2 text-center text-black hover:bg-opacity-80':
+            'liq-bg-neutral-50 liq-px-4 liq-py-2 liq-text-center liq-text-black hover:liq-bg-opacity-80':
               variant === 'button-neutral-50',
-            'bg-white/5 px-4 py-2 text-center text-neutral-50 hover:bg-white/10':
+            'liq-bg-white/5 liq-px-4 liq-py-2 liq-text-center liq-text-neutral-50 hover:liq-bg-white/10':
               variant === 'button-translucent'
           },
-          { 'flex items-center': isExternal && showExternalIcon },
-          { 'pointer-events-none opacity-50': disabled },
+          { 'liq-flex liq-items-center': isExternal && showExternalIcon },
+          { 'liq-pointer-events-none liq-opacity-50': disabled },
           className
         )}
       >
@@ -91,7 +98,7 @@ export const MxLink = forwardRef(
           <FontAwesomeIcon
             size="sm"
             icon={faArrowUpRightFromSquare}
-            className="ml-1"
+            className="liq-ml-1"
           />
         )}
       </Link>

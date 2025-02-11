@@ -36,7 +36,7 @@ export const TokenIcon = ({
           <img
             src={token.svgUrl}
             alt={assetTicker.split('-')[0]}
-            className="asset-icon sm p-0"
+            className="liq-asset-icon liq-sm liq-p-0"
           />
         </>
       ) : (
@@ -54,17 +54,17 @@ export const TokenIcon = ({
   return (
     <div
       className={mxClsx(
-        'flex-shrink-0 overflow-hidden rounded-full',
+        'liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full',
         {
-          'h-4 w-4': size === 'xs',
-          'h-5 w-5': size === '2xs',
-          'h-6 w-6': size === 'sm',
-          'h-7 w-7': size === '2sm',
-          'h-8 w-8': size === 'md',
-          'h-10 w-10': size === 'lg',
-          'h-12 w-12': size === 'xl',
-          'h-14 w-14': size === '2xl',
-          'h-16 w-16': size === '3xl'
+          'liq-h-4 liq-w-4': size === 'xs',
+          'liq-h-5 liq-w-5': size === '2xs',
+          'liq-h-6 liq-w-6': size === 'sm',
+          'liq-h-7 liq-w-7': size === '2sm',
+          'liq-h-8 liq-w-8': size === 'md',
+          'liq-h-10 liq-w-10': size === 'lg',
+          'liq-h-12 liq-w-12': size === 'xl',
+          'liq-h-14 liq-w-14': size === '2xl',
+          'liq-h-16 liq-w-16': size === '3xl'
         },
         className
       )}
@@ -74,15 +74,15 @@ export const TokenIcon = ({
           <div
             className={mxClsx(
               {
-                'h-4 w-4': size === 'xs',
-                'h-5 w-5': size === '2xs',
-                'h-6 w-6': size === 'sm',
-                'h-7 w-7': size === '2sm',
-                'h-8 w-8': size === 'md',
-                'h-10 w-10': size === 'lg',
-                'h-12 w-12': size === 'xl',
-                'h-14 w-14': size === '2xl',
-                'h-16 w-16': size === '3xl'
+                'liq-h-4 liq-w-4': size === 'xs',
+                'liq-h-5 liq-w-5': size === '2xs',
+                'liq-h-6 liq-w-6': size === 'sm',
+                'liq-h-7 liq-w-7': size === '2sm',
+                'liq-h-8 liq-w-8': size === 'md',
+                'liq-h-10 liq-w-10': size === 'lg',
+                'liq-h-12 liq-w-12': size === 'xl',
+                'liq-h-14 liq-w-14': size === '2xl',
+                'liq-h-16 liq-w-16': size === '3xl'
               },
               className
             )}
@@ -90,8 +90,11 @@ export const TokenIcon = ({
             {IconComponent}
           </div>
         ) : (
-          <div className="flex h-full w-full items-center justify-center rounded-full bg-black p-1">
-            <FontAwesomeIcon icon={faDiamond} className="text-neutral-500" />
+          <div className="liq-flex liq-h-full liq-w-full liq-items-center liq-justify-center liq-rounded-full liq-bg-black liq-p-1">
+            <FontAwesomeIcon
+              icon={faDiamond}
+              className="liq-text-neutral-500"
+            />
           </div>
         )}
       </>

@@ -48,7 +48,7 @@ export const PrecisedAmount = ({
             {prefix}
             {valueParts[0]}
             .0
-            <sub className={mxClsx(className, 'text-[60%]')}>
+            <sub className={mxClsx(className, 'liq-text-[60%]')}>
               {firstNonZeroIndex - 2}
             </sub>
             0{nonZeroDecimals}

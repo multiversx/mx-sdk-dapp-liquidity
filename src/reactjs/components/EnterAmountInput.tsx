@@ -25,9 +25,9 @@ export const EnterAmountInput = ({
 }) => {
   const restProps = {
     className: mxClsx(
-      `dapp-form-input-wrapper amount-input text-base lg:text-base`,
+      `dapp-form-input-wrapper amount-input liq-text-base lg:liq-text-base`,
       {
-        'disabled animate-pulse':
+        'liq-disabled liq-animate-pulse':
           (disabled && !omitDisableClass) || inputValue === ''
       },
       className
@@ -35,7 +35,7 @@ export const EnterAmountInput = ({
   };
 
   return (
-    <div className="flex w-full flex-col justify-between">
+    <div className="liq-flex liq-w-full liq-flex-col liq-justify-between">
       <AmountInput
         required
         name={inputName}
@@ -49,9 +49,9 @@ export const EnterAmountInput = ({
         handleChange={onInputChange ?? (() => null)}
         {...restProps}
       />
-      <div className="flex min-h-[2rem] items-end">
+      <div className="liq-flex liq-min-h-[2rem] liq-items-end">
         {amountError && (
-          <div className="text-danger text-xs">{amountError}</div>
+          <div className="liq-text-danger liq-text-xs">{amountError}</div>
         )}
       </div>
     </div>

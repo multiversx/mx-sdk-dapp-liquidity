@@ -11,7 +11,7 @@ export const TokenList = ({
   selectedToken?: TokenType;
 }) => {
   return (
-    <div className="token-list flex flex-col gap-1 ml-2">
+    <div className="token-list liq-flex liq-flex-col liq-gap-1 liq-ml-2">
       {tokens.map((token) => (
         <TokenItem
           key={token.address}

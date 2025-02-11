@@ -172,7 +172,7 @@ export const MxTooltip = ({
           ReactDOM.createPortal(
             <TooltipContent
               children={children}
-              contentClassName={mxClsx('text-center', contentClassName)}
+              contentClassName={mxClsx('liq-text-center', contentClassName)}
               popperAttributes={attributes.popper}
               popperStyles={styles.popper}
               setPopperEl={setPopperEl}

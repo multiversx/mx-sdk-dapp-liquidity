@@ -16,10 +16,10 @@ export const BridgeConnectButton = ({
   return (
     <CustomConnectButton className={className} disabled={disabled}>
       {account.isConnected ? null : (
-        <div className="flex items-center justify-center gap-1 text-neutral-100">
+        <div className="liq-flex liq-items-center liq-justify-center liq-gap-1 liq-text-neutral-100">
           {!account.isConnected && (
-            <div className="ml-2 flex items-center gap-1">
-              <span className="text-neutral-100">
+            <div className="liq-ml-2 liq-flex liq-items-center liq-gap-1">
+              <span className="liq-text-neutral-100">
                 {account.isConnecting ? 'Connecting...' : 'Connect'}
               </span>
             </div>
@@ -28,7 +28,7 @@ export const BridgeConnectButton = ({
             <img
               src={activeChain.svgUrl}
               alt={activeChain.chainName}
-              className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
+              className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
             />
           )}
           {activeChain?.chainName}

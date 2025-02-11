@@ -108,7 +108,7 @@ export const DisplayAmount = ({
       <MxTooltip
         placement={tooltipPlacement}
         buttonText={
-          <span {...rest} className={mxClsx('max-w-fit', className)}>
+          <span {...rest} className={mxClsx('liq-max-w-fit', className)}>
             {prefixWhenTooltip}
             {tooltipThreshold}
             {sufix}

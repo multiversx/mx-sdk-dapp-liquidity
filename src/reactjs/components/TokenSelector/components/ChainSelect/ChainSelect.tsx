@@ -59,7 +59,7 @@ export const ChainSelect = ({
   }, [chainOptions, selectedChainId]);
 
   return (
-    <div className={`styled-chain-select min-w-36`} data-testid="chainDropdown">
+    <div className="styled-chain-select min-w-36" data-testid="chainDropdown">
       <Select
         className="basic-single"
         classNamePrefix="styled-chain-select"

@@ -8,21 +8,21 @@ export const SelectedOption = ({ value }: { value?: TokenType }) => {
       <TokenIcon
         size="lg"
         token={value}
-        className="flex items-center justify-center relative"
+        className="liq-flex liq-items-center liq-justify-center liq-relative"
       />
 
-      <div className="flex-1 truncate text-left">
+      <div className="liq-flex-1 liq-truncate liq-text-left">
         {value && (
-          <div className="flex flex-col">
-            <div className="flex items-center">
+          <div className="liq-flex liq-flex-col">
+            <div className="liq-flex liq-items-center">
               <TokenSymbol
                 token={value}
-                className="font-semibold leading-none"
+                className="liq-font-semibold liq-leading-none"
               />
             </div>
           </div>
         )}
-        {!value && <div className="text-neutral-500">Select token</div>}
+        {!value && <div className="liq-text-neutral-500">Select token</div>}
       </div>
     </>
   );

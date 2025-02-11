@@ -37,7 +37,7 @@ export const BridgeHistory = ({
           <FontAwesomeIcon
             icon={faCircleCheck}
             size="lg"
-            className="flex items-center justify-center rounded-full text-green-400"
+            className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-green-400"
           />
         );
       case 'failed':
@@ -45,7 +45,7 @@ export const BridgeHistory = ({
           <FontAwesomeIcon
             icon={faCircleXmark}
             size="lg"
-            className="flex items-center justify-center rounded-full text-red-400"
+            className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-red-400"
           />
         );
       default:
@@ -53,7 +53,7 @@ export const BridgeHistory = ({
           <FontAwesomeIcon
             icon={faClock}
             size="lg"
-            className="flex items-center justify-center rounded-full text-yellow-400"
+            className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-yellow-400"
           />
         );
     }
@@ -108,19 +108,20 @@ export const BridgeHistory = ({
   }, [chains]);
 
   const className = mxClsx(
-    `h-[32rem] max-h-[32rem] text-base lg:text-base p-2`,
+    `liq-h-[32rem] liq-max-h-[32rem] liq-text-base lg:liq-text-base`,
     {
-      'disabled animate-pulse': isLoading || tokensLoading || isChainsLoading
+      'liq-disabled liq-animate-pulse':
+        isLoading || tokensLoading || isChainsLoading
     }
   );
 
   if (isLoading && !transactions) {
-    return <MxCard className={mxClsx('flex', className)} />;
+    return <MxCard className={mxClsx('liq-flex', className)} />;
   }
 
   if (isError && !transactions) {
     return (
-      <MxCard className={mxClsx('flex flex-col gap-1', className)}>
+      <MxCard className={mxClsx('liq-flex liq-flex-col liq-gap-1', className)}>
         Something went wrong. Please try again later.
       </MxCard>
     );
@@ -129,17 +130,17 @@ export const BridgeHistory = ({
   return (
     <MxCard
       className={mxClsx(
-        'flex flex-col gap-1 pt-12 lg:order-2 lg:max-w-[27.5rem] lg:pt-0',
+        'liq-flex liq-flex-col liq-gap-1 lg:liq-order-2 lg:liq-max-w-[27.5rem] liq-pt-0',
         className
       )}
     >
-      <div className={mxClsx('flex items-center justify-between p-2')}>
-        <div className="flex flex-1 items-center justify-center text-center text-lg">
+      <div className={'liq-flex liq-items-center liq-justify-between liq-py-2'}>
+        <div className="liq-flex liq-flex-1 liq-items-center liq-justify-center liq-text-center liq-text-lg">
           History
         </div>
         <MxButton
           btnSize="md"
-          className="border-none p-0"
+          className="liq-border-none !liq-p-0"
           variant="link-neutral-500"
           onClick={() => {
             navigate(-1);
@@ -149,26 +150,26 @@ export const BridgeHistory = ({
         </MxButton>
       </div>
 
-      <div className="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll">
+      <div className="scrollbar-thin liq-flex liq-flex-1 liq-flex-col liq-gap-2 liq-overflow-y-scroll">
         {transactions?.length === 0 && (
           <MxCard
             cardSize="lg"
             variant="transparent"
             className={
-              'align-center flex h-full flex-col justify-center gap-4 border-0 pb-8 pt-6 sm:pb-6 lg:p-4'
+              'liq-align-center liq-flex liq-h-full liq-flex-col liq-justify-center liq-gap-4 liq-border-0 !liq-pb-8 !liq-pt-6 !sm:liq-pb-6 !lg:liq-p-4'
             }
           >
-            <div className="align-center flex flex-col justify-center gap-8">
-              <div className="flex items-center justify-center">
+            <div className="liq-align-center liq-flex liq-flex-col liq-justify-center liq-gap-8">
+              <div className="liq-flex liq-items-center liq-justify-center">
                 <FontAwesomeIcon
                   icon={faClock}
                   size="6x"
-                  className="rounded-full bg-primary-400 text-[#2b617a]"
+                  className="liq-rounded-full liq-bg-primary-400 liq-text-[#2b617a]"
                 />
               </div>
-              <div className={mxClsx('flex flex-col items-center')}>
-                <div className="text-xl">No deposit yet</div>
-                <div className="text-neutral-400">
+              <div className={mxClsx('liq-flex liq-flex-col liq-items-center')}>
+                <div className="liq-text-xl">No deposit yet</div>
+                <div className="liq-text-neutral-400">
                   Your deposit history will appear here
                 </div>
               </div>
@@ -183,17 +184,16 @@ export const BridgeHistory = ({
                 key={`${transaction.txHash}-${index}`}
                 cardSize="lg"
                 variant="neutral-750"
-                className={mxClsx(
-                  'flex flex-col gap-4 outline outline-transparent focus-within:outline-neutral-700/75 hover:outline-neutral-700/55 hover:focus-within:outline-neutral-700/80',
-                  'pb-8 pt-6 hover:bg-neutral-700/50 sm:pb-6 lg:p-4 border border-neutral-750 bg-neutral-850'
-                )}
+                className={
+                  'liq-flex liq-flex-col liq-gap-4 !liq-outline liq-outline-transparent !p-4 liq-border liq-border-neutral-750 liq-bg-neutral-850 hover:!liq-bg-neutral-700 '
+                }
               >
-                <div className="align-center flex justify-between gap-1">
+                <div className="liq-align-center liq-flex liq-justify-between liq-gap-1">
                   <div
-                    className={mxClsx('flex items-center gap-1', {
-                      'text-yellow-200': transaction.status === 'pending',
-                      'text-green-200': transaction.status === 'success',
-                      'text-red-200': transaction.status === 'failed'
+                    className={mxClsx('liq-flex liq-items-center liq-gap-1', {
+                      'liq-text-yellow-200': transaction.status === 'pending',
+                      'liq-text-green-200': transaction.status === 'success',
+                      'liq-text-red-200': transaction.status === 'failed'
                     })}
                   >
                     {transaction.statusIcon}
@@ -209,7 +209,7 @@ export const BridgeHistory = ({
                           : tokensMap[transaction.tokenSource]?.svgUrl
                       }
                       alt=""
-                      className="h-[1.5rem] w-[1.5rem]"
+                      className="liq-h-[1.5rem] liq-w-[1.5rem]"
                     />
                     <span>
                       {formatAmount({
@@ -234,22 +234,23 @@ export const BridgeHistory = ({
                         ]?.svgUrl ?? ''
                       }
                       alt=""
-                      className="z-10 flex h-[1.5rem] w-[1.5rem] p-1"
+                      className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
                     />
                   </div>
-                  <div className="ml-auto mr-0 flex items-center gap-1">
+                  <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
                     <MxLink
                       to={`${bridgeURL}/status/${transaction.txHash}`}
                       target="_blank"
                       showExternalIcon={false}
+                      className="flex"
                     >
-                      View
+                      <div className="max-sm:liq-hidden">View</div>
+                      <img
+                        src={ArrowUpRight}
+                        alt=""
+                        className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
+                      />
                     </MxLink>
-                    <img
-                      src={ArrowUpRight}
-                      alt=""
-                      className="flex items-center justify-center rounded-full text-neutral-200"
-                    />
                   </div>
                 </div>
               </MxCard>

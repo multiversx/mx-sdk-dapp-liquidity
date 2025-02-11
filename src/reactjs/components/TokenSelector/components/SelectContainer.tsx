@@ -17,17 +17,17 @@ export const SelectContainer = ({
   return (
     <MxCard
       className={mxClsx(
-        'flex flex-col absolute left-0 top-0 order-1 mx-auto w-full gap-1 pt-12 lg:order-2 lg:max-w-[27.5rem] lg:pt-0 bg-neutral-850 z-50 p-2 pointer-events-auto',
+        'liq-flex liq-flex-col liq-absolute liq-left-0 liq-top-0 liq-order-1 liq-mx-auto liq-w-full liq-gap-1 liq-pt-12 lg:liq-order-2 lg:liq-max-w-[27.5rem] !lg:liq-pt-0 !liq-bg-neutral-850 !liq-z-50 !liq-p-2 !liq-pointer-events-auto',
         className
       )}
     >
-      <div className={mxClsx('flex items-center justify-between px-2 pt-2')}>
-        <div className="flex flex-1 items-center justify-center text-center text-lg">
+      <div className={'liq-flex liq-items-center liq-justify-between'}>
+        <div className="liq-flex liq-flex-1 liq-items-center liq-justify-center liq-text-center liq-text-lg">
           Select a token
         </div>
         <MxButton
           btnSize="md"
-          className="border-none p-0"
+          className="liq-border-none !liq-px-2"
           variant="link-neutral-500"
           onClick={onClose}
         >
@@ -35,7 +35,9 @@ export const SelectContainer = ({
         </MxButton>
       </div>
 
-      <div className="flex flex-1 flex-col gap-1">{children}</div>
+      <div className="!liq-flex !liq-flex-1 !liq-flex-col !liq-gap-1">
+        {children}
+      </div>
     </MxCard>
   );
 };

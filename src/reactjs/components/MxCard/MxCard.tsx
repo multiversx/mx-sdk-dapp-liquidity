@@ -34,32 +34,32 @@ export const MxCard = forwardRef(
         ref={ref}
         {...rest}
         className={mxClsx(
-          `rounded-2xl transition-colors duration-200`,
+          `liq-rounded-2xl liq-transition-colors liq-duration-200`,
           {
-            'bg-primary': variant === 'primary',
-            'bg-primary-300 bg-opacity-5': variant === 'primary-300'
+            'liq-bg-primary': variant === 'primary',
+            'liq-bg-primary-300 liq-bg-opacity-5': variant === 'primary-300'
           },
           {
-            'bg-neutral-650/50': variant === 'neutral-650',
-            'bg-neutral-750/50': variant === 'neutral-750',
-            'bg-neutral-800/50': variant === 'neutral-800',
-            'bg-neutral-850/50': variant === 'neutral-850',
-            'bg-neutral-900/50': variant === 'neutral-900'
+            'liq-bg-neutral-650/50': variant === 'neutral-650',
+            'liq-bg-neutral-750/50': variant === 'neutral-750',
+            'liq-bg-neutral-800/50': variant === 'neutral-800',
+            'liq-bg-neutral-850/50': variant === 'neutral-850',
+            'liq-bg-neutral-900/50': variant === 'neutral-900'
           },
           {
-            'border border-neutral-750 bg-transparent':
+            'liq-border liq-border-neutral-750 liq-bg-transparent':
               variant === 'transparent'
           },
           {
-            'bg-warning bg-opacity-5': variant === 'warning',
-            'bg-danger bg-opacity-5': variant === 'danger'
+            'liq-bg-warning liq-bg-opacity-5': variant === 'warning',
+            'liq-bg-danger liq-bg-opacity-5': variant === 'danger'
           },
           {
-            'p-1': cardSize === 'xs',
-            'px-4 py-1': cardSize === 'sm',
-            'p-4': cardSize === 'md',
-            'p-5 lg:p-6': cardSize === 'lg',
-            'p-5 md:p-10': cardSize === 'xl'
+            'liq-p-1': cardSize === 'xs',
+            'liq-px-4 liq-py-1': cardSize === 'sm',
+            'liq-p-4': cardSize === 'md',
+            'liq-p-5 lg:liq-p-6': cardSize === 'lg',
+            'liq-p-5 md:liq-p-10': cardSize === 'xl'
           },
           className
         )}

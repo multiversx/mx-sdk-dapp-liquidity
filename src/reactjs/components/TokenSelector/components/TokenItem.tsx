@@ -38,8 +38,8 @@ export const TokenItem = ({
   return (
     <div
       className={`token-item ${
-        selected ? 'selected' : ''
-      } flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-neutral-700 border border-neutral-750 bg-neutral-850`}
+        selected ? 'liq-selected' : ''
+      } liq-flex liq-cursor-pointer liq-items-center liq-justify-between liq-rounded-lg liq-p-2 hover:liq-bg-neutral-700 liq-border liq-border-neutral-750 liq-bg-neutral-850`}
       onClick={() => {
         if (tokenChain?.chainId && activeChain?.id !== tokenChain?.chainId) {
           switchChain({
@@ -50,25 +50,25 @@ export const TokenItem = ({
         onClick(token);
       }}
     >
-      <div className="mx-4 flex w-full items-center relative">
+      <div className="liq-mx-4 liq-flex liq-w-full liq-items-center liq-relative">
         <TokenIcon
           size="lg"
           token={token}
-          className="flex items-center justify-center"
+          className="liq-flex liq-items-center liq-justify-center"
         />
         {chainIcon && (
           <img
             src={chainIcon}
             alt={tokenChain?.chainName}
-            className="absolute left-4 -bottom-0.5 chain-icon sm w-6 h-6"
+            className="liq-absolute liq-left-4 liq--bottom-0.5 liq-chain-icon liq-sm liq-w-6 liq-h-6"
           />
         )}
-        <div className="ml-2">
-          <div className="text-sm font-bold">{token.symbol}</div>
-          <div className="text-xs text-gray-400">{token.name}</div>
+        <div className="liq-ml-2">
+          <div className="liq-text-sm liq-font-bold">{token.symbol}</div>
+          <div className="liq-text-xs liq-text-gray-400">{token.name}</div>
         </div>
-        <div className="ml-auto mr-0 flex justify-end">
-          <div className="text-sm font-bold">{formattedBalance}</div>
+        <div className="liq-ml-auto liq-mr-0 liq-flex liq-justify-end">
+          <div className="liq-text-sm liq-font-bold">{formattedBalance}</div>
         </div>
       </div>
     </div>

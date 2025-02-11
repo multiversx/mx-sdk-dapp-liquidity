@@ -13,10 +13,10 @@ export const SmallLoader = ({
   }
 
   return (
-    <div className="d-flex">
+    <div className="liq-d-flex">
       <FontAwesomeIcon
         icon={faSpinner}
-        className={`fa-spin fast-spin ${color ? color : 'text-primary'}`}
+        className={`liq-fa-spin liq-fast-spin ${color ? color : 'liq-text-primary'}`}
       />
     </div>
   );

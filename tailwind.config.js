@@ -30,5 +30,6 @@ export default {
       }
     }
   },
-  plugins: []
+  plugins: [],
+  prefix: 'liq-'
 };

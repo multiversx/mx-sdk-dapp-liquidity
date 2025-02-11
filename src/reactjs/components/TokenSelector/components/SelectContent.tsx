@@ -63,11 +63,11 @@ export const SelectContent = ({
   }, [selectedChainId, tokens]);
 
   return (
-    <div className="relative flex max-h-[4776px] max-w-full flex-col rounded-none p-0 md:max-h-[80vh] md:w-[28rem] md:rounded-2xl min-h-[476px]">
-      <div className="flex flex-col gap-3 rounded-t-2xl p-2">
-        <div className="flex gap-2">
+    <div className="liq-relative liq-flex liq-max-w-full liq-flex-col liq-rounded-none liq-p-0 liq-max-h-[50vh]">
+      <div className="liq-flex liq-flex-col liq-gap-3 liq-rounded-t-2xl liq-p-2">
+        <div className="liq-flex liq-gap-2">
           <MxSearch
-            inputClassName="bg-neutral-750 border border-neutral-750"
+            inputClassName="!liq-bg-neutral-750 liq-border liq-border-neutral-750"
             placeholder="Search token"
             onChange={handleSearch}
           />
@@ -82,8 +82,8 @@ export const SelectContent = ({
         </div>
       </div>
 
-      <div className="scrollbar-thin flex flex-col gap-2 overflow-y-scroll border-t border-neutral-750 pb-3">
-        <div className="flex text-left text-neutral-300 mt-4 ml-2">
+      <div className="scrollbar-thin liq-flex liq-flex-col liq-gap-2 liq-overflow-y-scroll liq-border-t liq-border-neutral-750 liq-pb-3">
+        <div className="liq-flex liq-text-left liq-text-neutral-300 liq-mt-4 liq-ml-2">
           {filteredTokensText}
         </div>
         <TokenList

@@ -14,7 +14,7 @@ export const EnterAmountCard = ({
       cardSize="lg"
       variant="neutral-750"
       className={mxClsx(
-        'flex flex-col gap-4 outline outline-transparent',
+        'liq-flex liq-flex-col liq-gap-4 liq-outline liq-outline-transparent',
         className
       )}
     >
