@@ -34,6 +34,8 @@ export const useGetHistoryQuery = () => {
     retry,
     enabled: Boolean(address),
     refetchOnWindowFocus: false,
+    refetchIntervalInBackground: true,
+    refetchInterval: 10000,
     gcTime: 0
   });
 };

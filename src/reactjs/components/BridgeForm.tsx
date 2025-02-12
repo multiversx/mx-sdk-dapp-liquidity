@@ -255,6 +255,8 @@ export const BridgeForm = ({
       handleOnChangeFirstAmount('');
       handleOnChangeSecondAmount('');
 
+      // Hack: this is needed to be called twice to invalidate the history query, otherwise the history won't update
+      invalidateHistoryQuery();
       invalidateHistoryQuery();
       onSuccessfullySentTransaction?.(txHashes);
     },
