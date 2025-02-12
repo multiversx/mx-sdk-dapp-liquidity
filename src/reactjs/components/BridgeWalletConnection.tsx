@@ -23,8 +23,9 @@ export const BridgeWalletConnection = ({
   const account = useAccount();
   const { disconnect } = useDisconnect();
 
-  const handleDisconnect = async () => {
+  const handleDisconnect = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
+      e.preventDefault();
       await disconnect();
     } catch (error) {
       console.error('Failed to disconnect:', error);
