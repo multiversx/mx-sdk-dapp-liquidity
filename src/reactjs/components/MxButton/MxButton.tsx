@@ -40,7 +40,7 @@ export const MxButton = ({
   className = '',
   btnSize = 'md',
   type = 'button',
-  variant = 'primary',
+  variant = 'transparent',
   ...rest
 }: MxButtonType) => {
   const disabledText = isLoading

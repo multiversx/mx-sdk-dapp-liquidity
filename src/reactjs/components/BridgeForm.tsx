@@ -199,6 +199,7 @@ export const BridgeForm = ({
 
   const fetchRate = useCallback(async () => {
     if (
+      !account.address ||
       !firstToken ||
       !secondToken ||
       !firstAmount ||
@@ -553,7 +554,7 @@ export const BridgeForm = ({
               inputName="firstAmount"
               inputValue={firstAmount}
               amountError={
-                account.address && firstAmount !== ''
+                firstAmount !== ''
                   ? rateValidationError ?? firstAmountError
                   : undefined
               }
@@ -597,7 +598,7 @@ export const BridgeForm = ({
               inputName="secondAmount"
               inputValue={secondAmount}
               amountError={
-                account.address && secondAmount !== ''
+                secondAmount !== ''
                   ? fromChainError ?? secondAmountError
                   : undefined
               }
@@ -636,7 +637,7 @@ export const BridgeForm = ({
             <MxButton
               type="submit"
               variant="primary"
-              className="liq-w-full liq-bg-neutral-850/50 liq-py-3 liq-font-medium liq-text-primary-200"
+              className="liq-w-full disabled:liq-bg-neutral-850/50 liq-py-3 liq-font-medium liq-text-primary-200"
               disabled={
                 !hasAmounts ||
                 isPendingRate ||
