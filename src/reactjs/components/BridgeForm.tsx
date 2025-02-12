@@ -139,9 +139,9 @@ export const BridgeForm = ({
     return setSecondAmount(rate?.amountOut ?? '');
   }, [rate]);
 
-  const fee = useMemo(() => {
-    return rate?.fee ?? '';
-  }, [rate]);
+  // const fee = useMemo(() => {
+  //   return rate?.fee ?? '';
+  // }, [rate]);
 
   const fromOptions = useMemo(
     () =>
@@ -619,11 +619,11 @@ export const BridgeForm = ({
             />
           </div>
         </EnterAmountCard>
-        {fee && (
-          <div className="liq-my-2 liq-ml-2 liq-flex liq-justify-start liq-rounded-xl liq-border liq-border-neutral-700 liq-px-4 liq-py-2 liq-text-sm liq-text-neutral-600">
-            {fee && `Fee: ${fee}`}
-          </div>
-        )}
+        {/*{fee && (*/}
+        {/*  <div className="liq-my-2 liq-ml-2 liq-flex liq-justify-start liq-rounded-xl liq-border liq-border-neutral-700 liq-px-4 liq-py-2 liq-text-sm liq-text-neutral-600">*/}
+        {/*    {fee && `Fee: ${fee}`}*/}
+        {/*  </div>*/}
+        {/*)}*/}
         <div className="liq-flex liq-items-center liq-justify-center">
           {!isAuthenticated && (
             <BridgeConnectButton
