@@ -13,8 +13,8 @@ export const SwitchChainButton = ({
   const { open } = useAppKit();
   const { isConnected } = useAppKitAccount();
 
-  const baseStyle = `font-bold text-white rounded-lg ${
-    disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+  const baseStyle = `liq-font-bold liq-text-white liq-rounded-lg ${
+    disabled ? 'liq-cursor-not-allowed' : 'liq-cursor-pointer'
   }`;
 
   return (
