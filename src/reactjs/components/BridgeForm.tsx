@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { useSwitchChain } from 'wagmi';
 import { BridgeWalletConnection } from './BridgeWalletConnection';
 import { BridgeConnectButton } from './Connect/BridgeConnectButton';
+import { MvxConnectButton } from './Connect/MvxConnectButton';
 import { EnterAmountCard } from './EnterAmountCard';
 import { EnterAmountInput } from './EnterAmountInput';
 import { MvxAccountDisplay } from './MvxAccountDisplay';
@@ -51,6 +52,7 @@ interface BridgeFormProps {
   TransactionToastComponent: typeof TransactionToast;
   onSuccessfullySentTransaction?: (txHashes?: string[]) => void;
   onFailedSentTransaction?: (message?: string) => void;
+  onMvxConnect: () => void;
 }
 
 export const BridgeForm = ({
@@ -65,7 +67,8 @@ export const BridgeForm = ({
   TrimAddressComponent,
   TransactionToastComponent,
   onSuccessfullySentTransaction,
-  onFailedSentTransaction
+  onFailedSentTransaction,
+  onMvxConnect
 }: BridgeFormProps) => {
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
@@ -133,8 +136,7 @@ export const BridgeForm = ({
   const [secondAmount, setSecondAmount] = useState('');
 
   const bridgeAddress = account.address;
-  const isAuthenticated =
-    account.status === 'connected' && Boolean(bridgeAddress);
+  const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
 
   // const fee = useMemo(() => {
   //   return rate?.fee ?? '';
@@ -627,14 +629,22 @@ export const BridgeForm = ({
         {/*  </div>*/}
         {/*)}*/}
         <div className="liq-flex liq-items-center liq-justify-center">
-          {!isAuthenticated && (
+          {!mvxAddress && (
+            <MvxConnectButton
+              mvxAccountAddress={mvxAddress}
+              chain={mvxChain}
+              onClick={onMvxConnect}
+            />
+          )}
+          {mvxAddress && !isAuthenticated && (
             <BridgeConnectButton
               className="focus-primary liq-w-full liq-rounded-xl liq-bg-neutral-850/50 liq-px-8 liq-py-3 liq-font-semibold liq-text-primary-200 liq-transition-colors liq-duration-200 hover:enabled:liq-bg-primary-700/80 disabled:liq-opacity-50"
               disabled={isPendingRate}
               activeChain={selectedChainOption}
             />
           )}
-          {isAuthenticated && (
+          {mvxAddress && isAuthenticated && (
+            // Deposit button
             <MxButton
               type="submit"
               variant="primary"
