@@ -600,7 +600,7 @@ export const BridgeForm = ({
           <div className="liq-flex liq-justify-between liq-gap-1">
             <EnterAmountInput
               inputName="secondAmount"
-              inputValue={secondAmount}
+              inputValue={formik.values.secondAmount ?? ''}
               amountError={
                 secondAmount !== ''
                   ? fromChainError ?? secondAmountError
