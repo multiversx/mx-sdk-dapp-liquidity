@@ -19,7 +19,6 @@ import {
   type CreateConnectorFn,
   useWaitForTransactionReceipt
 } from 'wagmi';
-import { berachainMainnet } from '../../helpers/chains/berachainMainnet';
 import { InMemoryStore } from '../../store/inMemoryStore';
 import { MVX_CHAIN_IDS } from '../constants/general';
 
@@ -66,17 +65,13 @@ function init(options: InitOptions) {
     ...options.adapterConfig,
     ssr: options.adapterConfig.ssr ?? true,
     projectId: options.appKitOptions.projectId,
-    networks: acceptedNetworks.concat([berachainMainnet])
+    networks: acceptedNetworks
   });
 
   const appKit = createAppKit({
     ...options.appKitOptions,
     adapters: [wagmiAdapter],
-    networks: [
-      acceptedNetworks[0],
-      berachainMainnet,
-      ...acceptedNetworks.slice(1)
-    ]
+    networks: [acceptedNetworks[0], ...acceptedNetworks.slice(1)]
   });
 
   return {
