@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
 import { AxiosError } from 'axios';
+import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -135,10 +136,6 @@ export const BridgeForm = ({
   const isAuthenticated =
     account.status === 'connected' && Boolean(bridgeAddress);
 
-  useEffect(() => {
-    return setSecondAmount(rate?.amountOut ?? '');
-  }, [rate]);
-
   // const fee = useMemo(() => {
   //   return rate?.fee ?? '';
   // }, [rate]);
@@ -197,43 +194,38 @@ export const BridgeForm = ({
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
-  const fetchRate = useCallback(async () => {
-    if (
-      !account.address ||
-      !firstToken ||
-      !secondToken ||
-      !firstAmount ||
-      firstAmount === '0' ||
-      !selectedChainOption
-    ) {
-      return;
-    }
-
-    getRate({
-      nativeAuthToken: nativeAuthToken ?? '',
-      body: {
-        tokenIn: firstToken.token.address,
-        amountIn: firstAmount,
-        fromChainId: chainId.toString(),
-        tokenOut: secondToken.token.address,
-        toChainId: mvxChainId
+  const fetchRateDebounced = useCallback(
+    debounce(async (amount: string) => {
+      if (
+        !amount ||
+        !account.address ||
+        !firstToken ||
+        !secondToken ||
+        !selectedChainOption
+      ) {
+        return;
       }
-    });
-  }, [
-    firstToken,
-    secondToken,
-    firstAmount,
-    selectedChainOption,
-    getRate,
-    nativeAuthToken
-  ]);
+
+      getRate({
+        nativeAuthToken: nativeAuthToken ?? '',
+        body: {
+          tokenIn: firstToken?.token.address,
+          amountIn: amount,
+          fromChainId: chainId.toString(),
+          tokenOut: secondToken.token.address,
+          toChainId: mvxChainId
+        }
+      });
+    }, 500),
+    [account.address, firstToken, secondToken, selectedChainOption]
+  );
 
   const handleOnChangeFirstAmount = useCallback((amount: string) => {
     setFirstAmount(() => amount);
   }, []);
 
   const handleOnChangeSecondAmount = useCallback((amount: string) => {
-    setSecondAmount(amount);
+    setSecondAmount(() => amount);
   }, []);
 
   const handleOnFirstMaxBtnChange = useCallback(() => {
@@ -477,10 +469,12 @@ export const BridgeForm = ({
   );
 
   const {
+    formik,
     firstAmountError,
     secondAmountError,
     fromChainError,
     handleBlur,
+    handleChange,
     handleSubmit,
     resetSwapForm
   } = useBridgeFormik({
@@ -503,8 +497,15 @@ export const BridgeForm = ({
   );
 
   useEffect(() => {
-    fetchRate();
-  }, [fetchRate]);
+    if (!firstAmount) {
+      setSecondAmount('');
+    }
+    fetchRateDebounced(firstAmount);
+  }, [firstAmount, fetchRateDebounced]);
+
+  useEffect(() => {
+    return setSecondAmount(rate?.amountOut ?? '');
+  }, [rate]);
 
   useEffect(() => {
     updateUrlParams({ firstTokenId: '', secondTokenId: '' });
@@ -552,7 +553,7 @@ export const BridgeForm = ({
           <div className="liq-flex liq-justify-between liq-gap-1">
             <EnterAmountInput
               inputName="firstAmount"
-              inputValue={firstAmount}
+              inputValue={formik.values.firstAmount ?? ''}
               amountError={
                 firstAmount !== ''
                   ? rateValidationError ?? firstAmountError
@@ -560,6 +561,7 @@ export const BridgeForm = ({
               }
               disabled={isPendingRate}
               onInputDebounceChange={handleOnChangeFirstAmount}
+              onInputChange={handleChange}
               onBlur={handleBlur}
             />
             <TokenSelector
@@ -605,7 +607,6 @@ export const BridgeForm = ({
               disabled={true}
               omitDisableClass={true}
               onInputDebounceChange={handleOnChangeSecondAmount}
-              onBlur={handleBlur}
             />
             <TokenSelector
               name={'secondToken'}

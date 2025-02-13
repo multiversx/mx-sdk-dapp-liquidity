@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { isString } from 'lodash';
+import isString from 'lodash/isString';
 import { HTMLProps } from 'react';
 import type { Placement } from 'react-joyride';
 import { AnimateNumber } from './components/AnimateNumber/AnimateNumber';
@@ -18,7 +18,7 @@ export interface DisplayAmountProps extends HTMLProps<HTMLSpanElement> {
   digits?: number;
   decimals?: number;
   className?: string;
-  amount: string | number;
+  amount: string;
   shouldAnimate?: boolean;
   shouldTruncate?: boolean;
   shouldBePrecised?: boolean;
