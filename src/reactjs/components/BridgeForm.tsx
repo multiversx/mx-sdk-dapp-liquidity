@@ -53,6 +53,7 @@ interface BridgeFormProps {
   onSuccessfullySentTransaction?: (txHashes?: string[]) => void;
   onFailedSentTransaction?: (message?: string) => void;
   onMvxConnect: () => void;
+  onMvxDisconnect?: () => void;
 }
 
 export const BridgeForm = ({
@@ -68,7 +69,8 @@ export const BridgeForm = ({
   TransactionToastComponent,
   onSuccessfullySentTransaction,
   onFailedSentTransaction,
-  onMvxConnect
+  onMvxConnect,
+  onMvxDisconnect
 }: BridgeFormProps) => {
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
@@ -597,6 +599,7 @@ export const BridgeForm = ({
             accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}
             TrimAddressComponent={TrimAddressComponent}
             showTag={true}
+            onDisconnect={onMvxDisconnect}
           />
           <div className="liq-flex liq-justify-between liq-gap-1">
             <EnterAmountInput
