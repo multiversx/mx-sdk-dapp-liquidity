@@ -43,7 +43,7 @@ export const TokenSelector = ({
   const [show, setShow] = useState(false);
 
   const { data, isLoading: areChainsLoading } = useGetChainsQuery();
-  const { tokenChain, chainIcon } = useResolveTokenChain({
+  const { chainIcon } = useResolveTokenChain({
     token: selectedOption
   });
 
