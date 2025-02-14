@@ -24,15 +24,15 @@ export const MvxConnectButton = ({
   return (
     <MxButton
       type="button"
-      variant="primary"
+      variant="neutral-850"
       className={mxClsx(
-        'liq-w-full disabled:liq-bg-neutral-850/50 liq-py-3 liq-font-medium liq-text-primary-200',
+        'liq-w-full liq-py-3 hover:enabled:liq-bg-primary hover:enabled:!liq-text-primary-200',
         className
       )}
       disabled={disabled}
       onClick={onClick}
     >
-      <div className="liq-flex liq-justify-center liq-gap-2 liq-text-neutral-100">
+      <div className="liq-flex liq-justify-center liq-gap-2">
         <div>Connect on</div>
         <img
           src={chain?.svgUrl ?? ''}

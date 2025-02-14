@@ -15,7 +15,7 @@ export const CustomConnectButton = ({
   const { isConnected, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const baseStyle = 'liq-font-bold liq-text-white liq-rounded-lg';
+  const baseStyle = 'liq-font-bold liq-text-inherit liq-rounded-lg';
 
   if (isConnected) {
     return (

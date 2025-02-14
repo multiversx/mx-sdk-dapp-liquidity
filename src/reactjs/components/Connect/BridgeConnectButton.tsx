@@ -16,10 +16,10 @@ export const BridgeConnectButton = ({
   return (
     <CustomConnectButton className={className} disabled={disabled}>
       {account.isConnected ? null : (
-        <div className="liq-flex liq-items-center liq-justify-center liq-gap-1 liq-text-neutral-100">
+        <div className="liq-flex liq-items-center liq-justify-center liq-gap-1">
           {!account.isConnected && (
             <div className="liq-ml-2 liq-flex liq-items-center liq-gap-1">
-              <span className="liq-text-neutral-100">
+              <span className="liq-text-primary-200">
                 {account.isConnecting ? 'Connecting...' : 'Connect'}
               </span>
             </div>

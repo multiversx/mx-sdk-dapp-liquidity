@@ -535,6 +535,7 @@ export const BridgeForm = ({
         ref={ref}
         noValidate
         className="liq-flex liq-flex-col liq-gap-1 liq-relative"
+        autoComplete="off"
         onSubmit={handleSubmit}
       >
         <EnterAmountCard
@@ -638,7 +639,7 @@ export const BridgeForm = ({
           )}
           {mvxAddress && !isAuthenticated && (
             <BridgeConnectButton
-              className="focus-primary liq-w-full liq-rounded-xl liq-bg-neutral-850/50 liq-px-8 liq-py-3 liq-font-semibold liq-text-primary-200 liq-transition-colors liq-duration-200 hover:enabled:liq-bg-primary-700/80 disabled:liq-opacity-50"
+              className="liq-w-full liq-rounded-xl liq-bg-neutral-850/50 liq-px-8 liq-py-3 liq-font-semibold liq-text-primary-200 liq-transition-colors liq-duration-200 hover:enabled:liq-bg-primary-700/80 disabled:liq-opacity-50"
               disabled={isPendingRate}
               activeChain={selectedChainOption}
             />
@@ -647,8 +648,8 @@ export const BridgeForm = ({
             // Deposit button
             <MxButton
               type="submit"
-              variant="primary"
-              className="liq-w-full disabled:liq-bg-neutral-850/50 liq-py-3 liq-font-medium liq-text-primary-200"
+              variant="neutral-850"
+              className="liq-w-full disabled:liq-bg-neutral-850/50 liq-py-3 hover:enabled:liq-bg-primary !liq-text-primary-200"
               disabled={
                 !hasAmounts ||
                 isPendingRate ||
@@ -659,7 +660,7 @@ export const BridgeForm = ({
               }
             >
               {hasAmounts && !pendingSigning && (
-                <div className="liq-flex liq-justify-center liq-gap-2 liq-text-neutral-100">
+                <div className="liq-flex liq-justify-center liq-gap-2">
                   <div>Deposit on </div>
                   <img
                     src={mvxChain?.svgUrl ?? ''}
@@ -674,7 +675,7 @@ export const BridgeForm = ({
               )}
 
               {pendingSigning && (
-                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2 liq-text-neutral-100">
+                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
                   <FontAwesomeIcon
                     icon={faSpinner}
                     spin
