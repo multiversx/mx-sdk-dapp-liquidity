@@ -121,7 +121,7 @@ export const TokenSelector = ({
                 'disabled:!liq-opacity-70': disabled && !omitDisableClass
               },
               {
-                '!liq-cursor-not-allowed': disabled && !omitDisableClass
+                '!liq-cursor-not-allowed': disabled
               },
               className
             )}

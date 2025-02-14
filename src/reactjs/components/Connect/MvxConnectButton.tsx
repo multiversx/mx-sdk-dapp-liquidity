@@ -26,7 +26,7 @@ export const MvxConnectButton = ({
       type="button"
       variant="neutral-850"
       className={mxClsx(
-        'liq-w-full liq-py-3 hover:enabled:liq-bg-primary hover:enabled:!liq-text-primary-200',
+        'liq-w-full liq-py-3 hover:enabled:liq-bg-primary !liq-text-primary-200',
         className
       )}
       disabled={disabled}
