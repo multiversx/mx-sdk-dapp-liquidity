@@ -27,7 +27,7 @@ export const ConnectButton = ({ connector }: { connector: Connector }) => {
       <div className="liq-flex-shrink-0">
         <img
           src={connector.icon}
-          alt={''}
+          alt=""
           className="sdk-dapp-liquidity-wallet-connect-button-icon"
         />
       </div>

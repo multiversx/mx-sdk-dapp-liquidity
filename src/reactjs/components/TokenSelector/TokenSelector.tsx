@@ -139,7 +139,7 @@ export const TokenSelector = ({
             {chainIcon && (
               <img
                 src={chainIcon}
-                alt={tokenChain?.chainName}
+                alt=""
                 className="liq-absolute liq-left-5 liq-bottom-0.5 liq-chain-icon liq-sm liq-w-6 liq-h-6"
               />
             )}

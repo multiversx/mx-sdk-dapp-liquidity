@@ -35,7 +35,7 @@ export const TokenIcon = ({
         <>
           <img
             src={token.svgUrl}
-            alt={assetTicker.split('-')[0]}
+            alt=""
             className="liq-asset-icon liq-sm liq-p-0"
           />
         </>

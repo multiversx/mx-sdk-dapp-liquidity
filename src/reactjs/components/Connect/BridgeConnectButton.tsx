@@ -27,7 +27,7 @@ export const BridgeConnectButton = ({
           {activeChain && (
             <img
               src={activeChain.svgUrl}
-              alt={activeChain.chainName}
+              alt=""
               className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
             />
           )}

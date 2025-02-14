@@ -595,6 +595,7 @@ export const BridgeForm = ({
         >
           <MvxAccountDisplay
             accountAddress={mvxAddress}
+            chainIcon={mvxChain?.svgUrl ?? ''}
             username={username}
             accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}
             TrimAddressComponent={TrimAddressComponent}

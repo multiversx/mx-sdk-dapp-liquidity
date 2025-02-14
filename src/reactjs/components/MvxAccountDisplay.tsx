@@ -6,6 +6,7 @@ import { MxLink } from './MxLink';
 
 export const MvxAccountDisplay = ({
   accountExplorerUrl,
+  chainIcon,
   accountAddress,
   username,
   showTag,
@@ -13,6 +14,7 @@ export const MvxAccountDisplay = ({
   onDisconnect
 }: {
   accountExplorerUrl: string;
+  chainIcon: string;
   accountAddress?: string;
   username?: string;
   showTag?: boolean;
@@ -31,11 +33,7 @@ export const MvxAccountDisplay = ({
   return (
     <div className="liq-flex liq-gap-2">
       To
-      <img
-        src="https://cdn.prod.website-files.com/6597cc7be68d63ec0c8ce338/659fac9b8d96a7bdeced582c_X-Favicon-256.png"
-        alt="MultiversX"
-        className="liq-w-6"
-      />
+      <img src={chainIcon} alt="" className="liq-w-6" />
       {accountAddress && (
         <div className="liq-flex liq-items-center liq-justify-between liq-gap-2">
           <div className="liq-flex liq-max-w-[10rem] liq-items-center liq-gap-1">
