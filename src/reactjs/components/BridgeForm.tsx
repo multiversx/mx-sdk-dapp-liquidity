@@ -240,6 +240,7 @@ export const BridgeForm = ({
       digits: 4
     });
 
+    formik.setFieldValue('firstAmount', formattedBalance);
     handleOnChangeFirstAmount(formattedBalance);
   }, [
     firstToken?.token?.balance,
