@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { useTestHasEnoughFunds } from './useTestHasEnoughFunds';
-import { useTestIsConnected } from './useTestIsConnected.ts';
+import { useTestIsConnected } from './useTestIsConnected';
 
 export const useAmountSchema = () => {
   const testHasEnoughFunds = useTestHasEnoughFunds();

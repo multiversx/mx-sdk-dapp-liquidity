@@ -23,6 +23,16 @@ export const EnterAmountInput = ({
   onInputDebounceChange?: (amount: string) => void;
   onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const amount = value.replace(/,/g, '');
+    onInputChange?.({
+      ...event,
+      target: { name: inputName, value: amount } as EventTarget &
+        HTMLInputElement
+    });
+  };
+
   return (
     <div className="liq-flex liq-w-full liq-flex-col liq-justify-between">
       <div className="liq-flex liq-text-base liq-max-w-none liq-w-full liq-bg-transparent liq-relative">
@@ -41,7 +51,7 @@ export const EnterAmountInput = ({
             },
             className
           )}
-          onChange={onInputChange}
+          onChange={handleAmountChange}
           onValueChange={async ({ value }) => {
             onInputDebounceChange?.(value);
           }}
