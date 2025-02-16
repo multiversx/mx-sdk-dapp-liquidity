@@ -33,6 +33,7 @@ export const EnterAmountInput = ({
           allowLeadingZeros={true}
           thousandSeparator=","
           allowNegative={false}
+          disabled={disabled}
           className={mxClsx(
             'liq-text-3xl liq-leading-9 liq-min-h-12 liq-py-0 liq-w-full liq-h-full liq-border-none liq-font-medium liq-px-0 liq-outline-0 liq-bg-transparent',
             {
@@ -47,11 +48,11 @@ export const EnterAmountInput = ({
           onBlur={onBlur}
         />
       </div>
-      <div className="liq-flex liq-min-h-[2rem] liq-items-end">
-        {amountError && (
+      {amountError && (
+        <div className="liq-flex liq-min-h-[2rem] liq-items-end">
           <div className="liq-text-danger liq-text-xs">{amountError}</div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -564,7 +564,7 @@ export const BridgeForm = ({
                   ? rateValidationError ?? firstAmountError
                   : undefined
               }
-              disabled={isPendingRate}
+              disabled={false}
               onInputDebounceChange={handleOnChangeFirstAmount}
               onInputChange={handleChange}
               onBlur={handleBlur}
