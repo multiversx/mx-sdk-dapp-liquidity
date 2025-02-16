@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChainSelect } from './ChainSelect/ChainSelect';
 import { TokenList } from './TokenList';
 import { ChainDTO } from '../../../../dto/Chain.dto';
@@ -21,6 +21,7 @@ export const SelectContent = ({
   const [filteredTokens, setFilteredTokens] = useState(tokens);
   const [selectedChainId, setSelectedChainId] = useState('0');
   const [selected, setSelected] = useState(selectedToken);
+  const searchPatternRef = useRef<string>('');
 
   const filteredTokensText = useMemo(() => {
     const selectedChain = chains.find(
@@ -45,21 +46,26 @@ export const SelectContent = ({
   }, [selectedToken, tokens]);
 
   const handleSearch = (pattern: string) => {
-    const filtered = tokens.filter((token) =>
-      token.symbol.toLowerCase().includes(pattern.toLowerCase())
+    searchPatternRef.current = pattern;
+
+    if (selectedChainId === '0') {
+      const filtered = tokens.filter((token) =>
+        token.symbol.toLowerCase().includes(pattern.toLowerCase())
+      );
+      setFilteredTokens(filtered);
+      return;
+    }
+
+    const filtered = tokens.filter(
+      (token) =>
+        token.symbol.toLowerCase().includes(pattern.toLowerCase()) &&
+        token.chainId.toString() === selectedChainId.toString()
     );
     setFilteredTokens(filtered);
   };
 
   useEffect(() => {
-    if (selectedChainId === '0') {
-      setFilteredTokens(tokens);
-    } else {
-      const filtered = tokens.filter(
-        (token) => token.chainId.toString() === selectedChainId.toString()
-      );
-      setFilteredTokens(filtered);
-    }
+    handleSearch(searchPatternRef.current);
   }, [selectedChainId, tokens]);
 
   return (
