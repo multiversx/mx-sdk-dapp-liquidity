@@ -1,5 +1,4 @@
-import { faGlobe } from '@fortawesome/free-solid-svg-icons/faGlobe';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AllNetworks from '../../../../../assets/all-networks.svg';
 
 export interface ChainOptionLabelType {
   isDisabled?: boolean;
@@ -36,8 +35,9 @@ export const ChainOptionLabel = ({
                 className="liq-h-full liq-w-full"
               />
             ) : (
-              <FontAwesomeIcon
-                icon={faGlobe}
+              <img
+                src={AllNetworks}
+                alt={''}
                 className="liq-h-full liq-w-full"
               />
             )}
