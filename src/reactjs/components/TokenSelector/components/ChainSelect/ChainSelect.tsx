@@ -28,7 +28,7 @@ export const ChainSelect = ({
 }) => {
   const chainOptions = useMemo(() => {
     const options: PartialChainOptionType[] = chains.map((chain) => ({
-      label: chain.chainName,
+      label: chain.networkName,
       value: chain.chainId.toString(),
       chain: {
         id: chain.chainId.toString(),

@@ -32,7 +32,7 @@ export const SelectContent = ({
       return `Tokens on all networks (${tokens.length})`;
     }
 
-    return `Tokens on ${selectedChain.chainName} (${filteredTokens.length})`;
+    return `Tokens on ${selectedChain.networkName} (${filteredTokens.length})`;
   }, [chains, filteredTokens.length, selectedChainId, tokens.length]);
 
   const handleSelect = (token: TokenType) => {
