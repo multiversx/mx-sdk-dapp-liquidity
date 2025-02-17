@@ -74,12 +74,12 @@ export const MvxAccountDisplay = ({
       {!accountAddress && (
         <button
           type="button"
-          className="liq-rounded-xl liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 liq-text-primary-200 hover:enabled:liq-bg-neutral-850 liq-px-2 liq-py-1"
+          className="liq-rounded-lg liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 liq-text-primary-200 hover:enabled:liq-bg-primary liq-px-2"
           onClick={handleConnect}
         >
           <div className="liq-flex liq-justify-center liq-gap-2">
             <div>Connect </div>
-            <img src={chainIcon} alt="" className="liq-w-6" />
+            <img src={chainIcon} alt="" className="liq-w-4" />
             <div>MultiversX</div>
           </div>
         </button>

@@ -551,7 +551,7 @@ export const BridgeForm = ({
             }
           )}
         >
-          <div className="liq-flex liq-items-center">
+          <div className="liq-flex liq-items-center liq-gap-2">
             From
             <BridgeWalletConnection
               disabled={isPendingRate}
