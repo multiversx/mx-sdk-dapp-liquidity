@@ -77,7 +77,7 @@ export const BridgeWalletConnection = ({
         >
           <div className="liq-flex liq-items-center liq-text-neutral-100">
             <div className="liq-flex liq-justify-center liq-gap-2">
-              <div>Connect </div>
+              <div> {account.isConnecting ? 'Connecting...' : 'Connect'} </div>
               <img src={activeChain?.svgUrl} alt="" className="liq-w-4" />
               <div>{activeChain?.chainName}</div>
             </div>
