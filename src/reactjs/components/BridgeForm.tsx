@@ -607,6 +607,7 @@ export const BridgeForm = ({
               TrimAddressComponent={TrimAddressComponent}
               showTag={true}
               onDisconnect={onMvxDisconnect}
+              onConnect={onMvxConnect}
             />
           </div>
           <div className="liq-flex liq-justify-between liq-gap-1">

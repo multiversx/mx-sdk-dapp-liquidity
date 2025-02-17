@@ -33,7 +33,7 @@ export const MvxConnectButton = ({
       onClick={onClick}
     >
       <div className="liq-flex liq-justify-center liq-gap-2">
-        <div>Connect on</div>
+        <div>Connect </div>
         <img
           src={chain?.svgUrl ?? ''}
           alt=""
