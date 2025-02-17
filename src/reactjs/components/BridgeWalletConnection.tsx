@@ -74,9 +74,9 @@ export const BridgeWalletConnection = ({
       {!account.address && (
         <SwitchChainButton
           disabled={disabled}
-          className="liq-rounded-lg liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 liq-text-primary-200 hover:enabled:liq-bg-primary liq-px-2"
+          className="liq-rounded-lg liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 !liq-text-primary-200 hover:enabled:liq-bg-primary liq-px-2"
         >
-          <div className="liq-flex liq-items-center liq-text-neutral-100">
+          <div className="liq-flex liq-items-center">
             <div className="liq-flex liq-justify-center liq-gap-2">
               <div> {account.isConnecting ? 'Connecting...' : 'Connect'} </div>
               <img src={activeChain?.svgUrl} alt="" className="liq-w-4" />
