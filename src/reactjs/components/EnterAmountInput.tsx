@@ -24,6 +24,8 @@ export const EnterAmountInput = ({
   onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+
     const { value } = event.target;
     const amount = value.replace(/,/g, '');
     onInputChange?.({
@@ -31,6 +33,12 @@ export const EnterAmountInput = ({
       target: { name: inputName, value: amount } as EventTarget &
         HTMLInputElement
     });
+  };
+
+  const checkKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
   };
 
   return (
@@ -56,6 +64,7 @@ export const EnterAmountInput = ({
             onInputDebounceChange?.(value);
           }}
           onBlur={onBlur}
+          onKeyDown={(e) => checkKeyDown(e)}
         />
       </div>
       {amountError && (
