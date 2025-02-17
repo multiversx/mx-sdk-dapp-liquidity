@@ -433,6 +433,7 @@ export const BridgeForm = ({
               hash: txHash
             });
           } catch (e) {
+            toast.dismiss();
             toast.error('Transaction aborted');
             onFailedSentTransaction?.('Transaction aborted');
             setPendingSigning(false);
@@ -451,6 +452,7 @@ export const BridgeForm = ({
         setPendingSigning(false);
       } catch (e) {
         console.error(e);
+        toast.dismiss();
         toast.error('Transaction cancelled');
         onFailedSentTransaction?.('Transaction cancelled');
         setPendingSigning(false);
