@@ -60,7 +60,7 @@ export const TokenItem = ({
           <img
             src={chainIcon}
             alt=""
-            className="liq-absolute liq-left-4 liq--bottom-0.5 liq-chain-icon liq-sm liq-w-6 liq-h-6"
+            className="liq-absolute liq-left-4 liq-bottom-[-2px] liq-chain-icon liq-sm liq-w-6 liq-h-6 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
           />
         )}
         <div className="liq-ml-2">

@@ -15,10 +15,7 @@ export const useResolveTokenChain = ({ token }: { token?: TokenDTO }) => {
   return {
     tokenChain,
     isLoading,
-    chainIcon: !isLoading
-      ? tokenChain?.svgUrl
-      : tokenChain
-        ? chainIdentifier[tokenChain.chainName]
-        : null
+    chainIcon:
+      tokenChain && !isLoading ? chainIdentifier[tokenChain.chainName] : null
   };
 };

@@ -140,7 +140,7 @@ export const TokenSelector = ({
               <img
                 src={chainIcon}
                 alt=""
-                className="liq-absolute liq-left-5 liq-bottom-0.5 liq-chain-icon liq-sm liq-w-6 liq-h-6"
+                className="liq-absolute liq-left-6 liq-bottom-[2px] liq-chain-icon liq-sm liq-w-6 liq-h-6 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
               />
             )}
           </button>

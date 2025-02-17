@@ -10,6 +10,7 @@ type PartialChainOptionType = {
   chain: {
     id: string;
     name: string;
+    networkName: string;
     svgUrl: string;
   };
 };
@@ -32,6 +33,7 @@ export const ChainSelect = ({
       chain: {
         id: chain.chainId.toString(),
         name: chain.chainName,
+        networkName: chain.networkName,
         svgUrl: chain.svgUrl
       }
     }));
@@ -41,7 +43,8 @@ export const ChainSelect = ({
       value: '0',
       chain: {
         id: '0',
-        name: 'All',
+        name: 'all',
+        networkName: 'All',
         svgUrl: ''
       }
     });

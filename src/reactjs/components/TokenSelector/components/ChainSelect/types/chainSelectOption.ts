@@ -4,6 +4,7 @@ export type ChainSelectOptionType = {
   chain: {
     id: string;
     name: string;
+    networkName: string;
     svgUrl?: string;
   };
 };
