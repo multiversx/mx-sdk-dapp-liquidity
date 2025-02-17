@@ -45,11 +45,12 @@ export const BridgeWalletConnection = ({
                 to={`${activeChain?.blockExplorerUrls?.[0]}/address/${account.address}`}
                 target="_blank"
                 showExternalIcon={false}
+                className="!liq-relative liq-bottom-[-1px]"
               >
                 <div className="liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none liq-max-w-[10rem]">
                   <TrimAddressComponent
                     text={account.address}
-                    className="liq-flex liq-items-center  liq-text-neutral-100 uppercase"
+                    className="liq-flex liq-items-center liq-text-neutral-100 uppercase"
                   />
                   {/*<FontAwesomeIcon*/}
                   {/*  icon={faChevronRight}*/}

@@ -49,6 +49,7 @@ export const MvxAccountDisplay = ({
                 to={`${accountExplorerUrl}`}
                 target="_blank"
                 showExternalIcon={false}
+                className="!liq-relative liq-bottom-[-1px]"
               >
                 <AccountAddress
                   address={accountAddress}
