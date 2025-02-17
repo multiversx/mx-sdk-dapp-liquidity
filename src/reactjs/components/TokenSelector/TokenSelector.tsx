@@ -121,7 +121,8 @@ export const TokenSelector = ({
                 'disabled:!liq-opacity-70': disabled && !omitDisableClass
               },
               {
-                '!liq-cursor-not-allowed': disabled
+                '!liq-cursor-not-allowed !liq-bg-transparent !liq-outline-transparent':
+                  disabled
               },
               className
             )}
@@ -131,10 +132,12 @@ export const TokenSelector = ({
           >
             <SelectedOption value={selectedOption} />
 
-            <FontAwesomeIcon
-              icon={faChevronDown}
-              className="liq-text-neutral-200 group-hover:liq-text-neutral-50"
-            />
+            {!disabled && (
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className="liq-text-neutral-200 group-hover:liq-text-neutral-50"
+              />
+            )}
 
             {chainIcon && (
               <img
