@@ -551,11 +551,14 @@ export const BridgeForm = ({
             }
           )}
         >
-          <BridgeWalletConnection
-            disabled={isPendingRate}
-            activeChain={selectedChainOption}
-            TrimAddressComponent={TrimAddressComponent}
-          />
+          <div className="liq-flex liq-items-center">
+            From
+            <BridgeWalletConnection
+              disabled={isPendingRate}
+              activeChain={selectedChainOption}
+              TrimAddressComponent={TrimAddressComponent}
+            />
+          </div>
           <div className="liq-flex liq-justify-between liq-gap-1">
             <EnterAmountInput
               inputName="firstAmount"
@@ -594,15 +597,18 @@ export const BridgeForm = ({
             }
           )}
         >
-          <MvxAccountDisplay
-            accountAddress={mvxAddress}
-            chainIcon={mvxChain?.svgUrl ?? ''}
-            username={username}
-            accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}
-            TrimAddressComponent={TrimAddressComponent}
-            showTag={true}
-            onDisconnect={onMvxDisconnect}
-          />
+          <div className="liq-flex liq-items-center liq-gap-2">
+            To
+            <MvxAccountDisplay
+              accountAddress={mvxAddress}
+              chainIcon={mvxChain?.svgUrl ?? ''}
+              username={username}
+              accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}
+              TrimAddressComponent={TrimAddressComponent}
+              showTag={true}
+              onDisconnect={onMvxDisconnect}
+            />
+          </div>
           <div className="liq-flex liq-justify-between liq-gap-1">
             <EnterAmountInput
               inputName="secondAmount"

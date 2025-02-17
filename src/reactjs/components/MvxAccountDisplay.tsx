@@ -31,11 +31,11 @@ export const MvxAccountDisplay = ({
   };
 
   return (
-    <div className="liq-flex liq-gap-2">
-      To
+    <>
       <img src={chainIcon} alt="" className="liq-w-6" />
+      <span className="">MultiversX:</span>
       {accountAddress && (
-        <div className="liq-flex liq-items-center liq-justify-between liq-gap-2">
+        <div className="liq-flex liq-items-center liq-justify-between">
           <div className="liq-flex liq-max-w-[10rem] liq-items-center liq-gap-1">
             <MxLink
               to={`${accountExplorerUrl}`}
@@ -64,6 +64,6 @@ export const MvxAccountDisplay = ({
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 };
