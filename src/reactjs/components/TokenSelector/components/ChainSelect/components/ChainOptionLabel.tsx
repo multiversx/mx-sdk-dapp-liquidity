@@ -28,7 +28,7 @@ export const ChainOptionLabel = ({
             {chain.svgUrl ? (
               <img
                 src={
-                  chainIdentifier[chain.name as ChainNameType] ?? chain.svgUrl
+                  chain.svgUrl ?? chainIdentifier[chain.name as ChainNameType]
                 }
                 alt={''}
                 loading="lazy"
