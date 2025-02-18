@@ -105,7 +105,7 @@ export const BridgeForm = ({
 
   const activeChain = useMemo(() => {
     return sdkChains.find(
-      (chain) => chain.id.toString() === chainId.toString()
+      (chain) => chain.id.toString() === chainId?.toString()
     );
   }, [chainId, sdkChains]);
 
@@ -191,8 +191,9 @@ export const BridgeForm = ({
 
   const selectedChainOption = useMemo(
     () =>
-      chains?.find((option) => option.chainId === activeChain?.id) ??
-      chains?.[0],
+      chains?.find(
+        (option) => option.chainId.toString() === activeChain?.id.toString()
+      ) ?? chains?.[0],
     [activeChain?.id, chains]
   );
 
@@ -205,7 +206,8 @@ export const BridgeForm = ({
         !account.address ||
         !firstToken ||
         !secondToken ||
-        !selectedChainOption
+        !selectedChainOption ||
+        !chainId
       ) {
         return;
       }
@@ -489,7 +491,7 @@ export const BridgeForm = ({
     mvxAccountAddress: mvxAddress,
     firstToken,
     firstAmount,
-    fromChainId: chainId.toString(),
+    fromChainId: chainId?.toString(),
     toChainId: mvxChainId,
     secondToken,
     secondAmount,
@@ -522,11 +524,11 @@ export const BridgeForm = ({
     );
 
     const firstChainSpecificOption = fromOptions?.find(
-      (option) => option.chainId.toString() === chainId.toString()
+      (option) => option.chainId.toString() === chainId?.toString()
     );
 
     onChangeFirstSelect(
-      persistedOption?.chainId.toString() === chainId.toString()
+      persistedOption?.chainId.toString() === chainId?.toString()
         ? persistedOption
         : firstChainSpecificOption
     );

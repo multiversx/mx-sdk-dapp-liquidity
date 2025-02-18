@@ -1,5 +1,6 @@
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
-import { useMemo } from 'react';
+import { useAppKitNetwork } from '@reown/appkit/react';
+import { useCallback, useMemo } from 'react';
 import { useSwitchChain } from 'wagmi';
 import { TokenIcon } from './TokenIcon';
 import { TokenType } from '../../../../types/token';
@@ -19,12 +20,13 @@ export const TokenItem = ({
     token
   });
 
-  const { chains: sdkChains, switchChain } = useSwitchChain();
+  const { chains: sdkChains } = useSwitchChain();
+  const { switchNetwork } = useAppKitNetwork();
   const chainId = useGetChainId();
 
   const activeChain = useMemo(() => {
     return sdkChains.find(
-      (chain) => chain.id.toString() === chainId.toString()
+      (chain) => chain.id.toString() === chainId?.toString()
     );
   }, [chainId, sdkChains]);
 
@@ -35,18 +37,27 @@ export const TokenItem = ({
     digits: 4
   });
 
+  const handleSwitchChain = useCallback(() => {
+    if (
+      activeChain &&
+      tokenChain?.chainId &&
+      activeChain?.id !== tokenChain?.chainId
+    ) {
+      switchNetwork(
+        sdkChains.find(
+          (chain) => chain.id.toString() === tokenChain?.chainId.toString()
+        ) ?? activeChain
+      );
+    }
+  }, [activeChain, sdkChains, tokenChain?.chainId, activeChain?.id]);
+
   return (
     <div
       className={`token-item ${
         selected ? 'liq-selected' : ''
       } liq-flex liq-cursor-pointer liq-items-center liq-justify-between liq-rounded-lg liq-p-2 hover:liq-bg-neutral-700 liq-bg-neutral-850`}
       onClick={() => {
-        if (tokenChain?.chainId && activeChain?.id !== tokenChain?.chainId) {
-          switchChain({
-            chainId: Number(tokenChain.chainId)
-          });
-        }
-
+        handleSwitchChain();
         onClick(token);
       }}
     >

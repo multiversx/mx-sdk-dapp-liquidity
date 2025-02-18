@@ -51,7 +51,7 @@ export const useFetchTokens = ({
     isError: isErrorEvmTokensBalances
   } = useGetEvmTokensBalancesQuery({
     tokens: evmTokens ?? [],
-    chainId: chainId.toString()
+    chainId: chainId?.toString()
   });
 
   const {

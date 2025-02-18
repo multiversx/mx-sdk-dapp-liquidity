@@ -11,14 +11,14 @@ export const useGetEvmTokensBalancesQuery = ({
   chainId
 }: {
   tokens: TokenType[];
-  chainId: string;
+  chainId?: string;
 }) => {
   const { address } = useAppKitAccount();
   const { fetchBalances } = useBalances();
 
   const tokenIdentifiers = useMemo(() => {
     return tokens
-      .filter((token) => token.chainId.toString() === chainId.toString())
+      .filter((token) => token.chainId.toString() === chainId?.toString())
       .map(({ address: tokenId }) => tokenId);
   }, [tokens, chainId]);
 
@@ -70,7 +70,7 @@ export const useGetEvmTokensBalancesQuery = ({
     ],
     queryFn,
     retry,
-    enabled: Boolean(address),
+    enabled: Boolean(address) && Boolean(chainId),
     refetchOnWindowFocus: false,
     gcTime: 0
   });
