@@ -108,7 +108,7 @@ export const BridgeHistory = ({
   }, [chains]);
 
   const className = mxClsx(
-    `liq-h-[32rem] liq-max-h-[32rem] liq-text-base lg:liq-text-base`,
+    `liq-h-96 liq-max-h-96 liq-text-base lg:liq-text-base`,
     {
       'liq-disabled liq-animate-pulse':
         isLoading || tokensLoading || isChainsLoading
@@ -130,7 +130,7 @@ export const BridgeHistory = ({
   return (
     <MxCard
       className={mxClsx(
-        'liq-flex liq-flex-col liq-gap-1 lg:liq-order-2 lg:liq-max-w-[27.5rem] liq-pt-0',
+        'liq-flex liq-flex-col liq-gap-1 lg:liq-order-2 lg:liq-max-w-[27.5rem] !liq-p-2 liq-pt-0',
         className
       )}
     >
@@ -140,7 +140,7 @@ export const BridgeHistory = ({
         </div>
         <MxButton
           btnSize="md"
-          className="liq-border-none !liq-p-0"
+          className="liq-border-none !liq-p-0 !liq-mr-2"
           variant="link-neutral-500"
           onClick={() => {
             navigate(-1);
@@ -150,7 +150,7 @@ export const BridgeHistory = ({
         </MxButton>
       </div>
 
-      <div className="scrollbar-thin liq-flex liq-flex-1 liq-flex-col liq-gap-2 liq-overflow-y-scroll">
+      <div className="scrollbar-thin liq-flex liq-flex-1 liq-flex-col liq-gap-1 liq-overflow-y-scroll">
         {transactions?.length === 0 && (
           <MxCard
             cardSize="lg"
@@ -185,7 +185,7 @@ export const BridgeHistory = ({
                 cardSize="lg"
                 variant="neutral-750"
                 className={
-                  'liq-flex liq-flex-col liq-gap-4 !liq-outline liq-outline-transparent !liq-p-4 liq-border liq-border-neutral-750 liq-bg-neutral-850 hover:!liq-bg-neutral-700 '
+                  'liq-flex liq-flex-col liq-gap-4 !liq-outline liq-outline-transparent !liq-p-4 liq-border liq-border-neutral-750 liq-bg-neutral-850 hover:!liq-bg-neutral-700 !liq-rounded-lg'
                 }
               >
                 <div className="liq-align-center liq-flex liq-justify-between liq-gap-1">
