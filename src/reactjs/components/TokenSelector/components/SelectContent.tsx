@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+// import { useSwitchChain } from 'wagmi';
 import { ChainSelect } from './ChainSelect/ChainSelect';
 import { TokenList } from './TokenList';
 import { ChainDTO } from '../../../../dto/Chain.dto';
 import { TokenType } from '../../../../types/token';
+import { useGetChainId } from '../../../hooks/useGetChainId';
 import { MxSearch } from '../../MxSearch';
 
 export const SelectContent = ({
@@ -19,9 +21,14 @@ export const SelectContent = ({
   selectedToken?: TokenType;
 }) => {
   const [filteredTokens, setFilteredTokens] = useState(tokens);
-  const [selectedChainId, setSelectedChainId] = useState('0');
   const [selected, setSelected] = useState(selectedToken);
   const searchPatternRef = useRef<string>('');
+  // const { switchChain } = useSwitchChain();
+  const activeChainId = useGetChainId();
+
+  const [selectedChainId, setSelectedChainId] = useState(
+    activeChainId?.toString() ?? '0'
+  );
 
   const filteredTokensText = useMemo(() => {
     const selectedChain = chains.find(
@@ -65,6 +72,12 @@ export const SelectContent = ({
   };
 
   useEffect(() => {
+    // '0' means "All" option
+    if (selectedChainId.toString() !== '0') {
+      // switchChain({
+      //   chainId: Number(selectedChainId)
+      // });
+    }
     handleSearch(searchPatternRef.current);
   }, [selectedChainId, tokens]);
 

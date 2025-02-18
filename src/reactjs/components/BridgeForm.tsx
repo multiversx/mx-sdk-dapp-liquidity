@@ -18,7 +18,6 @@ import { MxButton } from './MxButton';
 import { TokenSelector } from './TokenSelector';
 import { TransactionToast } from './TransactionToast/TransactionToast';
 import { getApiURL } from '../../helpers/getApiURL';
-import { OptionType } from '../../types/form';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
 import { useAccount } from '../hooks/useAccount';
@@ -31,7 +30,6 @@ import { useWeb3App } from '../hooks/useWeb3App';
 import { invalidateHistoryQuery } from '../queries/useGetHistory.query';
 import { useGetRateMutation } from '../queries/useGetRate.mutation';
 import { getCompletePathname } from '../utils/getCompletePathname';
-import { getDefaultOption } from '../utils/getDefaultOption';
 import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
 import { mxClsx } from '../utils/mxClsx';
 
@@ -80,7 +78,6 @@ export const BridgeForm = ({
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
   const { config } = useWeb3App();
-
   const chainId = useGetChainId();
 
   const {
@@ -132,9 +129,9 @@ export const BridgeForm = ({
 
   const ref = useRef(null);
 
-  const [firstToken, setFirstToken] = useState<OptionType | undefined>();
+  const [firstToken, setFirstToken] = useState<TokenType | undefined>();
   const [firstAmount, setFirstAmount] = useState('');
-  const [secondToken, setSecondToken] = useState<OptionType | undefined>();
+  const [secondToken, setSecondToken] = useState<TokenType | undefined>();
   const [secondAmount, setSecondAmount] = useState('');
 
   const bridgeAddress = account.address;
@@ -172,23 +169,6 @@ export const BridgeForm = ({
     [mvxTokensWithBalances]
   );
 
-  const firstSelectOptions =
-    useMemo(
-      () =>
-        fromOptions?.filter(
-          (option) => option.identifier !== secondToken?.token?.address
-        ),
-      [secondToken, fromOptions]
-    ) ?? fromOptions?.[0];
-
-  const secondSelectOptions = useMemo(
-    () =>
-      toOptions.filter(
-        (option) => option.identifier !== firstToken?.token?.address
-      ),
-    [firstToken, toOptions]
-  );
-
   const selectedChainOption = useMemo(
     () =>
       chains?.find(
@@ -204,8 +184,8 @@ export const BridgeForm = ({
       if (
         !amount ||
         !account.address ||
-        !firstToken ||
-        !secondToken ||
+        !firstToken?.address ||
+        !secondToken?.address ||
         !selectedChainOption ||
         !chainId
       ) {
@@ -215,15 +195,20 @@ export const BridgeForm = ({
       getRate({
         nativeAuthToken: nativeAuthToken ?? '',
         body: {
-          tokenIn: firstToken?.token.address,
+          tokenIn: firstToken.address,
           amountIn: amount,
           fromChainId: chainId.toString(),
-          tokenOut: secondToken.token.address,
+          tokenOut: secondToken.address,
           toChainId: mvxChainId
         }
       });
     }, 500),
-    [account.address, firstToken, secondToken, selectedChainOption]
+    [
+      account.address,
+      firstToken?.address,
+      secondToken?.address,
+      selectedChainOption
+    ]
   );
 
   const handleOnChangeFirstAmount = useCallback((amount: string) => {
@@ -236,19 +221,15 @@ export const BridgeForm = ({
 
   const handleOnFirstMaxBtnChange = useCallback(() => {
     const formattedBalance = formatAmount({
-      decimals: firstToken?.token?.decimals,
-      input: firstToken?.token?.balance ?? '0',
+      decimals: firstToken?.decimals,
+      input: firstToken?.balance ?? '0',
       addCommas: false,
       digits: 4
     });
 
     formik.setFieldValue('firstAmount', formattedBalance);
     handleOnChangeFirstAmount(formattedBalance);
-  }, [
-    firstToken?.token?.balance,
-    firstToken?.token?.decimals,
-    handleOnChangeFirstAmount
-  ]);
+  }, [firstToken?.balance, firstToken?.decimals, handleOnChangeFirstAmount]);
 
   const onSuccess = useCallback(
     async (txHashes: string[]) => {
@@ -296,81 +277,74 @@ export const BridgeForm = ({
 
   const onChangeFirstSelect = useCallback(
     (option?: TokenType) => {
-      const selectOption = getDefaultOption(option);
-
-      if (!selectOption) {
+      if (!option) {
         return;
       }
 
-      setFirstToken(selectOption);
-      updateUrlParams({ firstTokenId: selectOption?.value });
+      setFirstToken(() => option);
+      updateUrlParams({ firstTokenId: option?.address });
 
-      const secondOption = getDefaultOption(
-        toOptions.find((x) => x.name === selectOption?.token.name)
-      );
+      const secondOption = toOptions.find((x) => x.name === option?.name);
 
       if (!secondOption) {
         return;
       }
 
-      setSecondToken(secondOption);
-      updateUrlParams({ secondTokenId: secondOption?.value });
+      setSecondToken(() => secondOption);
+      updateUrlParams({ secondTokenId: secondOption?.address });
     },
-    [toOptions]
+    [toOptions, updateUrlParams]
   );
 
   const onChangeSecondSelect = useCallback(
     (option?: TokenType) => {
-      const selectOption = getDefaultOption(option);
-
-      if (!selectOption) {
+      if (!option) {
         return;
       }
 
-      setSecondToken(selectOption);
-      updateUrlParams({ secondTokenId: selectOption?.value });
+      setSecondToken(() => option);
+      updateUrlParams({ secondTokenId: option?.address });
 
-      const firstOption = getDefaultOption(
-        fromOptions.find((x) => x.name === selectOption?.token.name)
-      );
+      const firstOption = fromOptions.find((x) => x.name === option?.name);
 
       if (!firstOption) {
         return;
       }
 
-      setFirstToken(firstOption);
-      updateUrlParams({ firstTokenId: firstOption?.value });
+      setFirstToken(() => firstOption);
+      updateUrlParams({ firstTokenId: firstOption?.address });
     },
-    [fromOptions]
+    [fromOptions, updateUrlParams]
   );
 
-  const setInitialSelectedTokens = useCallback(() => {
+  const setInitialSelectedTokens = () => {
     if (isTokensLoading) {
       return;
     }
 
     const initialTokens = getInitialTokens();
 
-    const hasOptionsSelected = Boolean(firstToken) && Boolean(secondToken);
-
     const firstOption =
-      getDefaultOption(
-        fromOptions?.find(({ identifier }) =>
-          [initialTokens?.firstTokenId].includes(identifier)
-        )
-      ) ?? getDefaultOption(fromOptions[0]);
+      fromOptions?.find(({ identifier }) =>
+        [initialTokens?.firstTokenId].includes(identifier)
+      ) ??
+      fromOptions.find(
+        (option) => option.chainId.toString() === activeChain?.id?.toString()
+      );
 
     const secondOption =
-      getDefaultOption(
-        toOptions?.find(
-          ({ address }) =>
-            address ===
-            (firstOption?.token.name ?? initialTokens?.secondTokenId)
-        )
-      ) ??
-      getDefaultOption(
-        toOptions.find((x) => x.name === firstOption?.token.name)
-      );
+      toOptions?.find(
+        ({ address }) =>
+          address === (firstOption?.name ?? initialTokens?.secondTokenId)
+      ) ?? toOptions.find((x) => x.name === firstOption?.name);
+
+    const hasOptionsSelected =
+      Boolean(firstToken) &&
+      Boolean(secondToken) &&
+      firstToken?.address?.toLowerCase() ===
+        firstOption?.address?.toLowerCase() &&
+      secondToken?.address?.toLowerCase() ===
+        secondOption?.address?.toLowerCase();
 
     if (hasOptionsSelected) {
       return;
@@ -384,17 +358,10 @@ export const BridgeForm = ({
     setSecondToken(secondOption);
 
     updateUrlParams({
-      firstTokenId: firstOption?.value,
-      secondTokenId: secondOption?.value
+      firstTokenId: firstOption?.address,
+      secondTokenId: secondOption?.address
     });
-  }, [
-    bridgeAddress,
-    firstToken,
-    fromOptions,
-    isTokensLoading,
-    secondToken,
-    toOptions
-  ]);
+  };
 
   const onSubmit = useCallback(
     async (transactions: ServerTransaction[]) => {
@@ -516,25 +483,28 @@ export const BridgeForm = ({
     return setSecondAmount(rate?.amountOut ?? '');
   }, [rate]);
 
+  useEffect(setInitialSelectedTokens, [isTokensLoading, chainId]);
+
   useEffect(() => {
-    updateUrlParams({ firstTokenId: '', secondTokenId: '' });
-
-    const persistedOption = fromOptions?.find(
-      (option) => option.address === firstToken?.token?.address
+    const selectedTokenOption = evmTokensWithBalances?.find(
+      (x) => x.address === firstToken?.address
     );
 
-    const firstChainSpecificOption = fromOptions?.find(
-      (option) => option.chainId.toString() === chainId?.toString()
-    );
+    if (!selectedTokenOption) {
+      return;
+    }
 
-    onChangeFirstSelect(
-      persistedOption?.chainId.toString() === chainId?.toString()
-        ? persistedOption
-        : firstChainSpecificOption
-    );
-  }, [chainId, fromOptions, onChangeFirstSelect, refetchTrigger]);
+    setFirstToken((prevState) => {
+      if (!prevState) {
+        return prevState;
+      }
 
-  useEffect(setInitialSelectedTokens, [setInitialSelectedTokens, chainId]);
+      return {
+        ...prevState,
+        balance: selectedTokenOption?.balance
+      };
+    });
+  }, [evmTokensWithBalances, firstToken?.address]);
 
   return (
     <>
@@ -580,13 +550,13 @@ export const BridgeForm = ({
             <TokenSelector
               name={'firstToken'}
               disabled={isPendingRate}
-              options={firstSelectOptions}
+              options={fromOptions}
               areOptionsLoading={isTokensLoading}
               color="neutral-850"
               onChange={onChangeFirstSelect}
               onBlur={handleBlur}
               onMaxBtnClick={handleOnFirstMaxBtnChange}
-              selectedOption={firstToken?.token}
+              selectedOption={firstToken}
               onTokenSelectorDisplay={(visible) =>
                 setIsTokenSelectorVisible(visible)
               }
@@ -631,12 +601,12 @@ export const BridgeForm = ({
               name={'secondToken'}
               disabled={true}
               omitDisableClass={true}
-              options={secondSelectOptions}
+              options={toOptions}
               areOptionsLoading={isTokensLoading}
               color="neutral-850"
               onChange={onChangeSecondSelect}
               onBlur={handleBlur}
-              selectedOption={secondToken?.token}
+              selectedOption={secondToken}
             />
           </div>
         </EnterAmountCard>

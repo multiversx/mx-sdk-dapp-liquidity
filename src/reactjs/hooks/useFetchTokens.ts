@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { useAccount } from './useAccount';
 import { useGetChainId } from './useGetChainId';
 import { MVX_CHAIN_IDS } from '../constants/general';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
@@ -21,6 +22,7 @@ export const useFetchTokens = ({
   refetchTrigger?: number;
 }) => {
   const chainId = useGetChainId();
+  const account = useAccount();
 
   const {
     data: tokens,
@@ -104,10 +106,14 @@ export const useFetchTokens = ({
   }, [evmTokens, evmTokensBalances]);
 
   useEffect(() => {
-    console.log('invalidating balances');
-    invalidateEvmTokensBalances();
-    invalidateMvxTokensBalancesQuery();
-  }, [refetchTrigger, chainId]);
+    if (account.address) {
+      invalidateEvmTokensBalances();
+    }
+
+    if (mvxAddress) {
+      invalidateMvxTokensBalancesQuery();
+    }
+  }, [refetchTrigger, chainId, account.address, mvxAddress]);
 
   return {
     isTokensLoading,

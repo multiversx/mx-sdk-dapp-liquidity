@@ -1,11 +1,12 @@
 import { useFormik } from 'formik';
 import { useEffect, useRef } from 'react';
+import { useSwitchChain } from 'wagmi';
 import { object, string } from 'yup';
 import { useAccount } from './useAccount';
 import { useAmountSchema } from './validation/useAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
 import { getApiURL } from '../../helpers/getApiURL';
-import { OptionType } from '../../types/form';
+import { TokenType } from '../../types/token.ts';
 import { ServerTransaction } from '../../types/transaction';
 
 export enum BridgeFormikValuesEnum {
@@ -20,8 +21,8 @@ export enum BridgeFormikValuesEnum {
 export interface TradeFormikValuesType {
   firstAmount?: string;
   secondAmount?: string;
-  firstToken?: OptionType;
-  secondToken?: OptionType;
+  firstToken?: TokenType;
+  secondToken?: TokenType;
   fromChainId?: string;
   toChainId?: string;
 }
@@ -43,12 +44,14 @@ export const useBridgeFormik = ({
   secondAmount?: string;
   fromChainId?: string;
   toChainId?: string;
-  firstToken?: OptionType;
-  secondToken?: OptionType;
+  firstToken?: TokenType;
+  secondToken?: TokenType;
   onSubmit: (transactions: ServerTransaction[]) => void;
 }) => {
   const pendingSigningRef = useRef<boolean>();
   const account = useAccount();
+  // const { switchNetwork } = useAppKitNetwork();
+  const { switchChainAsync } = useSwitchChain();
 
   const initialValues: TradeFormikValuesType = {
     firstAmount: '',
@@ -65,6 +68,12 @@ export const useBridgeFormik = ({
   };
 
   const onSubmitFormik = async (values: TradeFormikValuesType) => {
+    if (values.fromChainId) {
+      await switchChainAsync({
+        chainId: Number(values.fromChainId)
+      });
+    }
+
     if (pendingSigningRef.current) {
       return;
     }
@@ -73,11 +82,11 @@ export const useBridgeFormik = ({
     if (firstToken && secondToken) {
       sessionStorage.setItem(
         'prevFirstTokenId',
-        values.firstToken?.token?.address ?? ''
+        values.firstToken?.address ?? ''
       );
       sessionStorage.setItem(
         'prevSecondTokenId',
-        values.secondToken?.token?.address ?? ''
+        values.secondToken?.address ?? ''
       );
     }
 
@@ -85,10 +94,10 @@ export const useBridgeFormik = ({
       url: getApiURL(),
       nativeAuthToken: nativeAuthToken ?? '',
       body: {
-        tokenIn: values.firstToken?.token?.address ?? '',
+        tokenIn: values.firstToken?.address ?? '',
         amountIn: firstAmount?.toString() ?? '',
         fromChainId: values.fromChainId ?? '',
-        tokenOut: values.secondToken?.token?.address ?? '',
+        tokenOut: values.secondToken?.address ?? '',
         toChainId: values.toChainId ?? '',
         fee: '0',
         amountOut: secondAmount?.toString() ?? '',
@@ -178,8 +187,8 @@ export const useBridgeFormik = ({
     formik,
     errors,
     touched,
-    firstToken: firstToken?.token,
-    secondToken: secondToken?.token,
+    firstToken,
+    secondToken,
     firstAmountError,
     secondAmountError,
     fromChainError,

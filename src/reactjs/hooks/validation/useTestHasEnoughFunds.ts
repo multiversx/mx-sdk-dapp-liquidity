@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { TestContext } from 'yup';
-import { OptionType } from '../../../types/form';
+import { TokenType } from '../../../types/token.ts';
 import { hasEnoughFunds } from '../../utils/hasEnoughFunds';
 import { testNumber } from '../../utils/testNumber';
 
@@ -11,10 +11,10 @@ export const useTestHasEnoughFunds = () => {
         return false;
       }
 
-      const asset = context.parent.firstToken as OptionType;
+      const asset = context.parent.firstToken as TokenType;
 
-      const balance = asset?.token?.balance ?? '0';
-      const decimals = asset?.token?.decimals;
+      const balance = asset?.balance ?? '0';
+      const decimals = asset?.decimals;
 
       const hasFunds = hasEnoughFunds({
         balance: balance ?? '0',
