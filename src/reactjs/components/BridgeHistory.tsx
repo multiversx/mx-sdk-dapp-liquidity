@@ -130,7 +130,7 @@ export const BridgeHistory = ({
   return (
     <MxCard
       className={mxClsx(
-        'liq-flex liq-flex-col liq-gap-1 lg:liq-order-2 lg:liq-max-w-[27.5rem] !liq-p-2 liq-pt-0',
+        'liq-flex liq-flex-col liq-gap-1 lg:liq-order-2 lg:liq-max-w-[27.5rem] !liq-px-2 liq-pt-0',
         className
       )}
     >

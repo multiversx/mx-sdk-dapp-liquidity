@@ -17,7 +17,7 @@ export const SelectContainer = ({
   return (
     <MxCard
       className={mxClsx(
-        'liq-flex liq-flex-col liq-absolute liq-left-0 liq-top-0 liq-order-1 liq-mx-auto liq-w-full liq-gap-1 liq-pt-12 lg:liq-order-2 lg:liq-max-w-[27.5rem] !liq-min-h-[26rem] !lg:liq-pt-0 !liq-bg-neutral-850 !liq-z-50 !liq-p-2 !liq-pointer-events-auto',
+        'liq-flex liq-flex-col liq-absolute liq-left-0 liq-top-0 liq-order-1 liq-mx-auto liq-w-full liq-gap-1 liq-pt-12 lg:liq-order-2 lg:liq-max-w-[27.5rem] !liq-min-h-[26rem] !lg:liq-pt-0 !liq-bg-neutral-850 !liq-z-[10] !liq-p-2 !liq-pointer-events-auto',
         className
       )}
     >
