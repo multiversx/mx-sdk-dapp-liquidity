@@ -39,7 +39,7 @@ export const TokenItem = ({
     <div
       className={`token-item ${
         selected ? 'liq-selected' : ''
-      } liq-flex liq-cursor-pointer liq-items-center liq-justify-between liq-rounded-lg liq-p-2 hover:liq-bg-neutral-700 liq-border liq-border-neutral-750 liq-bg-neutral-850`}
+      } liq-flex liq-cursor-pointer liq-items-center liq-justify-between liq-rounded-lg liq-p-2 hover:liq-bg-neutral-700 liq-bg-neutral-850`}
       onClick={() => {
         if (tokenChain?.chainId && activeChain?.id !== tokenChain?.chainId) {
           switchChain({
@@ -50,7 +50,7 @@ export const TokenItem = ({
         onClick(token);
       }}
     >
-      <div className="liq-mx-4 liq-flex liq-w-full liq-items-center liq-relative">
+      <div className="liq-flex liq-w-full liq-items-center liq-relative">
         <TokenIcon
           size="lg"
           token={token}

@@ -69,7 +69,7 @@ export const SelectContent = ({
   }, [selectedChainId, tokens]);
 
   return (
-    <div className="liq-relative liq-flex liq-max-w-full liq-flex-col liq-rounded-none liq-p-0 liq-max-h-[50vh]">
+    <div className="liq-relative liq-flex liq-max-w-full liq-flex-col liq-rounded-none liq-p-0 !liq-max-h-[22rem]">
       <div className="liq-flex liq-flex-col liq-gap-3 liq-rounded-t-2xl liq-p-2">
         <div className="liq-flex liq-gap-2">
           <MxSearch
