@@ -38,7 +38,10 @@ export const BridgeWalletConnection = ({
       {account.address && (
         <>
           <img src={activeChain?.svgUrl} alt="" className="liq-w-6" />
-          <span className="">{activeChain?.networkName}:</span>
+          <span className="liq-truncate md:liq-text-clip">
+            {activeChain?.networkName}
+          </span>
+          <span className="liq-ml-[-5px]">:</span>
           <div className="liq-flex liq-items-center liq-justify-between">
             <div className="liq-flex liq-max-w-[10rem] liq-items-center liq-gap-1">
               <MxLink
@@ -80,7 +83,9 @@ export const BridgeWalletConnection = ({
             <div className="liq-flex liq-justify-center liq-gap-2">
               <div> {account.isConnecting ? 'Connecting...' : 'Connect'} </div>
               <img src={activeChain?.svgUrl} alt="" className="liq-w-4" />
-              <div>{activeChain?.networkName}</div>
+              <div className="liq-truncate md:liq-text-clip">
+                {activeChain?.networkName}
+              </div>
             </div>
           </div>
         </SwitchChainButton>

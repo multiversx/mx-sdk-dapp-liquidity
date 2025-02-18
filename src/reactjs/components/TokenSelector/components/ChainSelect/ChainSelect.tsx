@@ -74,7 +74,8 @@ export const ChainSelect = ({
           control: (css) => ({
             ...css,
             width: 'max-content',
-            minWidth: '100%'
+            minWidth: '100%',
+            maxWidth: '10rem'
           }),
           menu: (css) => ({
             ...css,
