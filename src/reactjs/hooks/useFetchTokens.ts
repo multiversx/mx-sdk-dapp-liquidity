@@ -25,8 +25,7 @@ export const useFetchTokens = ({
   const {
     data: tokens,
     isLoading: isTokensLoading,
-    isError: isTokensError,
-    refetch: refetchTokens
+    isError: isTokensError
   } = useGetAllTokensQuery();
 
   const evmTokens = useMemo(
@@ -63,12 +62,6 @@ export const useFetchTokens = ({
     mvxAddress,
     apiURL: mvxApiURL
   });
-
-  // const evmTokensWithBalances = useMemo(() => {
-  //   return evmTokensBalances?.filter(
-  //     (x) => x.chainId.toString() === chainId?.toString()
-  //   );
-  // }, [evmTokens, evmTokensBalances]);
 
   const mvxTokensWithBalances = useMemo(() => {
     return mvxTokens?.map((token) => {
@@ -111,6 +104,7 @@ export const useFetchTokens = ({
   }, [evmTokens, evmTokensBalances]);
 
   useEffect(() => {
+    console.log('invalidating balances');
     invalidateEvmTokensBalances();
     invalidateMvxTokensBalancesQuery();
   }, [refetchTrigger, chainId]);
@@ -118,7 +112,6 @@ export const useFetchTokens = ({
   return {
     isTokensLoading,
     isTokensError,
-    refetchTokens,
     isLoadingEvmTokensBalances,
     isErrorEvmTokensBalances,
     evmTokensWithBalances,

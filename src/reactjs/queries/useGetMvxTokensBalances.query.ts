@@ -50,9 +50,9 @@ export const useGetMvxTokensBalancesQuery = ({
     queryFn,
     retry,
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,
-    refetchInterval: false,
-    refetchIntervalInBackground: true,
     refetchOnWindowFocus: false,
+    refetchIntervalInBackground: true,
+    refetchInterval: 20000,
     gcTime: 0
   });
 };

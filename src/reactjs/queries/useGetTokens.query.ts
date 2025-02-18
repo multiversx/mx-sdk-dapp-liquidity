@@ -28,6 +28,7 @@ export const useGetTokensQuery = () => {
     queryFn,
     retry,
     refetchOnWindowFocus: false,
-    gcTime: 0
+    gcTime: 5 * 60 * 1000,
+    staleTime: 0
   });
 };
