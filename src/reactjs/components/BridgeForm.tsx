@@ -386,7 +386,9 @@ export const BridgeForm = ({
               txHash
             });
 
-            setSigningTransactionsCount((prevState) => prevState - 1);
+            setSigningTransactionsCount(
+              () => transactions.length - 1 - txIndex
+            );
 
             if (txIndex === transactions.length - 1) {
               continue;
