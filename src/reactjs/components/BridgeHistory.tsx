@@ -224,7 +224,7 @@ export const BridgeHistory = ({
                       })}
                     </span>
                     <span className="liq-whitespace-nowrap">
-                      {tokensMap[transaction.tokenSource]?.name}
+                      {tokensMap[transaction.tokenSource]?.symbol}
                     </span>
                     <span>
                       {MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
