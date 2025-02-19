@@ -213,7 +213,11 @@ export const BridgeHistory = ({
                     />
                     <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
                       {formatAmount({
-                        decimals: tokensMap[transaction.tokenSource]?.decimals,
+                        decimals: MVX_CHAIN_IDS.includes(
+                          Number(transaction.toChainId)
+                        )
+                          ? tokensMap[transaction.tokenSource]?.decimals
+                          : tokensMap[transaction.tokenDestination]?.decimals,
                         amount: transaction.amountIn,
                         addCommas: false,
                         digits: 2
