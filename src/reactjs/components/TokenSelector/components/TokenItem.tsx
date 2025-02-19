@@ -75,8 +75,8 @@ export const TokenItem = ({
           />
         )}
         <div className="liq-ml-2">
-          <div className="liq-text-xs liq-text-gray-400">{token.name}</div>
           <div className="liq-text-sm liq-font-bold">{token.symbol}</div>
+          <div className="liq-text-xs liq-text-gray-400">{token.name}</div>
         </div>
         {/*Temp hide token balance from the token selector screen*/}
         {/*<div className="liq-ml-auto liq-mr-0 liq-flex liq-justify-end">*/}
