@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useSwitchChain } from 'wagmi';
+import { BridgeHistory } from './BridgeHistory.tsx';
 import { BridgeWalletConnection } from './BridgeWalletConnection';
 import { BridgeConnectButton } from './Connect/BridgeConnectButton';
 import { MvxConnectButton } from './Connect/MvxConnectButton';
@@ -36,31 +37,31 @@ import { getInitialTokens, InitialTokensType } from '../utils/getInitialTokens';
 import { mxClsx } from '../utils/mxClsx';
 
 interface BridgeFormProps {
-  mvxApiURL: string;
   mvxChainId: string;
   mvxAddress?: string;
   username?: string;
   nativeAuthToken?: string;
   callbackRoute?: string;
-  explorerAddress: string;
   refetchTrigger?: number;
+  showHistory?: boolean;
   onSuccessfullySentTransaction?: (txHashes?: string[]) => void;
   onFailedSentTransaction?: (message?: string) => void;
+  onHistoryClose?: () => void;
   onMvxConnect: () => void;
   onMvxDisconnect?: () => void;
 }
 
 export const BridgeForm = ({
-  mvxApiURL,
   mvxChainId,
   mvxAddress,
   username,
   nativeAuthToken,
   callbackRoute = '/',
-  explorerAddress,
   refetchTrigger,
+  showHistory,
   onSuccessfullySentTransaction,
   onFailedSentTransaction,
+  onHistoryClose,
   onMvxConnect,
   onMvxDisconnect
 }: BridgeFormProps) => {
@@ -71,7 +72,7 @@ export const BridgeForm = ({
   const navigate = useNavigate();
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
-  const { config } = useWeb3App();
+  const { config, options } = useWeb3App();
   const chainId = useGetChainId();
 
   const {
@@ -85,7 +86,7 @@ export const BridgeForm = ({
   } = useFetchBridgeData({
     refetchTrigger,
     mvxAddress,
-    mvxApiURL
+    mvxApiURL: options.mvxApiURL
   });
 
   const isTokensLoading =
@@ -210,6 +211,10 @@ export const BridgeForm = ({
     setSecondAmount(() => amount);
     setLastChangedField(BridgeFormikValuesEnum.secondAmount);
   }, []);
+
+  const handleHistoryClose = useCallback(() => {
+    onHistoryClose?.();
+  }, [onHistoryClose]);
 
   const handleOnFirstMaxBtnChange = useCallback(() => {
     const formattedBalance = formatAmount({
@@ -509,6 +514,9 @@ export const BridgeForm = ({
         autoComplete="off"
         onSubmit={handleSubmit}
       >
+        {showHistory && (
+          <BridgeHistory mvxAddress={mvxAddress} onClose={handleHistoryClose} />
+        )}
         <EnterAmountCard
           className={mxClsx(
             'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
@@ -570,7 +578,7 @@ export const BridgeForm = ({
               accountAddress={mvxAddress}
               chainIcon={mvxChain?.svgUrl ?? ''}
               username={username}
-              accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}
+              accountExplorerUrl={`${options.mvxExplorerAddress}/accounts/${mvxAddress}`}
               showTag={true}
               onDisconnect={onMvxDisconnect}
               onConnect={onMvxConnect}

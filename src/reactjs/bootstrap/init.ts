@@ -47,6 +47,19 @@ export type InitOptions = {
    * Bridge URL
    */
   bridgeURL: string;
+  /**
+   * MultiversX API URL
+   */
+  mvxApiURL: string;
+  /**
+   * MultiversX Explorer URL
+   */
+  mvxExplorerAddress: string;
+  /**
+   * MultiversX Chain ID
+   * Possible options 31 | 44 | 54 which are mapped to 1 | D | T
+   */
+  mvxChainId: '31' | '44' | '54';
 };
 
 function init(options: InitOptions) {

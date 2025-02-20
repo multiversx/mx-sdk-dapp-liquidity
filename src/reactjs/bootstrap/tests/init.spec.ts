@@ -44,7 +44,10 @@ describe('init', () => {
       },
       acceptedChainIDs: [1],
       apiURL: 'https://localhost:3000',
-      bridgeURL: 'https://devnet-bridge.example.com'
+      bridgeURL: 'https://devnet-bridge.example.com',
+      mvxApiURL: 'https://devnet-api.multiversx.com',
+      mvxExplorerAddress: 'https://devnet-explorer.multiversx.com',
+      mvxChainId: '44'
     };
 
     const result = init(options);
@@ -75,7 +78,10 @@ describe('init', () => {
       },
       acceptedChainIDs: [1],
       apiURL: 'https://localhost:3000',
-      bridgeURL: 'https://devnet-bridge.example.com'
+      bridgeURL: 'https://devnet-bridge.example.com',
+      mvxApiURL: 'https://devnet-api.multiversx.com',
+      mvxExplorerAddress: 'https://devnet-explorer.multiversx.com',
+      mvxChainId: '44'
     };
 
     init(options);
@@ -97,7 +103,10 @@ describe('init', () => {
       },
       acceptedChainIDs: [1],
       apiURL: 'https://localhost:3000',
-      bridgeURL: 'https://devnet-bridge.example.com'
+      bridgeURL: 'https://devnet-bridge.example.com',
+      mvxApiURL: 'https://devnet-api.multiversx.com',
+      mvxExplorerAddress: 'https://devnet-explorer.multiversx.com',
+      mvxChainId: '44'
     };
 
     init(options);

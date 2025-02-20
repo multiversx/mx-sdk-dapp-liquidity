@@ -4,7 +4,6 @@ import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
 import { faClose } from '@fortawesome/free-solid-svg-icons/faClose';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { MxButton } from './MxButton';
 import { MxCard } from './MxCard';
 import { MxLink } from './MxLink';
@@ -14,21 +13,20 @@ import { TokenType } from '../../types/token';
 import ArrowUpRight from '../assets/arrow-up-right.svg';
 import { MVX_CHAIN_IDS } from '../constants/general';
 import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
+import { useWeb3App } from '../hooks/useWeb3App.ts';
 import { useGetHistoryQuery } from '../queries/useGetHistory.query';
 import { formatAmount } from '../utils/formatAmount';
 import { mxClsx } from '../utils/mxClsx';
 
 export const BridgeHistory = ({
   mvxAddress,
-  bridgeURL,
-  mvxApiURL
+  onClose
 }: {
   mvxAddress?: string;
-  bridgeURL: string;
-  mvxApiURL: string;
+  onClose: () => void;
 }) => {
+  const { options } = useWeb3App();
   const { data, isLoading, isError } = useGetHistoryQuery();
-  const navigate = useNavigate();
 
   const resolveTransactionIcon = useCallback((transaction: TransactionDTO) => {
     switch (transaction.status) {
@@ -81,7 +79,7 @@ export const BridgeHistory = ({
     isChainsLoading
   } = useFetchBridgeData({
     mvxAddress,
-    mvxApiURL
+    mvxApiURL: options.mvxApiURL
   });
 
   const tokensMap = useMemo<Record<string, TokenType>>(() => {
@@ -108,9 +106,9 @@ export const BridgeHistory = ({
   }, [chains]);
 
   const className = mxClsx(
-    `liq-h-96 liq-max-h-96 liq-text-base lg:liq-text-base`,
+    'liq-flex liq-flex-col liq-absolute liq-left-0 liq-top-0 liq-order-1 liq-mx-auto liq-w-full liq-gap-1 liq-pt-12 lg:liq-order-2 lg:liq-max-w-[27.5rem] !liq-min-h-[26rem] !liq-h-[26rem] !lg:liq-pt-0 !liq-bg-neutral-850 !liq-z-[16] !liq-p-2 !liq-pointer-events-auto',
     {
-      'liq-disabled liq-animate-pulse':
+      '!liq-disabled !liq-animate-pulse':
         isLoading || tokensLoading || isChainsLoading
     }
   );
@@ -128,13 +126,12 @@ export const BridgeHistory = ({
   }
 
   return (
-    <MxCard
-      className={mxClsx(
-        'liq-flex liq-flex-col liq-gap-1 lg:liq-order-2 lg:liq-max-w-[27.5rem] !liq-px-2 liq-pt-0',
-        className
-      )}
-    >
-      <div className={'liq-flex liq-items-center liq-justify-between liq-py-2'}>
+    <MxCard className={mxClsx('liq-flex liq-flex-col liq-gap-1', className)}>
+      <div
+        className={
+          'liq-flex liq-items-center liq-justify-between liq-py-1 liq-mt-0.5'
+        }
+      >
         <div className="liq-flex liq-flex-1 liq-items-center liq-justify-center liq-text-center liq-text-lg">
           History
         </div>
@@ -142,9 +139,7 @@ export const BridgeHistory = ({
           btnSize="md"
           className="liq-border-none !liq-p-0 !liq-mr-2"
           variant="link-neutral-500"
-          onClick={() => {
-            navigate(-1);
-          }}
+          onClick={onClose}
         >
           <FontAwesomeIcon icon={faClose} size="xl" />
         </MxButton>
@@ -245,7 +240,7 @@ export const BridgeHistory = ({
                   </div>
                   <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
                     <MxLink
-                      to={`${bridgeURL}/status/${transaction.txHash}`}
+                      to={`${options.bridgeURL}/status/${transaction.txHash}`}
                       target="_blank"
                       showExternalIcon={false}
                       className="liq-flex"
