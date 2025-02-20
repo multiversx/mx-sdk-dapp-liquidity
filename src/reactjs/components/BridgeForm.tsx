@@ -20,7 +20,10 @@ import { getApiURL } from '../../helpers/getApiURL';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
 import { useAccount } from '../hooks/useAccount';
-import { useBridgeFormik } from '../hooks/useBridgeFormik';
+import {
+  BridgeFormikValuesEnum,
+  useBridgeFormik
+} from '../hooks/useBridgeFormik';
 import { useFetchBridgeData } from '../hooks/useFetchBridgeData';
 import { useGetChainId } from '../hooks/useGetChainId';
 import { useSendTransactions } from '../hooks/useSendTransactions';
@@ -200,10 +203,12 @@ export const BridgeForm = ({
 
   const handleOnChangeFirstAmount = useCallback((amount: string) => {
     setFirstAmount(() => amount);
+    setLastChangedField(BridgeFormikValuesEnum.firstAmount);
   }, []);
 
   const handleOnChangeSecondAmount = useCallback((amount: string) => {
     setSecondAmount(() => amount);
+    setLastChangedField(BridgeFormikValuesEnum.secondAmount);
   }, []);
 
   const handleOnFirstMaxBtnChange = useCallback(() => {
@@ -439,8 +444,10 @@ export const BridgeForm = ({
     handleBlur,
     handleChange,
     handleSubmit,
-    resetSwapForm
+    resetSwapForm,
+    setLastChangedField
   } = useBridgeFormik({
+    fee: rate?.fee,
     nativeAuthToken,
     mvxAccountAddress: mvxAddress,
     firstToken,
@@ -578,9 +585,10 @@ export const BridgeForm = ({
                   ? fromChainError ?? secondAmountError
                   : undefined
               }
-              disabled={true}
-              omitDisableClass={true}
+              disabled={false}
               onInputDebounceChange={handleOnChangeSecondAmount}
+              onInputChange={handleChange}
+              onBlur={handleBlur}
             />
             <TokenSelector
               name={'secondToken'}

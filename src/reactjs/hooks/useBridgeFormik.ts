@@ -1,9 +1,10 @@
 import { useFormik } from 'formik';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSwitchChain } from 'wagmi';
 import { object, string } from 'yup';
 import { useAccount } from './useAccount';
 import { useAmountSchema } from './validation/useAmountSchema';
+import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
 import { getApiURL } from '../../helpers/getApiURL';
 import { TokenType } from '../../types/token.ts';
@@ -36,6 +37,7 @@ export const useBridgeFormik = ({
   secondAmount,
   fromChainId,
   toChainId,
+  fee = '0',
   onSubmit
 }: {
   mvxAccountAddress?: string;
@@ -46,8 +48,14 @@ export const useBridgeFormik = ({
   toChainId?: string;
   firstToken?: TokenType;
   secondToken?: TokenType;
+  fee?: string;
   onSubmit: (transactions: ServerTransaction[]) => void;
 }) => {
+  const [lastChangedField, setLastChangedField] = useState<
+    | BridgeFormikValuesEnum.firstAmount
+    | BridgeFormikValuesEnum.secondAmount
+    | null
+  >(null);
   const pendingSigningRef = useRef<boolean>();
   const account = useAccount();
   const { switchChainAsync } = useSwitchChain();
@@ -78,17 +86,6 @@ export const useBridgeFormik = ({
     }
     pendingSigningRef.current = true;
 
-    if (firstToken && secondToken) {
-      sessionStorage.setItem(
-        'prevFirstTokenId',
-        values.firstToken?.address ?? ''
-      );
-      sessionStorage.setItem(
-        'prevSecondTokenId',
-        values.secondToken?.address ?? ''
-      );
-    }
-
     const { data } = await confirmRate({
       url: getApiURL(),
       nativeAuthToken: nativeAuthToken ?? '',
@@ -98,7 +95,7 @@ export const useBridgeFormik = ({
         fromChainId: values.fromChainId ?? '',
         tokenOut: values.secondToken?.address ?? '',
         toChainId: values.toChainId ?? '',
-        fee: '0',
+        fee: fee ?? '0',
         amountOut: secondAmount?.toString() ?? '',
         sender: account.address ?? '',
         receiver: mvxAccountAddress ?? ''
@@ -122,7 +119,7 @@ export const useBridgeFormik = ({
     validationSchema: object<TradeFormikValuesType>().shape({
       [BridgeFormikValuesEnum.firstAmount]: useAmountSchema(),
       [BridgeFormikValuesEnum.firstToken]: object().required(),
-      [BridgeFormikValuesEnum.secondAmount]: string(),
+      [BridgeFormikValuesEnum.secondAmount]: useSecondAmountSchema(),
       [BridgeFormikValuesEnum.secondToken]: object().required(),
       [BridgeFormikValuesEnum.fromChainId]: string().required(),
       [BridgeFormikValuesEnum.toChainId]: string().required()
@@ -131,6 +128,7 @@ export const useBridgeFormik = ({
   });
 
   const {
+    values,
     errors,
     touched,
     handleBlur,
@@ -144,9 +142,46 @@ export const useBridgeFormik = ({
   //   setFieldValue(BridgeFormikValuesEnum.firstAmount, firstAmount, true);
   // }, [firstAmount]);
 
+  // useEffect(() => {
+  //   setFieldValue(BridgeFormikValuesEnum.secondAmount, secondAmount, true);
+  // }, [secondAmount]);
+
   useEffect(() => {
-    setFieldValue(BridgeFormikValuesEnum.secondAmount, secondAmount, true);
-  }, [secondAmount]);
+    if (!values.firstAmount && touched.firstAmount) {
+      setFieldValue(BridgeFormikValuesEnum.secondAmount, 0, true);
+      return;
+    }
+
+    if (
+      lastChangedField === 'firstAmount' &&
+      values.firstAmount &&
+      values.firstAmount !== ''
+    ) {
+      const calculatedSecondAmount =
+        parseFloat(values.firstAmount) - Number(fee);
+      setFieldValue(
+        BridgeFormikValuesEnum.secondAmount,
+        calculatedSecondAmount > 0 ? calculatedSecondAmount : '0'
+      );
+    }
+  }, [values.firstAmount, fee, lastChangedField, touched.firstAmount]);
+
+  useEffect(() => {
+    if (!values.secondAmount && touched.secondAmount) {
+      setFieldValue(BridgeFormikValuesEnum.firstAmount, 0, true);
+      return;
+    }
+
+    if (
+      lastChangedField === 'secondAmount' &&
+      values.secondAmount &&
+      values.secondAmount !== ''
+    ) {
+      const calculatedFirstAmount =
+        parseFloat(values.secondAmount) + Number(fee);
+      setFieldValue(BridgeFormikValuesEnum.firstAmount, calculatedFirstAmount);
+    }
+  }, [values.secondAmount, fee, lastChangedField, touched.secondAmount]);
 
   useEffect(() => {
     setFieldValue(BridgeFormikValuesEnum.firstToken, firstToken, true);
@@ -196,6 +231,7 @@ export const useBridgeFormik = ({
     handleSubmit,
     setFieldValue,
     resetSwapForm,
-    setFieldTouched
+    setFieldTouched,
+    setLastChangedField
   };
 };
