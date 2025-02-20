@@ -10,16 +10,10 @@ import { useAccount } from '../hooks/useAccount';
 
 export const BridgeWalletConnection = ({
   activeChain,
-  disabled,
-  TrimAddressComponent
+  disabled
 }: {
   activeChain?: ChainDTO;
   disabled: boolean;
-  TrimAddressComponent: (props: {
-    text: string;
-    color?: 'muted' | 'secondary' | string;
-    className?: string;
-  }) => JSX.Element;
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
@@ -38,7 +32,7 @@ export const BridgeWalletConnection = ({
       {account.address && (
         <>
           <img src={activeChain?.svgUrl} alt="" className="liq-w-6" />
-          <span className="liq-truncate md:liq-text-clip">
+          <span className="liq-truncate liq-text-gray-400">
             {activeChain?.networkName}
           </span>
           <span className="liq-ml-[-5px]">:</span>
@@ -48,13 +42,14 @@ export const BridgeWalletConnection = ({
                 to={`${activeChain?.blockExplorerUrls?.[0]}/address/${account.address}`}
                 target="_blank"
                 showExternalIcon={false}
-                className="!liq-relative liq-bottom-[-1px]"
+                className="!liq-relative"
               >
                 <div className="liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none liq-max-w-[10rem]">
-                  <TrimAddressComponent
-                    text={account.address}
-                    className="liq-flex liq-items-center liq-text-neutral-100 uppercase"
-                  />
+                  <div className="liq-truncate liq-text-left liq-text-neutral-100 uppercase liq-flex liq-gap-1">
+                    <span>{account.address.slice(0, 4)}</span>
+                    <span>...</span>
+                    <span>{account.address.slice(-5)}</span>
+                  </div>
                   {/*<FontAwesomeIcon*/}
                   {/*  icon={faChevronRight}*/}
                   {/*  className="liq-ml-1 liq-text-neutral-400"*/}

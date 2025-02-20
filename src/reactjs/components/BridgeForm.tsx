@@ -16,7 +16,6 @@ import { EnterAmountInput } from './EnterAmountInput';
 import { MvxAccountDisplay } from './MvxAccountDisplay';
 import { MxButton } from './MxButton';
 import { TokenSelector } from './TokenSelector';
-import { TransactionToast } from './TransactionToast/TransactionToast';
 import { getApiURL } from '../../helpers/getApiURL';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
@@ -42,12 +41,6 @@ interface BridgeFormProps {
   callbackRoute?: string;
   explorerAddress: string;
   refetchTrigger?: number;
-  TrimAddressComponent: (props: {
-    text: string;
-    color?: 'muted' | 'secondary' | string;
-    className?: string;
-  }) => JSX.Element;
-  TransactionToastComponent: typeof TransactionToast;
   onSuccessfullySentTransaction?: (txHashes?: string[]) => void;
   onFailedSentTransaction?: (message?: string) => void;
   onMvxConnect: () => void;
@@ -63,8 +56,6 @@ export const BridgeForm = ({
   callbackRoute = '/',
   explorerAddress,
   refetchTrigger,
-  TrimAddressComponent,
-  TransactionToastComponent,
   onSuccessfullySentTransaction,
   onFailedSentTransaction,
   onMvxConnect,
@@ -434,8 +425,6 @@ export const BridgeForm = ({
       }
     },
     [
-      TransactionToastComponent,
-      TrimAddressComponent,
       bridgeAddress,
       handleOnChangeFirstAmount,
       handleOnChangeSecondAmount,
@@ -527,12 +516,11 @@ export const BridgeForm = ({
             }
           )}
         >
-          <div className="liq-flex liq-items-center liq-gap-2">
-            From
+          <div className="liq-flex liq-items-center liq-gap-1">
+            <span>From</span>
             <BridgeWalletConnection
               disabled={isPendingRate}
               activeChain={selectedChainOption}
-              TrimAddressComponent={TrimAddressComponent}
             />
           </div>
           <div className="liq-flex liq-justify-between liq-gap-1">
@@ -573,14 +561,13 @@ export const BridgeForm = ({
             }
           )}
         >
-          <div className="liq-flex liq-items-center liq-gap-2">
-            To
+          <div className="liq-flex liq-items-center liq-gap-1">
+            <span>To</span>
             <MvxAccountDisplay
               accountAddress={mvxAddress}
               chainIcon={mvxChain?.svgUrl ?? ''}
               username={username}
               accountExplorerUrl={`${explorerAddress}/accounts/${mvxAddress}`}
-              TrimAddressComponent={TrimAddressComponent}
               showTag={true}
               onDisconnect={onMvxDisconnect}
               onConnect={onMvxConnect}

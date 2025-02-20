@@ -10,7 +10,6 @@ export const MvxAccountDisplay = ({
   accountAddress,
   username,
   showTag,
-  TrimAddressComponent,
   onDisconnect,
   onConnect
 }: {
@@ -19,11 +18,6 @@ export const MvxAccountDisplay = ({
   accountAddress?: string;
   username?: string;
   showTag?: boolean;
-  TrimAddressComponent: (props: {
-    text: string;
-    color?: 'muted' | 'secondary' | string;
-    className?: string;
-  }) => JSX.Element;
   onDisconnect?: () => void;
   onConnect?: () => void;
 }) => {
@@ -42,20 +36,19 @@ export const MvxAccountDisplay = ({
       {accountAddress && (
         <>
           <img src={chainIcon} alt="" className="liq-w-6" />
-          <span className="">MultiversX:</span>
+          <span className="liq-truncate liq-text-gray-400">MultiversX:</span>
           <div className="liq-flex liq-items-center liq-justify-between">
             <div className="liq-flex liq-max-w-[10rem] liq-items-center liq-gap-1">
               <MxLink
                 to={`${accountExplorerUrl}`}
                 target="_blank"
                 showExternalIcon={false}
-                className="!liq-relative liq-bottom-[-1px]"
+                className="!liq-relative"
               >
                 <AccountAddress
                   address={accountAddress}
                   username={username}
                   showTag={showTag}
-                  TrimAddressComponent={TrimAddressComponent}
                 />
               </MxLink>
 

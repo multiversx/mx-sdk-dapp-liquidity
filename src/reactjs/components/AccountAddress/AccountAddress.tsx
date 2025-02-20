@@ -4,18 +4,12 @@ export const AccountAddress = ({
   address,
   username,
   showTag = true,
-  className = '',
-  TrimAddressComponent
+  className = ''
 }: {
   address: string;
   username?: string;
   showTag?: boolean;
   className?: string;
-  TrimAddressComponent: (props: {
-    text: string;
-    color?: 'muted' | 'secondary' | string;
-    className?: string;
-  }) => JSX.Element;
 }) => {
   const heroTag = username ? `@${username.replace('.elrond', '')}` : undefined;
 
@@ -31,10 +25,11 @@ export const AccountAddress = ({
           {heroTag}
         </div>
       ) : (
-        <TrimAddressComponent
-          text={address}
-          className="liq-text-neutral-100 uppercase"
-        />
+        <div className="liq-truncate liq-text-left liq-text-neutral-100 uppercase liq-flex liq-gap-1">
+          <span>{address.slice(0, 4)}</span>
+          <span>...</span>
+          <span>{address.slice(-5)}</span>
+        </div>
       )}
     </div>
   );
