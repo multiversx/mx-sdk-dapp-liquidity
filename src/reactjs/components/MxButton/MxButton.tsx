@@ -29,7 +29,7 @@ interface MxButtonType extends HTMLProps<HTMLButtonElement> {
   isProcessing?: boolean;
   btnSize?: MxButtonSizeType;
   variant?: MxButtonVariantType;
-  type?: HTMLButtonElement['type']; // typescript fix
+  type?: HTMLButtonElement['type'];
 }
 
 export const MxButton = ({

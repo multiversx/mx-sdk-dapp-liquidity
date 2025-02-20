@@ -128,10 +128,6 @@ export const BridgeForm = ({
   const bridgeAddress = account.address;
   const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
 
-  // const fee = useMemo(() => {
-  //   return rate?.fee ?? '';
-  // }, [rate]);
-
   const fromOptions = useMemo(
     () =>
       (evmTokensWithBalances &&
@@ -599,11 +595,6 @@ export const BridgeForm = ({
             />
           </div>
         </EnterAmountCard>
-        {/*{fee && (*/}
-        {/*  <div className="liq-my-2 liq-ml-2 liq-flex liq-justify-start liq-rounded-xl liq-border liq-border-neutral-700 liq-px-4 liq-py-2 liq-text-sm liq-text-neutral-600">*/}
-        {/*    {fee && `Fee: ${fee}`}*/}
-        {/*  </div>*/}
-        {/*)}*/}
         <div className="liq-flex liq-items-center liq-justify-center">
           {!mvxAddress && (
             <MvxConnectButton
@@ -620,7 +611,6 @@ export const BridgeForm = ({
             />
           )}
           {mvxAddress && isAuthenticated && (
-            // Deposit button
             <MxButton
               type="submit"
               variant="neutral-850"

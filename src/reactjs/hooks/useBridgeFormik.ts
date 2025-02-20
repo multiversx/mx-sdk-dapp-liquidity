@@ -50,7 +50,6 @@ export const useBridgeFormik = ({
 }) => {
   const pendingSigningRef = useRef<boolean>();
   const account = useAccount();
-  // const { switchNetwork } = useAppKitNetwork();
   const { switchChainAsync } = useSwitchChain();
 
   const initialValues: TradeFormikValuesType = {

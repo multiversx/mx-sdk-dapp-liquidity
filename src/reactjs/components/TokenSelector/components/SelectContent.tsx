@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-// import { useSwitchChain } from 'wagmi';
 import { ChainSelect } from './ChainSelect/ChainSelect';
 import { TokenList } from './TokenList';
 import { ChainDTO } from '../../../../dto/Chain.dto';
@@ -23,7 +22,6 @@ export const SelectContent = ({
   const [filteredTokens, setFilteredTokens] = useState(tokens);
   const [selected, setSelected] = useState(selectedToken);
   const searchPatternRef = useRef<string>('');
-  // const { switchChain } = useSwitchChain();
   const activeChainId = useGetChainId();
 
   const [selectedChainId, setSelectedChainId] = useState(
@@ -47,11 +45,6 @@ export const SelectContent = ({
     onSelect(token);
   };
 
-  useEffect(() => {
-    setFilteredTokens(tokens);
-    setSelected(selectedToken);
-  }, [selectedToken, tokens]);
-
   const handleSearch = (pattern: string) => {
     searchPatternRef.current = pattern;
 
@@ -72,14 +65,13 @@ export const SelectContent = ({
   };
 
   useEffect(() => {
-    // '0' means "All" option
-    if (selectedChainId.toString() !== '0') {
-      // switchChain({
-      //   chainId: Number(selectedChainId)
-      // });
-    }
+    setFilteredTokens(tokens);
+    setSelected(selectedToken);
+  }, [selectedToken, tokens]);
+
+  useEffect(() => {
     handleSearch(searchPatternRef.current);
-  }, [selectedChainId, tokens]);
+  }, [selectedChainId]);
 
   return (
     <div className="liq-relative liq-flex liq-max-w-full liq-flex-col liq-rounded-none liq-p-0 !liq-max-h-[22rem]">

@@ -1,4 +1,3 @@
-// import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDisconnect } from '@reown/appkit/react';
@@ -47,10 +46,6 @@ export const BridgeWalletConnection = ({
               >
                 <div className="liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none liq-max-w-[10rem]">
                   <TrimAddress address={account.address} />
-                  {/*<FontAwesomeIcon*/}
-                  {/*  icon={faChevronRight}*/}
-                  {/*  className="liq-ml-1 liq-text-neutral-400"*/}
-                  {/*/>*/}
                 </div>
               </MxLink>
               <CopyButton text={account.address} className="liq-text-sm" />

@@ -1,4 +1,3 @@
-// import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { useCallback, useMemo } from 'react';
 import { useSwitchChain } from 'wagmi';
@@ -29,13 +28,6 @@ export const TokenItem = ({
       (chain) => chain.id.toString() === chainId?.toString()
     );
   }, [chainId, sdkChains]);
-
-  // const formattedBalance = formatAmount({
-  //   decimals: token.decimals,
-  //   input: token.balance ?? '0',
-  //   addCommas: true,
-  //   digits: 4
-  // });
 
   const handleSwitchChain = useCallback(() => {
     if (
@@ -78,10 +70,6 @@ export const TokenItem = ({
           <div className="liq-text-sm liq-font-bold">{token.symbol}</div>
           <div className="liq-text-xs liq-text-gray-400">{token.name}</div>
         </div>
-        {/*Temp hide token balance from the token selector screen*/}
-        {/*<div className="liq-ml-auto liq-mr-0 liq-flex liq-justify-end">*/}
-        {/*  <div className="liq-text-sm liq-font-bold">{formattedBalance}</div>*/}
-        {/*</div>*/}
       </div>
     </div>
   );
