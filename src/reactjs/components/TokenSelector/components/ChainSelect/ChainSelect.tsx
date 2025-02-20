@@ -2,18 +2,9 @@ import { useMemo } from 'react';
 import Select from 'react-select';
 import { FormatChainOptionLabel } from './components/FormatChainOptionLabel';
 import { IndicatorSeparator } from './components/IndicatorSeparator';
+import { SelectedChainOption } from './components/SelectedChainOption';
+import { PartialChainOptionType } from './types/partialChainOption';
 import { ChainDTO } from '../../../../../dto/Chain.dto';
-
-type PartialChainOptionType = {
-  label: string;
-  value: string;
-  chain: {
-    id: string;
-    name: string;
-    networkName: string;
-    svgUrl: string;
-  };
-};
 
 export const ChainSelect = ({
   isLoading,
@@ -62,7 +53,7 @@ export const ChainSelect = ({
   }, [chainOptions, selectedChainId]);
 
   return (
-    <div className="styled-chain-select min-w-36" data-testid="chainDropdown">
+    <div className="styled-chain-select" data-testid="chainDropdown">
       <Select
         className="basic-single"
         classNamePrefix="styled-chain-select"
@@ -89,11 +80,16 @@ export const ChainSelect = ({
         name="chain"
         options={chainOptions}
         onChange={(selectedOption) => {
-          if (selectedOption?.chain.id) {
-            onChange?.(selectedOption.chain.id.toString());
+          if (selectedOption?.chain?.id) {
+            onChange?.(selectedOption.chain?.id.toString());
           }
         }}
+        isMulti={false}
         formatOptionLabel={FormatChainOptionLabel}
+        components={{
+          Input: () => null,
+          SingleValue: SelectedChainOption
+        }}
       />
     </div>
   );

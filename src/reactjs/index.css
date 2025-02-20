@@ -72,6 +72,10 @@
             @apply liq-text-neutral-300;
         }
 
+        .styled-chain-select__value-container {
+            @apply !liq-px-[2px]
+        }
+
         .styled-chain-select__single-value {
             @apply !liq-text-neutral-200 liq-bg-transparent;
         }

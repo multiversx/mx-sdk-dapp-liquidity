@@ -1,3 +1,3 @@
 export const IndicatorSeparator = () => {
-  return { display: "none" };
+  return { display: 'none' };
 };
