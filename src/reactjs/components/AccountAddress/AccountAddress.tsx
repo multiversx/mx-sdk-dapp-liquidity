@@ -1,4 +1,5 @@
 import { mxClsx } from '../../utils/mxClsx';
+import { TrimAddress } from '../TrimAddress/TrimAddress.tsx';
 
 export const AccountAddress = ({
   address,
@@ -25,11 +26,7 @@ export const AccountAddress = ({
           {heroTag}
         </div>
       ) : (
-        <div className="liq-truncate liq-text-left liq-text-neutral-100 uppercase liq-flex liq-gap-1">
-          <span>{address.slice(0, 4)}</span>
-          <span>...</span>
-          <span>{address.slice(-5)}</span>
-        </div>
+        <TrimAddress address={address} />
       )}
     </div>
   );

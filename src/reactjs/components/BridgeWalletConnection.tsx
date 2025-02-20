@@ -5,6 +5,7 @@ import { useDisconnect } from '@reown/appkit/react';
 import { SwitchChainButton } from './Connect/SwitchChainButton';
 import { CopyButton } from './CopyButton';
 import { MxLink } from './MxLink';
+import { TrimAddress } from './TrimAddress/TrimAddress.tsx';
 import { ChainDTO } from '../../dto/Chain.dto';
 import { useAccount } from '../hooks/useAccount';
 
@@ -45,11 +46,7 @@ export const BridgeWalletConnection = ({
                 className="!liq-relative"
               >
                 <div className="liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none liq-max-w-[10rem]">
-                  <div className="liq-truncate liq-text-left liq-text-neutral-100 uppercase liq-flex liq-gap-1">
-                    <span>{account.address.slice(0, 4)}</span>
-                    <span>...</span>
-                    <span>{account.address.slice(-5)}</span>
-                  </div>
+                  <TrimAddress address={account.address} />
                   {/*<FontAwesomeIcon*/}
                   {/*  icon={faChevronRight}*/}
                   {/*  className="liq-ml-1 liq-text-neutral-400"*/}
