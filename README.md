@@ -67,14 +67,7 @@ yarn publish-package-next
 ```
 
 ```tsx
-import { init, Web3AppProvider } from '@multiversx/mx-sdk-dapp-liquidity';
-import {
-  bscTestnet,
-  fantomTestnet,
-} from '@reown/appkit/networks'
-import {DEFAULT_APP_METADATA, DEFAULT_PROJECT_ID} from "../constants";
-import type {AppKitNetwork} from "@reown/appkit-common";
-import { walletConnect } from "wagmi/connectors";
+import { init, Web3AppProvider, AppKitNetwork, BridgeForm, TransactionToastContainer } from '@multiversx/mx-sdk-dapp-liquidity';
 
 const metadata = {
   name: 'AppName',
@@ -83,7 +76,6 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 };
 const projectId = "@reown project id";
-const networks: [AppKitNetwork, ...AppKitNetwork[]] = [bscTestnet, fantomTestnet ]
 const provider = init({
   /**
    * @reown AppKit options
@@ -91,7 +83,6 @@ const provider = init({
   appKitOptions: {
     allowUnsupportedChain: true,
     projectId,
-    networks,
     metadata,
     connectorImages: {
       injected: 'https://avatars.githubusercontent.com/u/179229932',
