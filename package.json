@@ -3,7 +3,7 @@
   "author": "MultiversX",
   "description": "Generic SDK for multi-chain wallet connection",
   "license": "MIT",
-  "version": "0.2.0-alpha.2",
+  "version": "1.0.0",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
