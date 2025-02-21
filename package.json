@@ -1,5 +1,5 @@
 {
-  "name": "@multiversx/mx-sdk-dapp-liquidity",
+  "name": "@multiversx/sdk-dapp-liquidity",
   "author": "MultiversX",
   "description": "Generic SDK for multi-chain wallet connection",
   "license": "MIT",

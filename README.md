@@ -67,7 +67,7 @@ yarn publish-package-next
 ```
 
 ```tsx
-import { init, Web3AppProvider, AppKitNetwork, BridgeForm, TransactionToastContainer } from '@multiversx/mx-sdk-dapp-liquidity';
+import { init, Web3AppProvider, AppKitNetwork, BridgeForm, TransactionToastContainer } from '@multiversx/sdk-dapp-liquidity';
 
 const metadata = {
   name: 'AppName',
