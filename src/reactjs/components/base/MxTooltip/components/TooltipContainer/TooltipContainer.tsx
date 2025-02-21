@@ -3,7 +3,7 @@ import { mxClsx } from '../../../../../utils/mxClsx';
 import {
   MxTooltipVariantColorType,
   MxTooltipVariantType
-} from '../../MxTooltip.tsx';
+} from '../../MxTooltip';
 
 interface TooltipContainerProps {
   children: React.ReactNode;

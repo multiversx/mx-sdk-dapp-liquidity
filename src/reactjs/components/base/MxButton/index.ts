@@ -1,1 +1,1 @@
-export * from './MxButton.tsx';
+export * from './MxButton';

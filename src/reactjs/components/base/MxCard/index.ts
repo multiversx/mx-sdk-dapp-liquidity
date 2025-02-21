@@ -1,1 +1,1 @@
-export * from './MxCard.tsx';
+export * from './MxCard';

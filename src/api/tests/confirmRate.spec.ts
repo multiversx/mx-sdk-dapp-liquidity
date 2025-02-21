@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ConfirmRateDTO } from 'dto/ConfirmRateDTO';
+import { ConfirmRateDto } from '../../dto/ConfirmRate.dto.ts';
 import { ServerTransaction } from '../../types/transaction';
 import { confirmRate } from '../confirmRate';
 
@@ -10,7 +10,7 @@ describe('confirmRate', () => {
   const url = 'https://api.example.com';
 
   it('POST confirmRate successfully', async () => {
-    const body: ConfirmRateDTO = {
+    const body: ConfirmRateDto = {
       tokenIn: 'tokenIn',
       tokenOut: 'tokenOut',
       fee: '100',
@@ -60,7 +60,7 @@ describe('confirmRate', () => {
   });
 
   it('POST confirmRate with no nativeAuthToken', async () => {
-    const body: ConfirmRateDTO = {
+    const body: ConfirmRateDto = {
       tokenIn: 'tokenIn',
       tokenOut: 'tokenOut',
       fee: '100',
@@ -108,7 +108,7 @@ describe('confirmRate', () => {
   });
 
   it('POST confirmRate should throw an error', async () => {
-    const body: ConfirmRateDTO = {
+    const body: ConfirmRateDto = {
       tokenIn: 'tokenIn',
       tokenOut: 'tokenOut',
       fee: '100',

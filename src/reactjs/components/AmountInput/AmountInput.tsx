@@ -1,6 +1,6 @@
 import { ChangeEvent, FocusEvent } from 'react';
 import { NumericFormat } from 'react-number-format';
-import { mxClsx } from '../../utils/mxClsx.ts';
+import { mxClsx } from '../../utils/mxClsx';
 
 export const AmountInput = ({
   inputName,

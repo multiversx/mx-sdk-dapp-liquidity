@@ -5,7 +5,7 @@ import { PropsWithChildren, useMemo } from 'react';
 import { createContext } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { getQueryClient } from './queryClient';
-import { InitOptions } from '../../bootstrap/init';
+import { InitOptions } from '../init/init';
 
 export type Web3AppContextProps = {
   config: ResolvedRegister['config'];

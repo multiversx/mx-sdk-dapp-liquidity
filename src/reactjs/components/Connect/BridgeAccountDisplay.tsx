@@ -1,12 +1,12 @@
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDisconnect } from '@reown/appkit/react';
-import { SwitchChainButton } from './SwitchChainButton.tsx';
-import { ChainDTO } from '../../../dto/Chain.dto.ts';
-import { useAccount } from '../../hooks/useAccount.ts';
-import { MxLink } from '../base/MxLink';
+import { SwitchChainButton } from './SwitchChainButton';
+import { ChainDTO } from '../../../dto/Chain.dto';
+import { useAccount } from '../../hooks/useAccount';
+import { MxLink } from '../base';
 import { CopyButton } from '../CopyButton';
-import { TrimAddress } from '../TrimAddress/TrimAddress.tsx';
+import { TrimAddress } from '../TrimAddress';
 
 export const BridgeAccountDisplay = ({
   activeChain,

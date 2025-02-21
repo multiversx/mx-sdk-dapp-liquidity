@@ -1,1 +1,1 @@
-export * from './MxSlideover.tsx';
+export * from './MxSlideover';

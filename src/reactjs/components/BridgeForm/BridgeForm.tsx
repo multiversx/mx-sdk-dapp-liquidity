@@ -8,35 +8,37 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useSwitchChain } from 'wagmi';
-import { getApiURL } from '../../../helpers/getApiURL.ts';
-import { TokenType } from '../../../types/token.ts';
-import { ServerTransaction } from '../../../types/transaction.ts';
-import { useWeb3App } from '../../context/useWeb3App.ts';
-import { useAccount } from '../../hooks/useAccount.ts';
+import { getApiURL } from '../../../helpers/getApiURL';
+import { TokenType } from '../../../types/token';
+import { ServerTransaction } from '../../../types/transaction';
+import { useWeb3App } from '../../context/useWeb3App';
+import { useAccount } from '../../hooks/useAccount';
 import {
   BridgeFormikValuesEnum,
   useBridgeFormik
-} from '../../hooks/useBridgeFormik.ts';
-import { useFetchBridgeData } from '../../hooks/useFetchBridgeData.ts';
-import { useGetChainId } from '../../hooks/useGetChainId.ts';
-import { useSendTransactions } from '../../hooks/useSendTransactions.ts';
-import { useSignTransaction } from '../../hooks/useSignTransaction.ts';
-import { invalidateHistoryQuery } from '../../queries/useGetHistory.query.ts';
-import { useGetRateMutation } from '../../queries/useGetRate.mutation.ts';
-import { getCompletePathname } from '../../utils/getCompletePathname.ts';
+} from '../../hooks/useBridgeFormik';
+import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
+import { useGetChainId } from '../../hooks/useGetChainId';
+import { useSendTransactions } from '../../hooks/useSendTransactions';
+import { useSignTransaction } from '../../hooks/useSignTransaction';
+import { invalidateHistoryQuery } from '../../queries/useGetHistory.query';
+import { useGetRateMutation } from '../../queries/useGetRate.mutation';
+import { getCompletePathname } from '../../utils/getCompletePathname';
 import {
   getInitialTokens,
   InitialTokensType
-} from '../../utils/getInitialTokens.ts';
-import { mxClsx } from '../../utils/mxClsx.ts';
-import { AmountCard } from '../AmountCard/AmountCard.tsx';
-import { AmountInput } from '../AmountInput/AmountInput.tsx';
-import { MxButton } from '../base/MxButton';
-import { BridgeHistory } from '../BridgeHistory/BridgeHistory.tsx';
-import { BridgeAccountDisplay } from '../Connect/BridgeAccountDisplay.tsx';
-import { BridgeConnectButton } from '../Connect/BridgeConnectButton.tsx';
-import { MvxAccountDisplay } from '../Connect/MvxAccountDisplay.tsx';
-import { MvxConnectButton } from '../Connect/MvxConnectButton.tsx';
+} from '../../utils/getInitialTokens';
+import { mxClsx } from '../../utils/mxClsx';
+import { AmountCard } from '../AmountCard';
+import { AmountInput } from '../AmountInput';
+import { MxButton } from '../base';
+import { BridgeHistory } from '../BridgeHistory';
+import {
+  BridgeAccountDisplay,
+  BridgeConnectButton,
+  MvxAccountDisplay,
+  MvxConnectButton
+} from '../Connect';
 import { TokenSelector } from '../TokenSelector';
 
 interface BridgeFormProps {

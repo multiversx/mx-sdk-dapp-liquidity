@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import { mxClsx } from '../../utils/mxClsx.ts';
-import { MxCard } from '../base/MxCard';
+import { mxClsx } from '../../utils/mxClsx';
+import { MxCard } from '../base';
 
 export const AmountCard = ({
   className,

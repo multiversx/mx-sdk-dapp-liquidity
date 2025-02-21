@@ -1,5 +1,5 @@
 import { mxClsx } from '../../utils/mxClsx';
-import { TrimAddress } from '../TrimAddress/TrimAddress.tsx';
+import { TrimAddress } from '../TrimAddress';
 
 export const AccountAddress = ({
   address,

@@ -1,11 +1,11 @@
 import type { AppKitOptions } from '@reown/appkit';
-import { createAppKit } from '@reown/appkit';
+import { createAppKit } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
 import * as networks from 'viem/chains';
-import { MVX_CHAIN_IDS } from '../constants';
-import { InMemoryStore } from '../store/inMemoryStore';
+import { MVX_CHAIN_IDS } from '../../constants';
+import { InMemoryStore } from '../../store/inMemoryStore';
 
 export type InitOptions = {
   /**
@@ -29,7 +29,7 @@ export type InitOptions = {
    */
   apiURL: string;
   /**
-   * Bridge URL
+   * Bridge URL. This is used to redirect the user to the bridge status page for tracking transactions (history). Will be removed in the next major release.
    */
   bridgeURL: string;
   /**

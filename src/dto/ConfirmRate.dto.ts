@@ -1,4 +1,4 @@
-export interface ConfirmRateDTO {
+export interface ConfirmRateDto {
   tokenIn: string;
   amountIn: string;
   fromChainId: string;

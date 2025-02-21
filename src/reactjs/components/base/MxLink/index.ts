@@ -1,1 +1,1 @@
-export * from './MxLink.tsx';
+export * from './MxLink';
