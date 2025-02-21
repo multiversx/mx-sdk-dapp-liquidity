@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { TestContext } from 'yup';
-import { TokenType } from '../../../types/token.ts';
+import { TokenType } from '../../../types/token';
 import { hasEnoughFunds } from '../../utils/hasEnoughFunds';
 import { testNumber } from '../../utils/testNumber';
 

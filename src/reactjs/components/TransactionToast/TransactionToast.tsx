@@ -1,7 +1,7 @@
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons/faArrowUpRightFromSquare';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToastContentProps } from 'react-toastify';
-import { useWeb3App } from '../../hooks/useWeb3App';
+import { useWeb3App } from '../../context/useWeb3App';
 import { CopyButton } from '../CopyButton';
 
 export const TransactionToast = ({

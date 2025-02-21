@@ -1,6 +1,6 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { useMemo } from 'react';
-import { useWeb3App } from './useWeb3App';
+import { useWeb3App } from '../context/useWeb3App';
 
 export const useGetChainId = () => {
   const { chainId } = useAppKitNetwork();

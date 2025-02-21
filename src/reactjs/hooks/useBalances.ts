@@ -1,6 +1,6 @@
 import { getBalance } from '@wagmi/core';
 import { useCallback } from 'react';
-import { useWeb3App } from './useWeb3App';
+import { useWeb3App } from '../context/useWeb3App';
 
 export const useBalances = () => {
   const { config } = useWeb3App();

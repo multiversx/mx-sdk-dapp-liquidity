@@ -5,13 +5,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { SelectContainer } from './components/SelectContainer';
 import { SelectContent } from './components/SelectContent';
 import { SelectedOption } from './components/SelectedOption';
+import { MVX_CHAIN_IDS } from '../../../constants';
 import { TokenType } from '../../../types/token';
-import { MVX_CHAIN_IDS } from '../../constants/general';
 import { useResolveTokenChain } from '../../hooks/useResolveTokenChain';
 import { useGetChainsQuery } from '../../queries/useGetChains.query';
 import { mxClsx } from '../../utils/mxClsx';
+import { MxButton } from '../base/MxButton';
 import { DisplayAmount } from '../DisplayAmount';
-import { MxButton } from '../MxButton';
 
 export const TokenSelector = ({
   name,

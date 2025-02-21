@@ -1,12 +1,12 @@
 import axios, { AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ConfirmRateDTO } from 'dto/ConfirmRateDTO';
 import { decodeToken } from 'helpers/decodeToken';
+import { ConfirmRateDto } from '../dto/ConfirmRate.dto.ts';
 import { ServerTransaction } from '../types/transaction';
 
 type ConfirmRateProps = {
   url: string;
   nativeAuthToken: string;
-  body: ConfirmRateDTO;
+  body: ConfirmRateDto;
 };
 
 export async function confirmRate({

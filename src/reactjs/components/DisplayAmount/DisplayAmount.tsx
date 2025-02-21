@@ -10,7 +10,7 @@ import { getCleanStringAmount } from '../../utils/getCleanStringAmount';
 import { isStringFloat } from '../../utils/isStringFloat';
 import { mxClsx } from '../../utils/mxClsx';
 import { roundAmount } from '../../utils/roundAmount';
-import { MxTooltip } from '../MxTooltip';
+import { MxTooltip } from '../base/MxTooltip';
 
 export interface DisplayAmountProps extends HTMLProps<HTMLSpanElement> {
   sufix?: string;

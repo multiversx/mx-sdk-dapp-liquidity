@@ -4,7 +4,7 @@ import { TokenList } from './TokenList';
 import { ChainDTO } from '../../../../dto/Chain.dto';
 import { TokenType } from '../../../../types/token';
 import { useGetChainId } from '../../../hooks/useGetChainId';
-import { MxSearch } from '../../MxSearch';
+import { MxSearch } from '../../base/MxSearch';
 
 export const SelectContent = ({
   onSelect,

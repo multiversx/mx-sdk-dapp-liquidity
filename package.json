@@ -1,15 +1,14 @@
 {
-  "name": "@multiversx/mx-sdk-dapp-liquidity",
+  "name": "@multiversx/sdk-dapp-liquidity",
   "author": "MultiversX",
   "description": "Generic SDK for multi-chain wallet connection",
   "license": "MIT",
-  "version": "0.1.1-alpha.70",
+  "version": "1.0.1",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
   "scripts": {
     "build": "rimraf dist && vite build && cp package.json dist && cp README.md dist",
-    "build-dev": "yarn build && sh copy-dist.sh",
     "build:watch": "tsc && vite build --watch",
     "publish-package": "yarn build && cd dist && npm publish",
     "publish-package-next": "yarn build && cd dist && npm publish --tag next",

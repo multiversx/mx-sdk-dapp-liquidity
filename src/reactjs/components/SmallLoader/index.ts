@@ -1,1 +1,1 @@
-export * from "./SmallLoader";
+export * from './SmallLoader';

@@ -1,1 +1,1 @@
-export * from "./truncateAmount";
+export * from './truncateAmount';

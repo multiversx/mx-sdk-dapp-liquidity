@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
-import { getQueryClient } from '../contexts/queryClient';
+import { getQueryClient } from '../context/queryClient';
 
 export const useGetMvxTokensBalancesQuery = ({
   tokens,

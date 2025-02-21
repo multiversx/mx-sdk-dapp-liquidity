@@ -2,8 +2,8 @@ import { faClose } from '@fortawesome/free-solid-svg-icons/faClose';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReactNode } from 'react';
 import { mxClsx } from '../../../utils/mxClsx';
-import { MxButton } from '../../MxButton';
-import { MxCard } from '../../MxCard';
+import { MxButton } from '../../base/MxButton';
+import { MxCard } from '../../base/MxCard';
 
 export const SelectContainer = ({
   children,

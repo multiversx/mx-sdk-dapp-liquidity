@@ -1,6 +1,6 @@
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { mxClsx } from '../../utils/mxClsx';
-import { MxButton } from '../MxButton';
+import { MxButton } from '../base/MxButton';
 
 interface ConnectButtonProps {
   mvxAccountAddress?: string;
