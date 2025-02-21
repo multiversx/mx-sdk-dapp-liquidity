@@ -36,7 +36,7 @@ export const ChainSelect = ({
         id: '0',
         name: 'all',
         networkName: 'All',
-        svgUrl: ''
+        svgUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg'
       }
     });
 
