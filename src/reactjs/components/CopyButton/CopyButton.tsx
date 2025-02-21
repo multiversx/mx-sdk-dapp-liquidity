@@ -3,7 +3,7 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons/faCopy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { copyTextToClipboard } from './utils';
-import { MxButton } from '../MxButton';
+import { MxButton } from '../base/MxButton';
 
 interface CopyButtonType {
   text: string;

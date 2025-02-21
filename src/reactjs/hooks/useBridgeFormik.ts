@@ -7,7 +7,7 @@ import { useAmountSchema } from './validation/useAmountSchema';
 import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
 import { getApiURL } from '../../helpers/getApiURL';
-import { TokenType } from '../../types/token.ts';
+import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
 
 export enum BridgeFormikValuesEnum {

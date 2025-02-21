@@ -1,4 +1,4 @@
-import { safeWindow } from '../constants/general';
+import { safeWindow } from '../constants';
 
 export type EthereumProvider = { request(...args: any): Promise<any> } & {
   isMetaMask?: boolean;

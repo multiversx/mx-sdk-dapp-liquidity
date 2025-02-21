@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { TokenDTO } from '../../dto/Token.dto';
+import { chainIdentifier, ChainNameType } from '../constants';
 import { useGetChainsQuery } from '../queries/useGetChains.query';
-import { chainIdentifier } from '../types/chains';
 
 export const useResolveTokenChain = ({ token }: { token?: TokenDTO }) => {
   const { data: chains, isLoading } = useGetChainsQuery();
@@ -16,7 +16,8 @@ export const useResolveTokenChain = ({ token }: { token?: TokenDTO }) => {
     tokenChain,
     isLoading,
     chainIcon: tokenChain
-      ? tokenChain.svgUrl ?? chainIdentifier[tokenChain.chainName]
+      ? tokenChain.svgUrl ??
+        chainIdentifier[tokenChain.chainName as ChainNameType]
       : null
   };
 };

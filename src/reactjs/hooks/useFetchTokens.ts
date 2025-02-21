@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useAccount } from './useAccount';
 import { useGetChainId } from './useGetChainId';
-import { MVX_CHAIN_IDS } from '../constants/general';
+import { MVX_CHAIN_IDS } from '../../constants';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import {
   invalidateEvmTokensBalances,

@@ -1,5 +1,5 @@
 import AllNetworks from '../../../../../assets/all-networks.svg';
-import { chainIdentifier, ChainNameType } from '../../../../../types/chains';
+import { chainIdentifier, ChainNameType } from '../../../../../constants';
 
 export interface ChainOptionLabelType {
   isDisabled?: boolean;

@@ -1,6 +1,6 @@
 import { Placement } from 'react-joyride';
 import { mxClsx } from '../../../../utils/mxClsx';
-import { MxTooltip } from '../../../MxTooltip';
+import { MxTooltip } from '../../../base/MxTooltip';
 
 interface PrecisedAmountProps {
   amount: string;

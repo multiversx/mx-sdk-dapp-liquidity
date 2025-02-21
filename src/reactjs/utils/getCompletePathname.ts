@@ -1,2 +1,4 @@
+import { safeWindow } from '../constants';
+
 export const getCompletePathname = () =>
-  `${window.location.pathname}${window.location.search}`;
+  `${safeWindow.location.pathname}${safeWindow.location.search}`;

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { TokenType } from '../../types/token';
-import { getQueryClient } from '../contexts/queryClient';
+import { getQueryClient } from '../context/queryClient';
 import { useBalances } from '../hooks/useBalances';
 
 export const useGetEvmTokensBalancesQuery = ({

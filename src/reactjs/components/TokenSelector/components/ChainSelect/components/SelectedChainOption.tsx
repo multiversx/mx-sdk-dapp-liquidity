@@ -1,6 +1,6 @@
 import { components, type SingleValueProps } from 'react-select';
 import AllNetworks from '../../../../../assets/all-networks.svg';
-import { chainIdentifier, ChainNameType } from '../../../../../types/chains';
+import { chainIdentifier, ChainNameType } from '../../../../../constants';
 import { PartialChainOptionType } from '../types/partialChainOption';
 
 export const SelectedChainOption = ({

@@ -1,1 +1,1 @@
-export * from './contexts/Web3AppProvider';
+export * from './context/Web3AppProvider';
