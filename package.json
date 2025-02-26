@@ -1,7 +1,7 @@
 {
   "name": "@multiversx/sdk-dapp-liquidity",
   "author": "MultiversX",
-  "description": "Generic SDK for multi-chain wallet connection",
+  "description": "A complete toolkit for bridging assets between MultiversX, Ethereum, and BNB Chain",
   "license": "MIT",
   "version": "1.0.1",
   "main": "index.js",
