@@ -2,7 +2,7 @@
 
 ## Overview
 
-Generic SDK for multi-chain wallet connections and transaction signing.
+A complete toolkit for bridging assets between MultiversX, Ethereum, and BNB Chain.
 
 ## Installation
 
