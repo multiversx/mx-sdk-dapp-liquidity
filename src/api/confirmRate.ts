@@ -1,6 +1,6 @@
 import axios, { AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { decodeToken } from 'helpers/decodeToken';
-import { ConfirmRateDto } from '../dto/ConfirmRate.dto.ts';
+import { ConfirmRateDto } from '../dto/ConfirmRate.dto';
 import { ServerTransaction } from '../types/transaction';
 
 type ConfirmRateProps = {

@@ -7,6 +7,7 @@ import { useAmountSchema } from './validation/useAmountSchema';
 import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
 import { getApiURL } from '../../helpers/getApiURL';
+import { ProviderType } from '../../types/providerType';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
 
@@ -38,6 +39,7 @@ export const useBridgeFormik = ({
   fromChainId,
   toChainId,
   fee = '0',
+  provider,
   onSubmit
 }: {
   mvxAccountAddress?: string;
@@ -49,7 +51,14 @@ export const useBridgeFormik = ({
   firstToken?: TokenType;
   secondToken?: TokenType;
   fee?: string;
-  onSubmit: (transactions: ServerTransaction[]) => void;
+  provider?: ProviderType;
+  onSubmit: ({
+    transactions,
+    provider
+  }: {
+    transactions: ServerTransaction[];
+    provider: ProviderType;
+  }) => void;
 }) => {
   const [lastChangedField, setLastChangedField] = useState<
     | BridgeFormikValuesEnum.firstAmount
@@ -98,7 +107,8 @@ export const useBridgeFormik = ({
         fee: fee ?? '0',
         amountOut: secondAmount?.toString() ?? '',
         sender: account.address ?? '',
-        receiver: mvxAccountAddress ?? ''
+        receiver: mvxAccountAddress ?? '',
+        provider: provider ?? ProviderType.None
       }
     });
 
@@ -110,7 +120,10 @@ export const useBridgeFormik = ({
     }
 
     resetSwapForm();
-    onSubmit(transactions);
+    onSubmit({
+      transactions,
+      provider: provider ?? ProviderType.None
+    });
     pendingSigningRef.current = false;
   };
 

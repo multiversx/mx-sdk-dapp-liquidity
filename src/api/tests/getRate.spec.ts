@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { RateRequestResponse } from 'types/rate';
+import { ProviderType } from '../../types/providerType';
 import { getRate } from '../getRate';
 
 jest.mock('axios');
@@ -28,7 +29,8 @@ describe('getRate', () => {
 
     const response: RateRequestResponse = {
       fee: '5',
-      amountOut: '100'
+      amountOut: '100',
+      provider: ProviderType.None
     };
     mockedAxios.post.mockResolvedValue({ data: response });
 
@@ -58,7 +60,8 @@ describe('getRate', () => {
 
     const response: RateRequestResponse = {
       fee: '5',
-      amountOut: '100'
+      amountOut: '100',
+      provider: ProviderType.None
     };
 
     mockedAxios.post.mockResolvedValue({ data: response });
