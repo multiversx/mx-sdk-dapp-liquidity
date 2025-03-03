@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { sendTransactions } from 'api/sendTransactions';
 import { serializeTransaction } from '../../helpers/serializeTransaction';
+import { ProviderType } from '../../types/providerType';
 import { ServerTransaction } from '../../types/transaction';
 
 jest.mock('axios');
@@ -27,7 +28,12 @@ describe('sendTransactions', () => {
     const response = { data: { transactions } };
     mockedAxios.post.mockResolvedValue(response);
 
-    const result = await sendTransactions({ transactions, url, token });
+    const result = await sendTransactions({
+      transactions,
+      provider: ProviderType.None,
+      url,
+      token
+    });
 
     expect(mockedAxios.post).toHaveBeenCalledWith(
       '/transactions',
@@ -53,6 +59,7 @@ describe('sendTransactions', () => {
 
     const result = await sendTransactions({
       transactions,
+      provider: ProviderType.None,
       url,
       token,
       axiosConfig
@@ -84,6 +91,7 @@ describe('sendTransactions', () => {
         transactions: transactions.map((transaction) =>
           JSON.parse(serializeTransaction(transaction))
         ),
+        provider: ProviderType.None,
         url,
         token
       })

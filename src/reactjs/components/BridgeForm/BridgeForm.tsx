@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useSwitchChain } from 'wagmi';
 import { getApiURL } from '../../../helpers/getApiURL';
+import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
 import { ServerTransaction } from '../../../types/transaction';
 import { useWeb3App } from '../../context/useWeb3App';
@@ -366,7 +367,13 @@ export const BridgeForm = ({
   };
 
   const onSubmit = useCallback(
-    async (transactions: ServerTransaction[]) => {
+    async ({
+      transactions,
+      provider
+    }: {
+      transactions: ServerTransaction[];
+      provider: ProviderType;
+    }) => {
       const signedTransactions: ServerTransaction[] = [];
       setPendingSigning(true);
       setSigningTransactionsCount(() => transactions.length);
@@ -416,6 +423,7 @@ export const BridgeForm = ({
 
         await sendTransactions({
           transactions: signedTransactions,
+          provider,
           url: getApiURL() ?? '',
           token: nativeAuthToken ?? ''
         });
@@ -458,6 +466,7 @@ export const BridgeForm = ({
     setLastChangedField
   } = useBridgeFormik({
     fee: rate?.fee,
+    provider: rate?.provider,
     nativeAuthToken,
     mvxAccountAddress: mvxAddress,
     firstToken,

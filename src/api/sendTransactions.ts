@@ -1,10 +1,12 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { serializeTransaction } from '../helpers/serializeTransaction';
 import { BatchTransactions } from '../types/batchTransactions';
+import { ProviderType } from '../types/providerType';
 import { ServerTransaction } from '../types/transaction';
 
 export type SendTransactionsType = {
   transactions: ServerTransaction[];
+  provider: ProviderType;
   url: string;
   token: string;
   axiosConfig?: AxiosRequestConfig;
@@ -12,6 +14,7 @@ export type SendTransactionsType = {
 
 export const sendTransactions = async ({
   transactions,
+  provider,
   url,
   token,
   axiosConfig
@@ -28,9 +31,12 @@ export const sendTransactions = async ({
 
   return axios.post<BatchTransactions>(
     `/transactions`,
-    transactions.map((transaction) =>
-      JSON.parse(serializeTransaction(transaction))
-    ),
+    {
+      transactions: transactions.map((transaction) =>
+        JSON.parse(serializeTransaction(transaction))
+      ),
+      provider
+    },
     config
   );
 };

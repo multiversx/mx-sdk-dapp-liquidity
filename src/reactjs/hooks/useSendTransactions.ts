@@ -6,9 +6,16 @@ import {
 
 export const useSendTransactions = () => {
   return useCallback(
-    async ({ transactions, url, token, axiosConfig }: SendTransactionsType) => {
+    async ({
+      transactions,
+      provider,
+      url,
+      token,
+      axiosConfig
+    }: SendTransactionsType) => {
       return await sendTransactions({
         transactions,
+        provider,
         url,
         token,
         axiosConfig

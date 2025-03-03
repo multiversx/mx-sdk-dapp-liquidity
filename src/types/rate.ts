@@ -1,3 +1,5 @@
+import { ProviderType } from './providerType';
+
 export interface RateRequestBody {
   tokenIn: string;
   amountIn: string;
@@ -9,4 +11,5 @@ export interface RateRequestBody {
 export interface RateRequestResponse {
   fee: string;
   amountOut: string;
+  provider: ProviderType;
 }
