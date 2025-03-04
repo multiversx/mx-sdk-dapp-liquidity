@@ -518,6 +518,27 @@ export const BridgeForm = ({
     });
   }, [evmTokensWithBalances, firstToken?.address]);
 
+  useEffect(() => {
+    const selectedTokenOption = mvxTokensWithBalances?.find(
+      (x) => x.address === secondToken?.address
+    );
+
+    if (!selectedTokenOption) {
+      return;
+    }
+
+    setSecondToken((prevState) => {
+      if (!prevState) {
+        return prevState;
+      }
+
+      return {
+        ...prevState,
+        balance: selectedTokenOption?.balance
+      };
+    });
+  }, [mvxTokensWithBalances, secondToken?.address]);
+
   return (
     <>
       <form
