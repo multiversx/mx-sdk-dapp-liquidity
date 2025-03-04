@@ -53,6 +53,7 @@ export const useGetMvxTokensBalancesQuery = ({
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: true,
     refetchInterval: 20000,
+    refetchOnReconnect: 'always',
     gcTime: 0
   });
 };

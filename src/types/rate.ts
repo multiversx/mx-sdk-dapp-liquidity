@@ -12,4 +12,6 @@ export interface RateRequestResponse {
   fee: string;
   amountOut: string;
   provider: ProviderType;
+  orderId: string;
+  expiresAt?: number;
 }

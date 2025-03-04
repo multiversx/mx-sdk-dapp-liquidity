@@ -12,10 +12,22 @@ export const useGetRateMutation = () => {
       url: getApiURL(),
       ...params
     });
+
     return data;
   };
 
   return useMutation({
-    mutationFn
+    mutationFn,
+    onSuccess: (data) => {
+      const currentTime = new Date().getTime();
+      if (data.expiresAt && new Date(data.expiresAt).getTime() < currentTime) {
+        throw new Error('Retrying due to expired rate');
+      }
+    },
+    retry: (failureCount, error) => {
+      return (
+        error.message === 'Retrying due to expired rate' && failureCount < 2
+      );
+    }
   });
 };

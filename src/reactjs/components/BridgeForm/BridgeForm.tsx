@@ -465,8 +465,7 @@ export const BridgeForm = ({
     resetSwapForm,
     setLastChangedField
   } = useBridgeFormik({
-    fee: rate?.fee,
-    provider: rate?.provider,
+    rate,
     nativeAuthToken,
     mvxAccountAddress: mvxAddress,
     firstToken,

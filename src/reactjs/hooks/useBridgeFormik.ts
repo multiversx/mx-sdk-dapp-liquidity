@@ -7,6 +7,7 @@ import { useAmountSchema } from './validation/useAmountSchema';
 import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
 import { getApiURL } from '../../helpers/getApiURL';
+import { RateRequestResponse } from '../../types';
 import { ProviderType } from '../../types/providerType';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
@@ -38,8 +39,7 @@ export const useBridgeFormik = ({
   secondAmount,
   fromChainId,
   toChainId,
-  fee = '0',
-  provider,
+  rate,
   onSubmit
 }: {
   mvxAccountAddress?: string;
@@ -50,8 +50,7 @@ export const useBridgeFormik = ({
   toChainId?: string;
   firstToken?: TokenType;
   secondToken?: TokenType;
-  fee?: string;
-  provider?: ProviderType;
+  rate?: RateRequestResponse;
   onSubmit: ({
     transactions,
     provider
@@ -104,11 +103,12 @@ export const useBridgeFormik = ({
         fromChainId: values.fromChainId ?? '',
         tokenOut: values.secondToken?.address ?? '',
         toChainId: values.toChainId ?? '',
-        fee: fee ?? '0',
         amountOut: secondAmount?.toString() ?? '',
         sender: account.address ?? '',
         receiver: mvxAccountAddress ?? '',
-        provider: provider ?? ProviderType.None
+        fee: rate?.fee ?? '0',
+        provider: rate?.provider ?? ProviderType.None,
+        orderId: rate?.orderId ?? ''
       }
     });
 
@@ -122,7 +122,7 @@ export const useBridgeFormik = ({
     resetSwapForm();
     onSubmit({
       transactions,
-      provider: provider ?? ProviderType.None
+      provider: rate?.provider ?? ProviderType.None
     });
     pendingSigningRef.current = false;
   };
@@ -163,13 +163,13 @@ export const useBridgeFormik = ({
       values.firstAmount !== ''
     ) {
       const calculatedSecondAmount =
-        parseFloat(values.firstAmount) - Number(fee);
+        parseFloat(values.firstAmount) - Number(rate?.fee ?? '0');
       setFieldValue(
         BridgeFormikValuesEnum.secondAmount,
         calculatedSecondAmount > 0 ? calculatedSecondAmount : '0'
       );
     }
-  }, [values.firstAmount, fee, lastChangedField, touched.firstAmount]);
+  }, [values.firstAmount, rate?.fee, lastChangedField, touched.firstAmount]);
 
   useEffect(() => {
     if (!values.secondAmount && touched.secondAmount) {
@@ -183,10 +183,10 @@ export const useBridgeFormik = ({
       values.secondAmount !== ''
     ) {
       const calculatedFirstAmount =
-        parseFloat(values.secondAmount) + Number(fee);
+        parseFloat(values.secondAmount) + Number(rate?.fee ?? '0');
       setFieldValue(BridgeFormikValuesEnum.firstAmount, calculatedFirstAmount);
     }
-  }, [values.secondAmount, fee, lastChangedField, touched.secondAmount]);
+  }, [values.secondAmount, rate?.fee, lastChangedField, touched.secondAmount]);
 
   useEffect(() => {
     setFieldValue(BridgeFormikValuesEnum.firstToken, firstToken, true);

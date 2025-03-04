@@ -30,7 +30,8 @@ describe('getRate', () => {
     const response: RateRequestResponse = {
       fee: '5',
       amountOut: '100',
-      provider: ProviderType.None
+      provider: ProviderType.None,
+      orderId: '123'
     };
     mockedAxios.post.mockResolvedValue({ data: response });
 
@@ -61,7 +62,8 @@ describe('getRate', () => {
     const response: RateRequestResponse = {
       fee: '5',
       amountOut: '100',
-      provider: ProviderType.None
+      provider: ProviderType.None,
+      orderId: '123'
     };
 
     mockedAxios.post.mockResolvedValue({ data: response });
