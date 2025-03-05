@@ -287,7 +287,9 @@ export const BridgeForm = ({
       setFirstToken(() => option);
       updateUrlParams({ firstTokenId: option?.address });
 
-      const secondOption = toOptions.find((x) => x.name === option?.name);
+      const secondOption =
+        toOptions.find((x) => x.name === option?.name) ??
+        toOptions.find((x) => x.name.toLowerCase().includes('usdc'));
 
       if (!secondOption) {
         return;
