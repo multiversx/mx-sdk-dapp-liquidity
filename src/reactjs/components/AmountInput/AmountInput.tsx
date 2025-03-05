@@ -43,7 +43,14 @@ export const AmountInput = ({
 
   return (
     <div className="liq-flex liq-w-full liq-flex-col liq-justify-between">
-      <div className="liq-flex liq-text-base liq-max-w-none liq-w-full liq-bg-transparent liq-relative">
+      <div
+        className={mxClsx(
+          'liq-flex liq-text-base liq-max-w-none liq-w-full liq-bg-transparent liq-relative',
+          {
+            'liq-disabled liq-animate-loader': disabled
+          }
+        )}
+      >
         <NumericFormat
           name={inputName}
           value={inputValue}

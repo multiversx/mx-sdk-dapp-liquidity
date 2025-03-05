@@ -152,6 +152,8 @@ export const useBridgeFormik = ({
   } = formik;
 
   useEffect(() => {
+    console.log('useBridgeFormik -> first amount set');
+
     if (!values.firstAmount && touched.firstAmount) {
       setFieldValue(BridgeFormikValuesEnum.secondAmount, 0, true);
       return;
@@ -160,10 +162,12 @@ export const useBridgeFormik = ({
     if (
       lastChangedField === 'firstAmount' &&
       values.firstAmount &&
-      values.firstAmount !== ''
+      values.firstAmount !== '' &&
+      rate?.fee &&
+      rate.fee !== '0'
     ) {
       const calculatedSecondAmount =
-        parseFloat(values.firstAmount) - Number(rate?.fee ?? '0');
+        parseFloat(values.firstAmount) - Number(rate.fee);
       setFieldValue(
         BridgeFormikValuesEnum.secondAmount,
         calculatedSecondAmount > 0 ? calculatedSecondAmount : '0'
@@ -172,6 +176,8 @@ export const useBridgeFormik = ({
   }, [values.firstAmount, rate?.fee, lastChangedField, touched.firstAmount]);
 
   useEffect(() => {
+    console.log('useBridgeFormik -> first amount set');
+
     if (!values.secondAmount && touched.secondAmount) {
       setFieldValue(BridgeFormikValuesEnum.firstAmount, 0, true);
       return;
@@ -180,10 +186,12 @@ export const useBridgeFormik = ({
     if (
       lastChangedField === 'secondAmount' &&
       values.secondAmount &&
-      values.secondAmount !== ''
+      values.secondAmount !== '' &&
+      rate?.fee &&
+      rate.fee !== '0'
     ) {
       const calculatedFirstAmount =
-        parseFloat(values.secondAmount) + Number(rate?.fee ?? '0');
+        parseFloat(values.secondAmount) + Number(rate.fee);
       setFieldValue(BridgeFormikValuesEnum.firstAmount, calculatedFirstAmount);
     }
   }, [values.secondAmount, rate?.fee, lastChangedField, touched.secondAmount]);

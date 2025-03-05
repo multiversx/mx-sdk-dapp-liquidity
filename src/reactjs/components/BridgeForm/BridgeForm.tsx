@@ -492,8 +492,20 @@ export const BridgeForm = ({
   }, [firstAmount, fetchRateDebounced]);
 
   useEffect(() => {
-    return setSecondAmount(rate?.amountOut ?? '');
-  }, [rate]);
+    if (!rate?.amountOut) {
+      return;
+    }
+
+    formik.setFieldValue(BridgeFormikValuesEnum.secondAmount, rate.amountOut);
+    setSecondAmount(rate.amountOut);
+  }, [rate?.amountOut]);
+
+  useEffect(() => {
+    if (rateValidationError) {
+      formik.setFieldValue(BridgeFormikValuesEnum.secondAmount, '0');
+      setSecondAmount('0');
+    }
+  }, [rateValidationError]);
 
   useEffect(setInitialSelectedTokens, [isTokensLoading, chainId]);
 
@@ -627,7 +639,7 @@ export const BridgeForm = ({
                   ? fromChainError ?? secondAmountError
                   : undefined
               }
-              disabled={false}
+              disabled={isPendingRate}
               onInputDebounceChange={handleOnChangeSecondAmount}
               onInputChange={handleChange}
               onBlur={handleBlur}
