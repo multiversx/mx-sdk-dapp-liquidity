@@ -152,8 +152,6 @@ export const useBridgeFormik = ({
   } = formik;
 
   useEffect(() => {
-    console.log('useBridgeFormik -> first amount set');
-
     if (!values.firstAmount && touched.firstAmount) {
       setFieldValue(BridgeFormikValuesEnum.secondAmount, 0, true);
       return;
@@ -176,8 +174,6 @@ export const useBridgeFormik = ({
   }, [values.firstAmount, rate?.fee, lastChangedField, touched.firstAmount]);
 
   useEffect(() => {
-    console.log('useBridgeFormik -> first amount set');
-
     if (!values.secondAmount && touched.secondAmount) {
       setFieldValue(BridgeFormikValuesEnum.firstAmount, 0, true);
       return;
