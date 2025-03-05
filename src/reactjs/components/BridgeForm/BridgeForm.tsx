@@ -339,7 +339,9 @@ export const BridgeForm = ({
       toOptions?.find(
         ({ address }) =>
           address === (firstOption?.name ?? initialTokens?.secondTokenId)
-      ) ?? toOptions.find((x) => x.name === firstOption?.name);
+      ) ??
+      toOptions.find((x) => x.name === firstOption?.name) ??
+      toOptions.find((x) => x.name.toLowerCase().includes('usdc'));
 
     const hasOptionsSelected =
       Boolean(firstToken) &&
