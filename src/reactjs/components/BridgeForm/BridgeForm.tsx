@@ -174,6 +174,10 @@ export const BridgeForm = ({
     [activeChain?.id, chains]
   );
 
+  const defaultReceivingToken = toOptions.find((x) =>
+    x.name.toLowerCase().includes('usdc')
+  );
+
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
   const fetchRateDebounced = useCallback(
@@ -288,8 +292,7 @@ export const BridgeForm = ({
       updateUrlParams({ firstTokenId: option?.address });
 
       const secondOption =
-        toOptions.find((x) => x.name === option?.name) ??
-        toOptions.find((x) => x.name.toLowerCase().includes('usdc'));
+        toOptions.find((x) => x.name === option?.name) ?? defaultReceivingToken;
 
       if (!secondOption) {
         return;
@@ -343,7 +346,7 @@ export const BridgeForm = ({
           address === (firstOption?.name ?? initialTokens?.secondTokenId)
       ) ??
       toOptions.find((x) => x.name === firstOption?.name) ??
-      toOptions.find((x) => x.name.toLowerCase().includes('usdc'));
+      defaultReceivingToken;
 
     const hasOptionsSelected =
       Boolean(firstToken) &&
