@@ -5,6 +5,7 @@ import { IndicatorSeparator } from './components/IndicatorSeparator';
 import { SelectedChainOption } from './components/SelectedChainOption';
 import { PartialChainOptionType } from './types/partialChainOption';
 import { ChainDTO } from '../../../../../dto/Chain.dto';
+import { ALL_NETWORK_ID } from '../../../../constants';
 
 export const ChainSelect = ({
   isLoading,
@@ -31,9 +32,9 @@ export const ChainSelect = ({
 
     options.unshift({
       label: 'All',
-      value: '0',
+      value: ALL_NETWORK_ID,
       chain: {
-        id: '0',
+        id: ALL_NETWORK_ID,
         name: 'all',
         networkName: 'All',
         svgUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg'

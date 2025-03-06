@@ -3,6 +3,7 @@ import { ChainSelect } from './ChainSelect/ChainSelect';
 import { TokenList } from './TokenList';
 import { ChainDTO } from '../../../../dto/Chain.dto';
 import { TokenType } from '../../../../types/token';
+import { ALL_NETWORK_ID } from '../../../constants';
 import { useGetChainId } from '../../../hooks/useGetChainId';
 import { MxSearch } from '../../base/MxSearch';
 
@@ -25,7 +26,7 @@ export const SelectContent = ({
   const activeChainId = useGetChainId();
 
   const [selectedChainId, setSelectedChainId] = useState(
-    activeChainId?.toString() ?? '0'
+    activeChainId?.toString() ?? ALL_NETWORK_ID
   );
 
   const filteredTokensText = useMemo(() => {
@@ -48,7 +49,7 @@ export const SelectContent = ({
   const handleSearch = (pattern: string) => {
     searchPatternRef.current = pattern;
 
-    if (selectedChainId === '0') {
+    if (selectedChainId === ALL_NETWORK_ID) {
       const filtered = tokens.filter((token) =>
         token.symbol.toLowerCase().includes(pattern.toLowerCase())
       );
