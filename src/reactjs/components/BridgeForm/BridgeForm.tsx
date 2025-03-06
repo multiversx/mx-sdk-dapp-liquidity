@@ -174,6 +174,10 @@ export const BridgeForm = ({
     [activeChain?.id, chains]
   );
 
+  const defaultReceivingToken = toOptions.find((x) =>
+    x.name.toLowerCase().includes('usdc')
+  );
+
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
   const fetchRateDebounced = useCallback(
@@ -287,7 +291,8 @@ export const BridgeForm = ({
       setFirstToken(() => option);
       updateUrlParams({ firstTokenId: option?.address });
 
-      const secondOption = toOptions.find((x) => x.name === option?.name);
+      const secondOption =
+        toOptions.find((x) => x.name === option?.name) ?? defaultReceivingToken;
 
       if (!secondOption) {
         return;
@@ -339,7 +344,9 @@ export const BridgeForm = ({
       toOptions?.find(
         ({ address }) =>
           address === (firstOption?.name ?? initialTokens?.secondTokenId)
-      ) ?? toOptions.find((x) => x.name === firstOption?.name);
+      ) ??
+      toOptions.find((x) => x.name === firstOption?.name) ??
+      defaultReceivingToken;
 
     const hasOptionsSelected =
       Boolean(firstToken) &&
@@ -492,8 +499,20 @@ export const BridgeForm = ({
   }, [firstAmount, fetchRateDebounced]);
 
   useEffect(() => {
-    return setSecondAmount(rate?.amountOut ?? '');
-  }, [rate]);
+    if (!rate?.amountOut) {
+      return;
+    }
+
+    formik.setFieldValue(BridgeFormikValuesEnum.secondAmount, rate.amountOut);
+    setSecondAmount(rate.amountOut);
+  }, [rate?.amountOut]);
+
+  useEffect(() => {
+    if (rateValidationError) {
+      formik.setFieldValue(BridgeFormikValuesEnum.secondAmount, '0');
+      setSecondAmount('0');
+    }
+  }, [rateValidationError]);
 
   useEffect(setInitialSelectedTokens, [isTokensLoading, chainId]);
 
@@ -627,7 +646,7 @@ export const BridgeForm = ({
                   ? fromChainError ?? secondAmountError
                   : undefined
               }
-              disabled={false}
+              disabled={isPendingRate}
               onInputDebounceChange={handleOnChangeSecondAmount}
               onInputChange={handleChange}
               onBlur={handleBlur}
