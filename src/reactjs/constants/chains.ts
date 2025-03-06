@@ -46,3 +46,5 @@ export const chainIdentifier = {
   ...base,
   default: Default
 };
+
+export const ALL_NETWORK_ID = '-1';
