@@ -11,4 +11,5 @@ export interface TokenDTO {
     minBridgeAmount: string;
     maxBridgeAmount: string;
   };
+  availableTokens?: string[];
 }

@@ -36,7 +36,7 @@ export const TokenSelector = ({
   className?: string;
   color?: 'neutral-750' | 'neutral-850';
   onChange: (option?: TokenType) => void;
-  onBlur: (e: React.FocusEvent<any, HTMLButtonElement>) => void;
+  onBlur?: (e: React.FocusEvent<any, HTMLButtonElement>) => void;
   onMaxBtnClick?: () => void;
   onTokenSelectorDisplay?: (visible: boolean) => void;
 }) => {

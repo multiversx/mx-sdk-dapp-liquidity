@@ -33,7 +33,7 @@ export const TokenItem = ({
     if (
       activeChain &&
       tokenChain?.chainId &&
-      activeChain?.id !== tokenChain?.chainId
+      activeChain?.id.toString() !== tokenChain?.chainId.toString()
     ) {
       switchNetwork(
         sdkChains.find(

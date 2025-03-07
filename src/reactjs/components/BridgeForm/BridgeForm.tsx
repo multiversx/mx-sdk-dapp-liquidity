@@ -71,6 +71,7 @@ export const BridgeForm = ({
   onMvxConnect,
   onMvxDisconnect
 }: BridgeFormProps) => {
+  const ref = useRef(null);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
@@ -127,8 +128,6 @@ export const BridgeForm = ({
     (rateError as AxiosError)?.response?.status === 400
       ? (rateError as AxiosError<{ message: string }>)?.response?.data.message
       : undefined;
-
-  const ref = useRef(null);
 
   const [firstToken, setFirstToken] = useState<TokenType | undefined>();
   const [firstAmount, setFirstAmount] = useState('');

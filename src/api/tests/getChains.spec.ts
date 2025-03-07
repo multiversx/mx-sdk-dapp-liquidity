@@ -11,7 +11,7 @@ describe('getChains', () => {
   it('fetches chains successfully', async () => {
     const response: ChainDTO[] = [
       {
-        chainId: 1,
+        chainId: '1',
         chainName: 'msx',
         pngUrl:
           'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.png',

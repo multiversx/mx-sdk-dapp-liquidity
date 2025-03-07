@@ -1,18 +1,12 @@
 import { useEffect, useMemo } from 'react';
-import { useAccount } from './useAccount';
-import { useGetChainId } from './useGetChainId';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
-import {
-  invalidateEvmTokensBalances,
-  useGetEvmTokensBalancesQuery
-} from '../queries/useGetEvmTokensBalances.query';
 import {
   invalidateMvxTokensBalancesQuery,
   useGetMvxTokensBalancesQuery
 } from '../queries/useGetMvxTokensBalances.query';
 
-export const useFetchTokens = ({
+export const useFiatData = ({
   mvxAddress,
   mvxApiURL,
   refetchTrigger
@@ -21,22 +15,11 @@ export const useFetchTokens = ({
   mvxApiURL: string;
   refetchTrigger?: number;
 }) => {
-  const chainId = useGetChainId();
-  const account = useAccount();
-
   const {
     data: tokens,
     isLoading: isTokensLoading,
     isError: isTokensError
   } = useGetAllTokensQuery();
-
-  const evmTokens = useMemo(
-    () =>
-      tokens?.filter(
-        (token) => !MVX_CHAIN_IDS.includes(Number(token.chainId.toString()))
-      ),
-    [tokens]
-  );
 
   const mvxTokens = useMemo(
     () =>
@@ -46,18 +29,9 @@ export const useFetchTokens = ({
     [tokens]
   );
 
-  const fiatCurrencies = useMemo(() => {
+  const currencies = useMemo(() => {
     return tokens?.filter((token) => !token.chainId);
   }, [tokens]);
-
-  const {
-    data: evmTokensBalances,
-    isLoading: isLoadingEvmTokensBalances,
-    isError: isErrorEvmTokensBalances
-  } = useGetEvmTokensBalancesQuery({
-    tokens: evmTokens ?? [],
-    chainId: chainId?.toString()
-  });
 
   const {
     data: mvxTokensBalances,
@@ -89,46 +63,19 @@ export const useFetchTokens = ({
     });
   }, [mvxTokens, mvxTokensBalances]);
 
-  const evmTokensWithBalances = useMemo(() => {
-    return evmTokens?.map((token) => {
-      const foundToken = evmTokensBalances?.find(
-        (evmToken) => evmToken.address === token.address
-      );
-
-      if (!foundToken) {
-        return {
-          ...token,
-          balance: '0'
-        };
-      }
-
-      return {
-        ...foundToken,
-        balance: foundToken.balance.toString()
-      };
-    });
-  }, [evmTokens, evmTokensBalances]);
-
   useEffect(() => {
-    if (account.address) {
-      invalidateEvmTokensBalances();
-    }
-
     if (mvxAddress) {
       invalidateMvxTokensBalancesQuery();
     }
-  }, [refetchTrigger, chainId, account.address, mvxAddress]);
+  }, [refetchTrigger, mvxAddress]);
 
   return {
     isTokensLoading,
     isTokensError,
-    isLoadingEvmTokensBalances,
-    isErrorEvmTokensBalances,
-    evmTokensWithBalances,
     isLoadingMvxTokensBalances,
     isErrorMvxTokensBalances,
     mvxTokensWithBalances,
-    fiatCurrencies,
+    currencies,
     tokens
   };
 };

@@ -1,5 +1,5 @@
 export interface ChainDTO {
-  chainId: number;
+  chainId: string;
   chainName: string;
   pngUrl: string;
   svgUrl: string;
