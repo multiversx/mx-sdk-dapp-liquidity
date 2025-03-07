@@ -21,6 +21,10 @@ export const useFiatData = ({
     isError: isTokensError
   } = useGetAllTokensQuery();
 
+  console.log({
+    tokens
+  });
+
   const mvxTokens = useMemo(
     () =>
       tokens?.filter((token) =>
@@ -32,6 +36,11 @@ export const useFiatData = ({
   const currencies = useMemo(() => {
     return tokens?.filter((token) => !token.chainId);
   }, [tokens]);
+
+  console.log({
+    mvxTokens,
+    currencies
+  });
 
   const {
     data: mvxTokensBalances,

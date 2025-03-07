@@ -2,9 +2,10 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { PropsWithChildren, useMemo } from 'react';
 import { createContext } from 'react';
 import { getQueryClient } from './queryClient';
+import { InitFiatOptions } from '../init';
 
 export type FiatContextProps = {
-  mvxApiURL: string;
+  options: InitFiatOptions;
 };
 
 const queryClient = getQueryClient();
@@ -15,13 +16,13 @@ export const FiatContext = createContext<FiatContextProps | undefined>(
 
 export function FiatProvider({
   children,
-  mvxApiURL
+  options
 }: PropsWithChildren<FiatContextProps>) {
   const value = useMemo<FiatContextProps>(() => {
     return {
-      mvxApiURL
+      options
     };
-  }, [mvxApiURL]);
+  }, [options]);
 
   return (
     <FiatContext.Provider value={value}>

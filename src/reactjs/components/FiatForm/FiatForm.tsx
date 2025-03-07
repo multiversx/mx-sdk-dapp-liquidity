@@ -31,7 +31,7 @@ export const FiatForm = ({
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [firstToken, setFirstToken] = useState<TokenType | undefined>();
   const [firstAmount, setFirstAmount] = useState('');
-  const { mvxApiURL } = useFiat();
+  const { options } = useFiat();
 
   const {
     currencies,
@@ -40,7 +40,7 @@ export const FiatForm = ({
   } = useFiatData({
     refetchTrigger,
     mvxAddress,
-    mvxApiURL
+    mvxApiURL: options.mvxApiURL
   });
 
   const [selectedCurrency, setSelectedCurrency] = useState<

@@ -47,7 +47,7 @@ export type InitOptions = {
   mvxChainId: '31' | '44' | '54';
 };
 
-function init(options: InitOptions) {
+export function init(options: InitOptions) {
   const store = InMemoryStore.getInstance();
   store.setItem('apiURL', options.apiURL);
   store.setItem('bridgeURL', options.bridgeURL);
@@ -82,5 +82,3 @@ function init(options: InitOptions) {
     options
   };
 }
-
-export { init };
