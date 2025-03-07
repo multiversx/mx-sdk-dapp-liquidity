@@ -14,7 +14,7 @@ export const SelectedChainOption = ({
   return (
     <components.SingleValue {...props}>
       <div
-        className="liq-w-full liq-flex liq-justify-between liq-items-center liq-cursor-pointer"
+        className="liq-h-6 liq-w-6 liq-flex liq-justify-between liq-items-center liq-cursor-pointer"
         onClick={onMenuOpen}
       >
         {chain?.svgUrl ? (
