@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/multiversx/mx-sdk-dapp-liquidity#readme",
   "license": "MIT",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
@@ -50,7 +50,7 @@
     "@fortawesome/react-fontawesome": "0.2.0",
     "@headlessui/react": "2.2.0",
     "@multiversx/sdk-dapp-utils": "1.0.5",
-    "@reown/appkit-adapter-wagmi": "1.6.8",
+    "@reown/appkit-adapter-wagmi": "1.6.9",
     "@tanstack/react-query": "5.62.7",
     "@types/numeral": "2.0.5",
     "animated-number-react": "0.1.2",
@@ -64,8 +64,8 @@
     "react-select": "5.10.0",
     "react-toastify": "11.0.3",
     "tailwind-merge": "2.6.0",
-    "viem": "2.23.2",
-    "wagmi": "2.14.11",
+    "viem": "2.23.7",
+    "wagmi": "2.14.12",
     "yup": "1.4.0"
   },
   "peerDependencies": {
