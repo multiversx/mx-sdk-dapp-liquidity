@@ -1,20 +1,15 @@
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { TokenType } from '../../../types/token';
-import { useFiat } from '../../context/useFiat.ts';
+import { AmountInput, BridgeHistory, MxCard, mxClsx } from 'reactjs';
+import { TokenType } from 'types';
+import { TokenSelector } from './components/TokenSelector';
 import { useFiatData } from '../../hooks/useFiatData';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
-import { mxClsx } from '../../utils/mxClsx';
-import { AmountInput } from '../AmountInput';
-import { MxCard } from '../base';
-import { BridgeHistory } from '../BridgeHistory';
-import { TokenSelector } from '../TokenSelector';
 
 interface FiatFormProps {
   mvxChainId: string;
   mvxAddress?: string;
   nativeAuthToken?: string;
-  refetchTrigger?: number;
   showHistory?: boolean;
   onHistoryClose?: () => void;
 }
@@ -23,25 +18,19 @@ export const FiatForm = ({
   mvxChainId,
   mvxAddress,
   nativeAuthToken,
-  refetchTrigger,
   showHistory,
   onHistoryClose
 }: FiatFormProps) => {
   const ref = useRef(null);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [firstToken, setFirstToken] = useState<TokenType | undefined>();
-  const [firstAmount, setFirstAmount] = useState('');
-  const { options } = useFiat();
+  const [amount, setAmount] = useState('');
 
   const {
     currencies,
-    mvxTokensWithBalances,
+    mvxTokens,
     isTokensLoading: tokensLoading
-  } = useFiatData({
-    refetchTrigger,
-    mvxAddress,
-    mvxApiURL: options.mvxApiURL
-  });
+  } = useFiatData();
 
   const [selectedCurrency, setSelectedCurrency] = useState<
     TokenType | undefined
@@ -62,7 +51,7 @@ export const FiatForm = ({
     const foundTokens: TokenType[] = [];
 
     for (const ticker of selectedCurrency.availableTokens) {
-      const foundToken = mvxTokensWithBalances?.find(
+      const foundToken = mvxTokens?.find(
         (mvxToken) => mvxToken.address === ticker
       );
 
@@ -72,7 +61,7 @@ export const FiatForm = ({
     }
 
     return foundTokens;
-  }, [mvxTokensWithBalances, selectedCurrency]);
+  }, [mvxTokens, selectedCurrency]);
 
   const fromOptions = useMemo(
     () =>
@@ -117,8 +106,8 @@ export const FiatForm = ({
   }, []);
 
   useEffect(() => {
-    fetchRateDebounced(firstAmount);
-  }, [firstAmount, fetchRateDebounced]);
+    fetchRateDebounced(amount);
+  }, [amount, fetchRateDebounced]);
 
   return (
     <form

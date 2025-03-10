@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+@layer utilities {
+    .scrollbar-thin {
+        scrollbar-width: thin;
+
+        &:hover {
+            --fix: ; /* This custom property invalidates styles on hover, thereby enforcing a style recomputation. This is needed to work around a bug in Safari. */
+        }
+
+        /* Legacy browsers with `::-webkit-scrollbar-*` support */
+        @supports selector(::-webkit-scrollbar) {
+            &::-webkit-scrollbar,
+            &::-webkit-scrollbar-track,
+            &::-webkit-scrollbar-track:hover,
+            &::-webkit-scrollbar-corner,
+            &::-webkit-scrollbar:horizontal {
+                @apply liq-bg-transparent;
+            }
+            &::-webkit-scrollbar {
+                @apply liq-h-2 liq-w-2;
+            }
+            &::-webkit-scrollbar:horizontal {
+                @apply liq-h-2;
+            }
+            &::-webkit-scrollbar-thumb,
+            &::-webkit-scrollbar-thumb:horizontal {
+                @apply liq-rounded-lg liq-border-2 liq-border-solid liq-border-transparent liq-bg-neutral-700;
+            }
+            &::-webkit-scrollbar-thumb:hover {
+                @apply liq-border-2 liq-border-solid liq-border-transparent liq-bg-neutral-600;
+            }
+            &::-webkit-scrollbar-button {
+                @apply liq-hidden;
+            }
+            &::-webkit-resizer {
+                @apply liq-bg-transparent;
+            }
+        }
+    }
+}
