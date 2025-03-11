@@ -174,8 +174,9 @@ export const BridgeForm = ({
     [activeChain?.id, chains]
   );
 
-  const defaultReceivingToken = toOptions.find((x) =>
-    x.name.toLowerCase().includes('usdc')
+  const defaultReceivingToken = useMemo(
+    () => toOptions.find((x) => x.symbol.toLowerCase().includes('usdc')),
+    [toOptions]
   );
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
@@ -292,7 +293,9 @@ export const BridgeForm = ({
       updateUrlParams({ firstTokenId: option?.address });
 
       const secondOption =
-        toOptions.find((x) => x.name === option?.name) ?? defaultReceivingToken;
+        toOptions.find(
+          (x) => x.symbol.toLowerCase() === option?.symbol.toLocaleLowerCase()
+        ) ?? defaultReceivingToken;
 
       if (!secondOption) {
         return;
@@ -313,7 +316,9 @@ export const BridgeForm = ({
       setSecondToken(() => option);
       updateUrlParams({ secondTokenId: option?.address });
 
-      const firstOption = fromOptions.find((x) => x.name === option?.name);
+      const firstOption = fromOptions.find(
+        (x) => x.symbol.toLowerCase() === option?.symbol.toLocaleLowerCase()
+      );
 
       if (!firstOption) {
         return;
@@ -333,8 +338,8 @@ export const BridgeForm = ({
     const initialTokens = getInitialTokens();
 
     const firstOption =
-      fromOptions?.find(({ identifier }) =>
-        [initialTokens?.firstTokenId].includes(identifier)
+      fromOptions?.find(
+        ({ identifier }) => initialTokens?.firstTokenId === identifier
       ) ??
       fromOptions.find(
         (option) => option.chainId.toString() === activeChain?.id?.toString()
@@ -343,9 +348,13 @@ export const BridgeForm = ({
     const secondOption =
       toOptions?.find(
         ({ address }) =>
-          address === (firstOption?.name ?? initialTokens?.secondTokenId)
+          address.toLowerCase() ===
+          (firstOption?.symbol ?? initialTokens?.secondTokenId).toLowerCase()
       ) ??
-      toOptions.find((x) => x.name === firstOption?.name) ??
+      toOptions.find(
+        (x) =>
+          x.symbol.toLowerCase() === firstOption?.symbol.toLocaleLowerCase()
+      ) ??
       defaultReceivingToken;
 
     const hasOptionsSelected =
@@ -415,7 +424,7 @@ export const BridgeForm = ({
               hash: txHash
             });
 
-            console.log({
+            console.info({
               transactionReceipt,
               hash: txHash
             });

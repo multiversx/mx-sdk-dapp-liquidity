@@ -21,7 +21,12 @@ export const useBalances = () => {
             const balance = await getBalance(config, {
               address: address as `0x${string}`,
               chainId: Number(chainId),
-              token: tokenIdentifier as `0x${string}`
+              // TODO: fix this using the API support
+              // omit passing the token for fetching the native currency balance
+              token:
+                tokenIdentifier.length > 10
+                  ? (tokenIdentifier as `0x${string}`)
+                  : undefined
             });
 
             return {
