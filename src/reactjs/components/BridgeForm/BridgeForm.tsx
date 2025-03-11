@@ -294,7 +294,7 @@ export const BridgeForm = ({
 
       const secondOption =
         toOptions.find(
-          (x) => x.symbol.toLowerCase() === option?.symbol.toLocaleLowerCase()
+          (x) => x.symbol.toLowerCase() === option?.symbol.toLowerCase()
         ) ?? defaultReceivingToken;
 
       if (!secondOption) {
@@ -317,7 +317,7 @@ export const BridgeForm = ({
       updateUrlParams({ secondTokenId: option?.address });
 
       const firstOption = fromOptions.find(
-        (x) => x.symbol.toLowerCase() === option?.symbol.toLocaleLowerCase()
+        (x) => x.symbol.toLowerCase() === option?.symbol.toLowerCase()
       );
 
       if (!firstOption) {
@@ -352,8 +352,7 @@ export const BridgeForm = ({
           (firstOption?.symbol ?? initialTokens?.secondTokenId).toLowerCase()
       ) ??
       toOptions.find(
-        (x) =>
-          x.symbol.toLowerCase() === firstOption?.symbol.toLocaleLowerCase()
+        (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()
       ) ??
       defaultReceivingToken;
 
