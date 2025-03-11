@@ -1,1 +1,0 @@
-cp -r dist/ ../mx-exchange-dapp/node_modules/@multiversx/sdk-dapp-liquidity
