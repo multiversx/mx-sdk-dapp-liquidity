@@ -85,7 +85,7 @@ export const TokenSelector = ({
             className={mxClsx(
               'focus-primary liq-group liq-flex liq-cursor-pointer liq-items-center liq-gap-2 liq-transition-colors liq-duration-200 liq-relative',
               {
-                'liq-rounded-e-lg liq-rounded-s-3xl liq-px-1 liq-py-1 liq-pr-3':
+                'liq-rounded-e-lg liq-rounded-s-lg liq-px-1 liq-py-1 liq-pr-3':
                   true
               },
               {

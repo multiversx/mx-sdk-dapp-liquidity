@@ -5,8 +5,9 @@ import { TokenSymbol } from './TokenSymbol';
 export const SelectedOption = ({ value }: { value?: TokenType }) => {
   return (
     <>
+      <span className="liq-items-center">Buy</span>
       <TokenIcon
-        size="lg"
+        size="sm"
         token={value}
         className="liq-flex liq-items-center liq-justify-center liq-relative"
       />

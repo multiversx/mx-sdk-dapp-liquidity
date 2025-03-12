@@ -19,7 +19,7 @@ export const TokenItem = ({
     >
       <div className="liq-flex liq-w-full liq-items-center liq-relative">
         <TokenIcon
-          size="lg"
+          size="sm"
           token={token}
           className="liq-flex liq-items-center liq-justify-center"
         />

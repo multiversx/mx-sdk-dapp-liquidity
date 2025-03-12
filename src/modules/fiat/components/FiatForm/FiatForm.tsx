@@ -34,7 +34,7 @@ export const FiatForm = ({
 
   const [selectedCurrency, setSelectedCurrency] = useState<
     TokenType | undefined
-  >(currencies?.[0]);
+  >();
 
   const {
     mutate: getRate,
@@ -74,12 +74,16 @@ export const FiatForm = ({
           };
         })) ??
       [],
-    [currencies]
+    [availableTokens]
   );
 
+  console.log({
+    fromOptions
+  });
+
   const fetchRateDebounced = useCallback(
-    debounce(async (amount: string) => {
-      if (!amount || !firstToken?.address || !selectedCurrency) {
+    debounce(async (value: string) => {
+      if (!value || !firstToken?.address || !selectedCurrency) {
         return;
       }
 
@@ -87,7 +91,7 @@ export const FiatForm = ({
         nativeAuthToken: nativeAuthToken ?? '',
         body: {
           tokenIn: selectedCurrency.address,
-          amountIn: amount,
+          amountIn: value,
           fromChainId: mvxChainId.toString(),
           tokenOut: firstToken.address,
           toChainId: mvxChainId
@@ -108,6 +112,15 @@ export const FiatForm = ({
   useEffect(() => {
     fetchRateDebounced(amount);
   }, [amount, fetchRateDebounced]);
+
+  useEffect(() => {
+    console.log('currencies.length', {
+      currencies
+    });
+    if (currencies?.length) {
+      setSelectedCurrency(() => currencies?.[0]);
+    }
+  }, [currencies?.length]);
 
   return (
     <form
@@ -157,7 +170,6 @@ export const FiatForm = ({
             disabled={false}
           />
         </div>
-        <div>Fee: {rate?.fee}</div>
       </MxCard>
     </form>
   );
