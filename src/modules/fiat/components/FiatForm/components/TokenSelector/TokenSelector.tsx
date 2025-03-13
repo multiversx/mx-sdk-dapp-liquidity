@@ -14,7 +14,6 @@ export const TokenSelector = ({
   areOptionsLoading = false,
   className = '',
   disabled = false,
-  omitDisableClass = false,
   color = 'neutral-750',
   onBlur,
   onChange,
@@ -25,7 +24,6 @@ export const TokenSelector = ({
   selectedOption?: TokenType;
   areOptionsLoading?: boolean;
   disabled?: boolean;
-  omitDisableClass?: boolean;
   className?: string;
   color?: 'neutral-750' | 'neutral-850';
   onChange: (option?: TokenType) => void;
@@ -47,7 +45,7 @@ export const TokenSelector = ({
           'liq-h-12 liq-w-40 liq-animate-pulse',
           {
             'liq-rounded-xl': true,
-            'liq-rounded-e-lg liq-rounded-s-3xl': true
+            'liq-rounded-lg': true
           },
           {
             'liq-bg-neutral-100 liq-bg-opacity-[0.1] hover:liq-bg-opacity-[0.25]':
@@ -85,8 +83,7 @@ export const TokenSelector = ({
             className={mxClsx(
               'focus-primary liq-group liq-flex liq-cursor-pointer liq-items-center liq-gap-2 liq-transition-colors liq-duration-200 liq-relative',
               {
-                'liq-rounded-e-lg liq-rounded-s-lg liq-px-1 liq-py-1 liq-pr-3':
-                  true
+                'liq-rounded-lg liq-px-1 liq-py-1 liq-pr-3': true
               },
               {
                 'liq-bg-neutral-750/50 hover:enabled:liq-bg-neutral-750':
@@ -95,11 +92,7 @@ export const TokenSelector = ({
                   color === 'neutral-850'
               },
               {
-                'disabled:!liq-opacity-70': disabled && !omitDisableClass
-              },
-              {
-                '!liq-cursor-not-allowed !liq-bg-transparent !liq-outline-transparent':
-                  disabled
+                '!liq-cursor-not-allowed': disabled
               },
               className
             )}
