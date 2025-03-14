@@ -81,10 +81,7 @@ export const TokenSelector = ({
             type="button"
             role="combobox"
             className={mxClsx(
-              'focus-primary liq-group liq-flex liq-cursor-pointer liq-items-center liq-gap-2 liq-transition-colors liq-duration-200 liq-relative',
-              {
-                'liq-rounded-lg liq-px-1 liq-py-1 liq-pr-3': true
-              },
+              'focus-primary liq-px-2 liq-py-1 liq-group liq-flex liq-cursor-pointer liq-items-center liq-gap-2 liq-transition-colors liq-duration-200 liq-rounded-lg liq-relative',
               {
                 'liq-bg-neutral-750/50 hover:enabled:liq-bg-neutral-750':
                   color === 'neutral-750',
@@ -102,12 +99,10 @@ export const TokenSelector = ({
           >
             <SelectedOption value={selectedOption} />
 
-            {!disabled && (
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className="liq-text-neutral-200 group-hover:liq-text-neutral-50"
-              />
-            )}
+            <FontAwesomeIcon
+              icon={faChevronDown}
+              className="liq-text-neutral-200 group-hover:liq-text-neutral-50"
+            />
           </button>
         </div>
       )}

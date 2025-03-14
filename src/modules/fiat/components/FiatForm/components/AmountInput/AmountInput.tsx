@@ -1,6 +1,6 @@
 import { ChangeEvent, FocusEvent } from 'react';
 import { NumericFormat } from 'react-number-format';
-import { mxClsx } from '../../utils/mxClsx';
+import { mxClsx } from 'reactjs';
 
 export const AmountInput = ({
   inputName,
@@ -54,13 +54,15 @@ export const AmountInput = ({
         <NumericFormat
           name={inputName}
           value={inputValue}
-          placeholder="0"
+          placeholder="€0"
           allowLeadingZeros={true}
           thousandSeparator=","
+          prefix={Boolean(inputValue) || inputValue === '0' ? '€' : undefined}
+          defaultValue={'0'}
           allowNegative={false}
           disabled={disabled}
           className={mxClsx(
-            'liq-text-3xl liq-leading-9 liq-min-h-12 liq-py-0 liq-w-full liq-h-full liq-border-none liq-font-medium liq-px-0 liq-outline-0 liq-bg-transparent',
+            'liq-text-3xl liq-leading-9 liq-min-h-12 liq-py-0 liq-w-full liq-h-full liq-border-none liq-font-medium liq-px-0 liq-outline-0 liq-bg-transparent liq-text-center',
             {
               'liq-disabled liq-animate-pulse': disabled && !omitDisableClass
             },

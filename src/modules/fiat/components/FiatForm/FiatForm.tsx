@@ -2,8 +2,9 @@ import { faArrowUpRightDots } from '@fortawesome/free-solid-svg-icons/faArrowUpR
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AmountInput, BridgeHistory, MxButton, MxCard, mxClsx } from 'reactjs';
+import { BridgeHistory, MxButton, MxCard, mxClsx } from 'reactjs';
 import { TokenType } from 'types';
+import { AmountInput } from './components/AmountInput';
 import { TokenSelector } from './components/TokenSelector';
 import { useFiatData } from '../../hooks/useFiatData';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
@@ -26,7 +27,7 @@ export const FiatForm = ({
   const ref = useRef(null);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [firstToken, setFirstToken] = useState<TokenType | undefined>();
-  const [amount, setAmount] = useState('0');
+  const [amount, setAmount] = useState('');
   const [conversionRate, setConversionRate] = useState(0);
 
   const {
@@ -112,17 +113,17 @@ export const FiatForm = ({
     setFirstToken(() => option);
   }, []);
 
-  const handleAmountChange = (value: string | number) => {
-    const numericValue = Number(value);
-    setAmount(numericValue.toString());
-    // TODO update with real conversion rate
-    // Simulated conversion rate
-    setConversionRate(numericValue / 50);
+  const handleAmountChange = (value: string) => {
+    setAmount(value);
   };
 
   useEffect(() => {
     fetchRateDebounced(amount);
   }, [amount, fetchRateDebounced]);
+
+  useEffect(() => {
+    setConversionRate(Number(rate?.amountOut ?? '0') / Number(amount || '1'));
+  }, [rate?.amountOut, amount]);
 
   useEffect(() => {
     console.log('currencies.length', {
@@ -178,17 +179,22 @@ export const FiatForm = ({
         </div>
         <div className="liq-flex liq-flex-col liq-justify-between liq-gap-1 liq-text-center">
           <AmountInput
-            inputName="firstAmount"
+            inputName="amount"
             inputValue={amount}
             disabled={false}
             onInputDebounceChange={handleAmountChange}
           />
-          <p className="liq-text-gray-400 liq-text-sm mt-2">
-            ⇅ {conversionRate.toFixed(4)} {firstToken?.symbol}
+          <p
+            className={`liq-text-sm mt-2 ${rateError ? 'liq-text-danger' : 'liq-text-gray-400'}`}
+          >
+            ⇅
+            {rateError
+              ? 'Error fetching rate'
+              : `${conversionRate.toFixed(4)} ${firstToken?.symbol}`}
           </p>
         </div>
         <div className="liq-flex liq-justify-center liq-gap-3 liq-mt-6">
-          {[50, 100, 500].map((value) => (
+          {['50', '100', '500'].map((value) => (
             <button
               key={value}
               className="liq-bg-neutral-750/50 hover:liq-bg-neutral-700/50 liq-px-4 liq-py-2 liq-rounded-lg liq-text-neutral-200 hover:liq-text-neutral-50"
