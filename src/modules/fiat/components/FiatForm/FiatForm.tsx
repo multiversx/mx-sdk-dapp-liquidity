@@ -1,11 +1,15 @@
 import { faArrowUpRightDots } from '@fortawesome/free-solid-svg-icons/faArrowUpRightDots';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BridgeHistory, MxButton, MxCard, mxClsx } from 'reactjs';
 import { TokenType } from 'types';
 import { AmountInput } from './components/AmountInput';
 import { TokenSelector } from './components/TokenSelector';
+import { confirmFiatRate } from '../../../../api/confirmFiatRate.ts';
+import { getApiURL } from '../../../../helpers';
+import { ProviderType } from '../../../../types/providerType.ts';
 import { useFiatData } from '../../hooks/useFiatData';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
 
@@ -117,6 +121,44 @@ export const FiatForm = ({
     setAmount(value);
   };
 
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { data } = await confirmFiatRate({
+      url: getApiURL(),
+      nativeAuthToken: nativeAuthToken ?? '',
+      body: {
+        tokenIn: selectedCurrency?.address ?? '',
+        amountIn: amount?.toString() ?? '',
+        fromChainId: mvxChainId.toString(),
+        tokenOut: firstToken?.address ?? '',
+        toChainId: mvxChainId.toString(),
+        amountOut: rate?.amountOut ?? '',
+        sender: mvxAddress ?? '',
+        receiver: mvxAddress ?? '',
+        fee: rate?.fee ?? '0',
+        provider: rate?.provider ?? ProviderType.None,
+        orderId: rate?.orderId ?? ''
+      }
+    });
+
+    const responseData = data?.[0];
+
+    if (!responseData) {
+      return;
+    }
+
+    const paymentURL = responseData.additionalInfo.url;
+
+    if (!paymentURL) {
+      return;
+    }
+
+    axios.post(paymentURL, {
+      checksum: responseData.additionalInfo.checksum,
+      jsonRequest: responseData.additionalInfo.jsonRequest
+    });
+  };
+
   useEffect(() => {
     fetchRateDebounced(amount);
   }, [amount, fetchRateDebounced]);
@@ -144,7 +186,7 @@ export const FiatForm = ({
       noValidate
       className="liq-flex liq-flex-col liq-gap-1 liq-relative"
       autoComplete="off"
-      onSubmit={() => {}}
+      onSubmit={handleOnSubmit}
     >
       {showHistory && (
         <BridgeHistory
