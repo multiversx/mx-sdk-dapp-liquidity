@@ -5,6 +5,7 @@ import { Placement } from 'react-joyride';
 import { Timeout } from 'react-number-format/types/types';
 import { usePopper } from 'react-popper';
 import { TooltipContainer, TooltipContent } from './components';
+import { safeDocument, safeWindow } from '../../../constants';
 import { mxClsx } from '../../../utils/mxClsx';
 import { MxSlideover } from '../MxSlideover';
 
@@ -54,7 +55,7 @@ export const MxTooltip = ({
   const [referenceEl, setReferenceEl] = useState<HTMLDivElement | null>(null);
   const [showSlideOver, setShowSlideOver] = useState(false);
 
-  const isMobile = window.innerWidth < 768;
+  const isMobile = safeWindow.innerWidth < 768;
 
   const { styles, attributes } = usePopper(referenceEl, popperEl, {
     placement,
@@ -132,7 +133,7 @@ export const MxTooltip = ({
     e.stopPropagation();
   };
 
-  const portalRoot = portalId ? document.getElementById(portalId) : null;
+  const portalRoot = portalId ? safeDocument.getElementById(portalId) : null;
 
   if (hideTooltip) {
     return buttonText;
@@ -177,7 +178,7 @@ export const MxTooltip = ({
               popperStyles={styles.popper}
               setPopperEl={setPopperEl}
             />,
-            portalRoot ?? document.body // Fixes z-index - overflow issue on tooltips
+            portalRoot ?? safeDocument.body // Fixes z-index - overflow issue on tooltips
           )
         ) : (
           <TooltipContent

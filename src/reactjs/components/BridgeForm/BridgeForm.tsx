@@ -5,13 +5,13 @@ import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useSwitchChain } from 'wagmi';
 import { getApiURL } from '../../../helpers/getApiURL';
 import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
 import { ServerTransaction } from '../../../types/transaction';
+import { safeWindow } from '../../constants';
 import { useWeb3App } from '../../context/useWeb3App';
 import { useAccount } from '../../hooks/useAccount';
 import {
@@ -55,6 +55,7 @@ interface BridgeFormProps {
   onHistoryClose?: () => void;
   onMvxConnect: () => void;
   onMvxDisconnect?: () => void;
+  onNavigate?: (url: string, options?: object) => void;
 }
 
 export const BridgeForm = ({
@@ -69,13 +70,13 @@ export const BridgeForm = ({
   onFailedSentTransaction,
   onHistoryClose,
   onMvxConnect,
-  onMvxDisconnect
+  onMvxDisconnect,
+  onNavigate
 }: BridgeFormProps) => {
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
     useState<number>(0);
-  const navigate = useNavigate();
   const account = useAccount();
   const { chains: sdkChains } = useSwitchChain();
   const { config, options } = useWeb3App();
@@ -263,7 +264,7 @@ export const BridgeForm = ({
       }
 
       const currentUrl = getCompletePathname();
-      const searchParams = new URLSearchParams(window.location.search);
+      const searchParams = new URLSearchParams(safeWindow.location.search);
 
       if (firstTokenId) {
         searchParams.set('firstToken', firstTokenId);
@@ -278,9 +279,9 @@ export const BridgeForm = ({
       if (currentUrl === newUrl) {
         return;
       }
-      navigate(newUrl, { replace: true });
+      onNavigate?.(newUrl, { replace: true });
     },
-    [bridgeAddress, callbackRoute, isTokensLoading, navigate]
+    [bridgeAddress, callbackRoute, isTokensLoading, onNavigate]
   );
 
   const onChangeFirstSelect = useCallback(
