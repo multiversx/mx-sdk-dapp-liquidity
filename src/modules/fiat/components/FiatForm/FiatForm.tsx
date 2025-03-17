@@ -127,9 +127,9 @@ export const FiatForm = ({
       url: getApiURL(),
       nativeAuthToken: nativeAuthToken ?? '',
       body: {
-        tokenIn: selectedCurrency?.address ?? '',
+        tokenIn: selectedCurrency?.symbol ?? '',
         amountIn: amount?.toString() ?? '',
-        fromChainId: mvxChainId.toString(),
+        fromChainId: '',
         tokenOut: firstToken?.address ?? '',
         toChainId: mvxChainId.toString(),
         amountOut: rate?.amountOut ?? '',
