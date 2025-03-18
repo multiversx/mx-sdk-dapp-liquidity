@@ -7,7 +7,7 @@ A complete toolkit for bridging assets between MultiversX, Ethereum, and BNB Cha
 ## Installation
 
 ```bash
-npm install @multiversx/mx-sdk-dapp-liquidity
+npm install @multiversx/sdk-dapp-liquidity
 ```
 
 ## Commands
