@@ -1,6 +1,5 @@
-import { Metadata } from '@reown/appkit';
 import { mainnet } from '@reown/appkit/networks';
-import { createAppKit } from '@reown/appkit/react';
+import { Metadata, createAppKit } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import { CreateConfigParameters } from '@wagmi/core';

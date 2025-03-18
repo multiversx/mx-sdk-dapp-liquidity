@@ -1,5 +1,4 @@
-import type { AppKitOptions } from '@reown/appkit';
-import { createAppKit } from '@reown/appkit/react';
+import { createAppKit, type AppKitOptions } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
