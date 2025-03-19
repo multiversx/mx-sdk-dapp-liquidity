@@ -180,9 +180,6 @@ export const FiatForm = ({
   }, [rate?.amountOut, amount]);
 
   useEffect(() => {
-    console.log('currencies.length', {
-      currencies
-    });
     if (currencies?.length) {
       setSelectedCurrency(() => currencies?.[0]);
     }

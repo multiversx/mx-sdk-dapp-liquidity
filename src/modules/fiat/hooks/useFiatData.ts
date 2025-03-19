@@ -21,12 +21,6 @@ export const useFiatData = () => {
     return tokens?.filter((token) => !token.chainId);
   }, [tokens]);
 
-  console.log('useFiatData', {
-    tokens,
-    mvxTokens,
-    currencies
-  });
-
   return {
     isTokensLoading,
     isTokensError,
