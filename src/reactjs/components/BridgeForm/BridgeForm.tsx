@@ -57,6 +57,8 @@ interface BridgeFormProps {
   onMvxDisconnect?: () => void;
 }
 
+let fetchRateInterval: NodeJS.Timeout;
+
 export const BridgeForm = ({
   mvxChainId,
   mvxAddress,
@@ -502,7 +504,18 @@ export const BridgeForm = ({
     if (!firstAmount) {
       setSecondAmount('');
     }
+
     fetchRateDebounced(firstAmount);
+
+    if (fetchRateInterval) {
+      clearInterval(fetchRateInterval);
+    }
+
+    fetchRateInterval = setInterval(() => {
+      fetchRateDebounced(firstAmount);
+    }, 60 * 1000); // 1min
+
+    return () => clearInterval(fetchRateInterval);
   }, [firstAmount, fetchRateDebounced]);
 
   useEffect(() => {

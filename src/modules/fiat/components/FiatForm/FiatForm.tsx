@@ -1,15 +1,15 @@
-import { faArrowUpRightDots } from '@fortawesome/free-solid-svg-icons/faArrowUpRightDots';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BridgeHistory, MxButton, MxCard, mxClsx } from 'reactjs';
 import { TokenType } from 'types';
 import { AmountInput } from './components/AmountInput';
+import { RateReloading } from './components/RateReloading/RateReloading.tsx';
 import { TokenSelector } from './components/TokenSelector';
 import { confirmFiatRate } from '../../../../api/confirmFiatRate.ts';
 import { getApiURL } from '../../../../helpers';
 import { ProviderType } from '../../../../types/providerType.ts';
+import ArrowUpRight from '../../assets/arrow-up-right.svg';
 import { useFiatData } from '../../hooks/useFiatData';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
 
@@ -20,6 +20,8 @@ interface FiatFormProps {
   showHistory?: boolean;
   onHistoryClose?: () => void;
 }
+
+let fetchRateInterval: NodeJS.Timeout;
 
 export const FiatForm = ({
   mvxChainId,
@@ -32,7 +34,7 @@ export const FiatForm = ({
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [firstToken, setFirstToken] = useState<TokenType | undefined>();
   const [amount, setAmount] = useState('');
-  const [conversionRate, setConversionRate] = useState(0);
+  const [conversionRate, setConversionRate] = useState<number>();
 
   const {
     currencies,
@@ -161,10 +163,24 @@ export const FiatForm = ({
 
   useEffect(() => {
     fetchRateDebounced(amount);
+
+    if (fetchRateInterval) {
+      clearInterval(fetchRateInterval);
+    }
+
+    fetchRateInterval = setInterval(() => {
+      fetchRateDebounced(amount);
+    }, 60 * 1000); // 1min
+
+    return () => clearInterval(fetchRateInterval);
   }, [amount, fetchRateDebounced]);
 
   useEffect(() => {
-    setConversionRate(Number(rate?.amountOut ?? '0') / Number(amount || '1'));
+    if (!rate?.amountOut) {
+      setConversionRate(undefined);
+      return;
+    }
+    setConversionRate(Number(amount || '1') / Number(rate.amountOut || '1'));
   }, [rate?.amountOut, amount]);
 
   useEffect(() => {
@@ -232,7 +248,7 @@ export const FiatForm = ({
             ⇅
             {rateError
               ? 'Error fetching rate'
-              : `${conversionRate.toFixed(4)} ${firstToken?.symbol}`}
+              : `${rate?.amountOut ? Number(rate?.amountOut).toFixed(4) : 0} ${firstToken?.symbol}`}
           </p>
         </div>
         <div className="liq-flex liq-justify-center liq-gap-3 liq-mt-6">
@@ -253,15 +269,16 @@ export const FiatForm = ({
       <MxButton
         type="submit"
         variant="neutral-850"
-        className="liq-w-full disabled:liq-bg-neutral-850/50 liq-py-3 hover:enabled:liq-bg-primary !liq-text-primary-200"
+        className="liq-w-full disabled:liq-bg-neutral-850/50 liq-py-2 hover:enabled:liq-bg-primary !liq-text-primary-200"
         disabled={isPendingRate || !mvxAddress || Boolean(rateError)}
       >
         {Boolean(amount) && (
-          <div className="liq-flex liq-justify-center liq-gap-2">
-            <div>Continue</div>
-            <FontAwesomeIcon
-              icon={faArrowUpRightDots}
-              className="liq-mx-1 liq-flex liq-items-center liq-text-end"
+          <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
+            <div className="flex-1">Continue</div>
+            <img
+              src={ArrowUpRight}
+              alt=""
+              className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-fill-primary-200"
             />
           </div>
         )}
@@ -269,6 +286,19 @@ export const FiatForm = ({
           <span className="liq-text-neutral-100">Enter amount</span>
         )}
       </MxButton>
+
+      {amount && (
+        <div className="liq-transition-colors liq-duration-200 liq-bg-neutral-900/50 liq-flex liq-justify-between liq-items-center liq-border liq-border-neutral-750 liq-rounded-xl liq-p-2">
+          <div className="liq-flex liq-items-center">Exchange Rate</div>
+          <div className="liq-flex liq-items-center liq-ml-2">
+            {conversionRate && <RateReloading progressWidth={16} />}
+            <span className="liq-flex liq-items-center liq-ml-2">
+              1 {firstToken?.symbol} = {selectedCurrency?.symbol}{' '}
+              {conversionRate ? conversionRate.toFixed(4) : '...'}
+            </span>
+          </div>
+        </div>
+      )}
     </form>
   );
 };
