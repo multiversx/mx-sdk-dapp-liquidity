@@ -87,10 +87,6 @@ export const FiatForm = ({
     [availableTokens]
   );
 
-  console.log({
-    fromOptions
-  });
-
   const fetchRateDebounced = useCallback(
     debounce(async (value: string) => {
       if (!value || !firstToken?.address || !selectedCurrency) {
