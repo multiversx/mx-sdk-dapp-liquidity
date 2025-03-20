@@ -7,6 +7,7 @@ import { useCallback, useMemo } from 'react';
 import { MVX_CHAIN_IDS } from '../../../constants';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { TransactionDTO } from '../../../dto/Transaction.dto';
+import { ProviderType } from '../../../types/providerType.ts';
 import { TokenType } from '../../../types/token';
 import ArrowUpRight from '../../assets/arrow-up-right.svg';
 import { useWeb3App } from '../../context/useWeb3App';
@@ -192,67 +193,129 @@ export const BridgeHistory = ({
                     })}
                   >
                     {transaction.statusIcon}
-                    <span>
-                      {MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                        ? 'Deposit'
-                        : 'Transfer'}
-                    </span>
-                    <img
-                      src={
-                        MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                          ? tokensMap[transaction.tokenDestination]?.svgUrl
-                          : tokensMap[transaction.tokenSource]?.svgUrl
-                      }
-                      alt=""
-                      className="liq-h-[1.5rem] liq-w-[1.5rem]"
-                    />
-                    <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
-                      {formatAmount({
-                        decimals: MVX_CHAIN_IDS.includes(
-                          Number(transaction.toChainId)
-                        )
-                          ? tokensMap[transaction.tokenSource]?.decimals
-                          : tokensMap[transaction.tokenDestination]?.decimals,
-                        amount: transaction.amountIn,
-                        addCommas: false,
-                        digits: 2
-                      })}
-                    </span>
-                    <span className="liq-whitespace-nowrap">
-                      {tokensMap[transaction.tokenSource]?.symbol}
-                    </span>
-                    <span>
-                      {MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                        ? 'from'
-                        : 'to'}
-                    </span>
-                    <img
-                      src={
-                        chainsMap[
-                          MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                            ? transaction.fromChainId.toString()
-                            : transaction.toChainId.toString()
-                        ]?.svgUrl ?? ''
-                      }
-                      alt=""
-                      className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
-                    />
+
+                    {MVX_CHAIN_IDS.includes(Number(transaction.toChainId)) ? (
+                      <>
+                        <span>Deposit </span>
+                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenDestination]?.decimals,
+                            amount: transaction.amountOut,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenDestination]?.symbol}
+                        </span>
+                        <img
+                          src={tokensMap[transaction.tokenDestination]?.svgUrl}
+                          alt=""
+                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                        />
+                        <span className="liq-whitespace-nowrap">from</span>
+                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenSource]?.decimals,
+                            amount: transaction.amountIn,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenSource]?.symbol}
+                        </span>
+                        <div className="liq-flex liq-items-center liq-relative">
+                          <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                              <img
+                                src={tokensMap[transaction.tokenSource]?.svgUrl}
+                                alt=""
+                                className="liq-asset-icon liq-sm liq-p-0"
+                              />
+                            </div>
+                          </div>
+                          <img
+                            src={chainsMap[transaction.fromChainId]?.svgUrl}
+                            alt=""
+                            className="liq-absolute liq-left-3 liq-bottom-[-2px] liq-chain-icon liq-sm liq-w-5 liq-h-5 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <span>Transfer </span>
+                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenSource]?.decimals,
+                            amount: transaction.amountIn,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenSource]?.symbol}
+                        </span>
+                        <img
+                          src={tokensMap[transaction.tokenSource]?.svgUrl}
+                          alt=""
+                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                        />
+                        <span className="liq-whitespace-nowrap">to</span>
+                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenDestination]?.decimals,
+                            amount: transaction.amountOut,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenDestination]?.symbol}
+                        </span>
+                        <div className="liq-flex liq-items-center liq-relative">
+                          <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                              <img
+                                src={
+                                  tokensMap[transaction.tokenDestination]
+                                    ?.svgUrl
+                                }
+                                alt=""
+                                className="liq-asset-icon liq-sm liq-p-0"
+                              />
+                            </div>
+                          </div>
+                          <img
+                            src={chainsMap[transaction.toChainId]?.svgUrl}
+                            alt=""
+                            className="liq-absolute liq-left-3 liq-bottom-[-2px] liq-chain-icon liq-sm liq-w-5 liq-h-5 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
-                    <MxLink
-                      to={`${options.bridgeURL}/status/${transaction.txHash}`}
-                      target="_blank"
-                      showExternalIcon={false}
-                      className="liq-flex"
-                    >
-                      <div className="max-sm:liq-hidden">View</div>
-                      <img
-                        src={ArrowUpRight}
-                        alt=""
-                        className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
-                      />
-                    </MxLink>
-                  </div>
+                  {transaction.provider === ProviderType.MultiversxBridge && (
+                    <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
+                      <MxLink
+                        to={`${options.bridgeURL}/status/${transaction.txHash}`}
+                        target="_blank"
+                        showExternalIcon={false}
+                        className="liq-flex"
+                      >
+                        <div className="max-sm:liq-hidden">View</div>
+                        <img
+                          src={ArrowUpRight}
+                          alt=""
+                          className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
+                        />
+                      </MxLink>
+                    </div>
+                  )}
                 </div>
               </MxCard>
             );

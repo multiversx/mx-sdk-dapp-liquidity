@@ -1,4 +1,4 @@
-# @multiversx/mx-sdk-dapp-liquidity
+# @multiversx/sdk-dapp-liquidity
 
 ## Overview
 
@@ -63,7 +63,7 @@ yarn publish-package-next
 ## Usage
 
 ```css
-@import 'node_modules/@multiversx/mx-sdk-dapp-liquidity/style.css';
+@import 'node_modules/@multiversx/sdk-dapp-liquidity/style.css';
 ```
 
 ```tsx

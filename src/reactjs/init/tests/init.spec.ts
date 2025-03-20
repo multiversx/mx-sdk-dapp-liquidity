@@ -11,8 +11,8 @@ const projectID = 'testProjectID';
 
 describe('init', () => {
   const mockMetadata: Metadata = {
-    name: 'mx-sdk-dapp-liquidity',
-    description: 'mx-sdk-dapp-liquidity example',
+    name: 'sdk-dapp-liquidity',
+    description: 'sdk-dapp-liquidity example',
     url: 'https://example.com',
     icons: ['https://avatars.githubusercontent.com/u/179229932']
   };
