@@ -1,5 +1,5 @@
-import { fileURLToPath } from 'node:url';
 import { extname, relative, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { glob } from 'glob';
 import nodeExternals from 'rollup-plugin-node-externals';
@@ -11,7 +11,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    nodeExternals(),
+    nodeExternals({
+      builtinsPrefix: 'strip'
+    }),
     dts({
       entryRoot: 'src'
     }),
@@ -61,7 +63,11 @@ export default defineConfig({
         },
         plugins: [nodeResolve()]
       },
-      external: ['cross-fetch', 'cross-fetch/polyfill']
+      external: [
+        'cross-fetch',
+        'cross-fetch/polyfill',
+        '@reown/appkit-scaffold-ui'
+      ]
     }
   },
   resolve: {

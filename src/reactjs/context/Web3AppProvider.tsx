@@ -1,4 +1,4 @@
-import { AppKit } from '@reown/appkit';
+import { AppKit } from '@reown/appkit/react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { ResolvedRegister } from '@wagmi/core';
 import { PropsWithChildren, useMemo } from 'react';

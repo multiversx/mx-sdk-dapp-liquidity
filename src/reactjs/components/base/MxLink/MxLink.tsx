@@ -1,7 +1,6 @@
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons/faArrowUpRightFromSquare';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Ref, forwardRef } from 'react';
-import { LinkProps, Link } from 'react-router-dom';
+import { ReactNode, Ref, forwardRef, HTMLAttributeAnchorTarget } from 'react';
 import { mxClsx } from '../../../utils/mxClsx';
 
 export type MxLinkVariantType =
@@ -23,10 +22,14 @@ export type MxLinkVariantType =
   | 'button-primary-300'
   | 'button-translucent';
 
-interface MxLinkType extends LinkProps {
+interface MxLinkType {
+  to: string;
+  target?: HTMLAttributeAnchorTarget;
   disabled?: boolean;
   showExternalIcon?: boolean;
   variant?: MxLinkVariantType;
+  className?: string;
+  children?: ReactNode;
 }
 
 export const MxLink = forwardRef(
@@ -43,7 +46,8 @@ export const MxLink = forwardRef(
     const rel = isExternal ? 'noopener noreferrer nofollow' : undefined;
 
     return (
-      <Link
+      <a
+        target=""
         ref={ref}
         {...rest}
         {...(rel ? { rel } : {})}
@@ -101,7 +105,7 @@ export const MxLink = forwardRef(
             className="liq-ml-1"
           />
         )}
-      </Link>
+      </a>
     );
   }
 );

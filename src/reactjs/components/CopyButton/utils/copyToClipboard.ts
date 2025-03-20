@@ -1,21 +1,23 @@
+import { safeDocument, safeWindow } from '../../../constants';
+
 function fallbackCopyTextToClipboard(text: string) {
   let success = false;
 
-  const textArea = document.createElement('textarea');
+  const textArea = safeDocument.createElement('textarea');
   textArea.value = text;
   textArea.style.position = 'fixed';
-  document.body.appendChild(textArea);
+  safeDocument.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
 
   try {
-    document.execCommand('copy');
+    safeDocument.execCommand('copy');
     success = true;
   } catch (err) {
     console.error('Fallback: Oops, unable to copy', err);
   }
 
-  document.body.removeChild(textArea);
+  safeDocument.body.removeChild(textArea);
 
   return success;
 }
@@ -23,10 +25,10 @@ function fallbackCopyTextToClipboard(text: string) {
 export async function copyTextToClipboard(text: string) {
   let success = false;
 
-  if (!navigator.clipboard) {
+  if (!safeWindow.navigator.clipboard) {
     success = fallbackCopyTextToClipboard(text);
   } else {
-    success = await navigator.clipboard.writeText(text).then(
+    success = await safeWindow.navigator.clipboard.writeText(text).then(
       function done() {
         return true;
       },
