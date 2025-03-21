@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { TransactionDTO } from 'dto/Transaction.dto';
+import { ProviderType } from '../../types/providerType.ts';
 import { getTransactions } from '../getTransactions';
 
 jest.mock('axios');
@@ -26,7 +27,8 @@ describe('getTransactions', () => {
           'erd1sp0aaszznqnuvyvkmxkv2ultcvlf637c093sfc26dszks60jdqsqy2knqu',
         txHash:
           '0xe7e706c1793d06a252a3f040f07732989e4a6466d804cae17105c09818bc2994',
-        fee: '0'
+        fee: '0',
+        provider: ProviderType.MultiversxBridge
       }
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
@@ -56,7 +58,8 @@ describe('getTransactions', () => {
           'erd1sp0aaszznqnuvyvkmxkv2ultcvlf637c093sfc26dszks60jdqsqy2knqu',
         txHash:
           '0xe7e706c1793d06a252a3f040f07732989e4a6466d804cae17105c09818bc2994',
-        fee: '0'
+        fee: '0',
+        provider: ProviderType.MultiversxBridge
       }
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
@@ -87,7 +90,8 @@ describe('getTransactions', () => {
           'erd1sp0aaszznqnuvyvkmxkv2ultcvlf637c093sfc26dszks60jdqsqy2knqu',
         txHash:
           '0xe7e706c1793d06a252a3f040f07732989e4a6466d804cae17105c09818bc2994',
-        fee: '0'
+        fee: '0',
+        provider: ProviderType.MultiversxBridge
       }
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
