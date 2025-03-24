@@ -63,11 +63,7 @@ export default defineConfig({
         },
         plugins: [nodeResolve()]
       },
-      external: [
-        'cross-fetch',
-        'cross-fetch/polyfill',
-        '@reown/appkit-scaffold-ui'
-      ]
+      external: ['cross-fetch', 'cross-fetch/polyfill']
     }
   },
   resolve: {
