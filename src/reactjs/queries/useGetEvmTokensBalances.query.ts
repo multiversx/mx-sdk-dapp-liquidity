@@ -1,10 +1,9 @@
 import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useMemo } from 'react';
-import { TokenType } from '../../types/token';
+import { TokenType } from '../../types';
 import { getQueryClient } from '../context/queryClient';
-import { useBalances } from '../hooks/useBalances';
+import { useBalances } from '../hooks';
 
 export const useGetEvmTokensBalancesQuery = ({
   tokens,
@@ -15,12 +14,6 @@ export const useGetEvmTokensBalancesQuery = ({
 }) => {
   const { address } = useAppKitAccount();
   const { fetchBalances } = useBalances();
-
-  const tokenIdentifiers = useMemo(() => {
-    return tokens
-      .filter((token) => token.chainId.toString() === chainId?.toString())
-      .map(({ address: tokenId }) => tokenId);
-  }, [tokens, chainId]);
 
   const queryFn = async () => {
     try {
@@ -35,7 +28,7 @@ export const useGetEvmTokensBalancesQuery = ({
       const assets = await fetchBalances({
         address: address as `0x${string}`,
         chainId: chainId.toString(),
-        tokenIdentifiers
+        tokens
       });
 
       return assets.map((asset) => {
@@ -62,12 +55,7 @@ export const useGetEvmTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: [
-      'evm-tokens-balances',
-      address,
-      chainId,
-      tokenIdentifiers.sort()
-    ],
+    queryKey: ['evm-tokens-balances', address, chainId],
     queryFn,
     retry,
     enabled: Boolean(address) && Boolean(chainId),

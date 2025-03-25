@@ -12,4 +12,5 @@ export interface TokenDTO {
     maxBridgeAmount: string;
   };
   availableTokens?: string[];
+  isNative?: boolean;
 }

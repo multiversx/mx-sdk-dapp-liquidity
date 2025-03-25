@@ -1,5 +1,6 @@
 import { getBalance } from '@wagmi/core';
 import { useCallback } from 'react';
+import { TokenType } from '../../types';
 import { useWeb3App } from '../context/useWeb3App';
 
 export const useBalances = () => {
@@ -9,38 +10,32 @@ export const useBalances = () => {
     async ({
       address,
       chainId,
-      tokenIdentifiers
+      tokens
     }: {
       address: `0x${string}`;
       chainId: string;
-      tokenIdentifiers: string[];
+      tokens: TokenType[];
     }) => {
       return await Promise.all(
-        tokenIdentifiers.map(async (tokenIdentifier) => {
+        tokens.map(async (token) => {
           try {
             const balance = await getBalance(config, {
               address: address as `0x${string}`,
               chainId: Number(chainId),
-              // TODO: fix this using the API support
               // omit passing the token for fetching the native currency balance
-              token:
-                tokenIdentifier.length > 10
-                  ? (tokenIdentifier as `0x${string}`)
-                  : undefined
+              token: token.isNative
+                ? undefined
+                : (token.address as `0x${string}`)
             });
 
             return {
-              tokenId: tokenIdentifier,
+              tokenId: token.address,
               balance: balance.value.toString()
             };
           } catch (error) {
-            console.warn(
-              'Error fetching balance for: ',
-              tokenIdentifier,
-              error
-            );
+            console.warn('Error fetching balance for: ', token.address, error);
             return {
-              tokenId: tokenIdentifier,
+              tokenId: token.address,
               balance: '0'
             };
           }
