@@ -11,3 +11,4 @@ export * from './SmallLoader';
 export * from './TokenSelector';
 export * from './TransactionToast';
 export * from './TrimAddress';
+export * from './Error';

@@ -1,9 +1,9 @@
-import axios from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BridgeHistory, MxButton, MxCard, mxClsx } from 'reactjs';
 import { TokenType } from 'types';
 import { AmountInput } from './components/AmountInput';
+import { PaymentForm } from './components/Payment/PaymentForm.tsx';
 import { RateReloading } from './components/RateReloading/RateReloading.tsx';
 import { TokenSelector } from './components/TokenSelector';
 import { confirmFiatRate } from '../../../../api/confirmFiatRate.ts';
@@ -35,6 +35,11 @@ export const FiatForm = ({
   const [firstToken, setFirstToken] = useState<TokenType | undefined>();
   const [amount, setAmount] = useState('');
   const [conversionRate, setConversionRate] = useState<number>();
+
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [paymentFormContent, setPaymentFormContent] = useState<string>('');
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     currencies,
@@ -145,16 +150,19 @@ export const FiatForm = ({
       return;
     }
 
-    const paymentURL = responseData.additionalInfo.url;
+    setPaymentFormContent(responseData.content);
+    setShowPaymentForm(true);
 
-    if (!paymentURL) {
-      return;
-    }
-
-    axios.post(paymentURL, {
-      checksum: responseData.additionalInfo.checksum,
-      jsonRequest: responseData.additionalInfo.jsonRequest
-    });
+    // const paymentURL = responseData.additionalInfo.url;
+    //
+    // if (!paymentURL) {
+    //   return;
+    // }
+    //
+    // axios.post(paymentURL, {
+    //   checksum: responseData.additionalInfo.checksum,
+    //   jsonRequest: responseData.additionalInfo.jsonRequest
+    // });
   };
 
   useEffect(() => {
@@ -170,6 +178,13 @@ export const FiatForm = ({
 
     return () => clearInterval(fetchRateInterval);
   }, [amount, fetchRateDebounced]);
+
+  const onStartOver = () => {
+    setShowPaymentForm(false);
+    setPaymentFormContent('');
+    setStatus(null);
+    setError(null);
+  };
 
   useEffect(() => {
     if (!rate?.amountOut) {
@@ -188,6 +203,17 @@ export const FiatForm = ({
   useEffect(() => {
     setFirstToken(fromOptions?.[0]);
   }, [fromOptions]);
+
+  if (showPaymentForm) {
+    return (
+      <PaymentForm
+        frameContent={paymentFormContent}
+        status={status}
+        error={error}
+        onStartOver={onStartOver}
+      />
+    );
+  }
 
   return (
     <form
