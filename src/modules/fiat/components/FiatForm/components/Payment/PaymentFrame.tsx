@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { mxClsx, SmallLoader } from '../../../../../../reactjs';
+import { MxCircleLoader } from 'reactjs/components/base/MxCircleLoader/MxCircleLoader';
+import { mxClsx } from '../../../../../../reactjs';
 
 interface PaymentFrameProps {
-  htmlContent: string; // The string containing HTML + script tags
+  htmlContent: string;
 }
 
 export const PaymentFrame: React.FC<PaymentFrameProps> = ({ htmlContent }) => {
@@ -38,13 +39,17 @@ export const PaymentFrame: React.FC<PaymentFrameProps> = ({ htmlContent }) => {
   }, []);
 
   return (
-    <div className={`relative w-full`}>
-      {!formLoaded && <SmallLoader show={true} />}
+    <div className="liq-relative liq-w-full">
+      {!formLoaded && (
+        <div className="payment-iframe liq-w-full  liq-rounded-md liq-border liq-border-neutral-700">
+          <MxCircleLoader />
+        </div>
+      )}
       <iframe
         ref={iframeRef}
         title="Buy with FIAT"
         className={mxClsx(
-          'h-[500px] w-full rounded-md border border-neutral-700',
+          'payment-iframe scrollbar-thin liq-w-full liq-rounded-md liq-border liq-border-neutral-700',
           {
             hidden: !formLoaded
           }

@@ -35,10 +35,11 @@ export const TokenItem = ({
       tokenChain?.chainId &&
       activeChain?.id.toString() !== tokenChain?.chainId.toString()
     ) {
+      // TODO remove any when sdk is updated
       switchNetwork(
-        sdkChains.find(
+        (sdkChains.find(
           (chain) => chain.id.toString() === tokenChain?.chainId.toString()
-        ) ?? activeChain
+        ) ?? activeChain) as any
       );
     }
   }, [activeChain, sdkChains, tokenChain?.chainId, activeChain?.id]);
