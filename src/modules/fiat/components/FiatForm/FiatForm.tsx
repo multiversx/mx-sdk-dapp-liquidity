@@ -144,6 +144,8 @@ export const FiatForm = ({
       }
     });
 
+    fetchRateDebounced(amount);
+
     const responseData = data?.[0];
 
     if (!responseData) {
