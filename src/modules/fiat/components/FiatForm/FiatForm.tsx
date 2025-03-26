@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { BridgeHistory, MxButton, MxCard, mxClsx } from 'reactjs';
+import { BridgeHistory, MxButton, MxCard, mxClsx, safeWindow } from 'reactjs';
 import { TokenType } from 'types';
 import { AmountInput } from './components/AmountInput';
 import { PaymentForm } from './components/Payment/PaymentForm.tsx';
@@ -140,7 +140,8 @@ export const FiatForm = ({
         receiver: mvxAddress ?? '',
         fee: rate?.fee ?? '0',
         provider: rate?.provider ?? ProviderType.None,
-        orderId: rate?.orderId ?? ''
+        orderId: rate?.orderId ?? '',
+        backUrl: safeWindow.location.href
       }
     });
 
