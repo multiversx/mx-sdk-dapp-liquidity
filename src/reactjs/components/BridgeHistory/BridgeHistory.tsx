@@ -13,7 +13,6 @@ import { ProviderType } from '../../../types/providerType.ts';
 import { TokenType } from '../../../types/token';
 import ArrowUpRight from '../../assets/arrow-up-right.svg';
 import { useWeb3App } from '../../context/useWeb3App';
-import { useAccount } from '../../hooks';
 import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetHistoryQuery } from '../../queries/useGetHistory.query';
 import { formatAmount } from '../../utils/formatAmount';
@@ -31,8 +30,9 @@ export const BridgeHistory = ({
   onClose: () => void;
 }) => {
   const { options } = useWeb3App();
-  const { address } = useAccount();
-  const { data, isLoading, isError } = useGetHistoryQuery({ address });
+  const { data, isLoading, isError } = useGetHistoryQuery({
+    address: mvxAddress
+  });
 
   const resolveTransactionIcon = useCallback((transaction: TransactionDTO) => {
     switch (transaction.status) {
