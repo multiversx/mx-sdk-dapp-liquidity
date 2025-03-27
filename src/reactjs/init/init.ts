@@ -1,8 +1,15 @@
+import {
+  bitcoin,
+  bitcoinTestnet,
+  solana,
+  solanaDevnet,
+  solanaTestnet
+} from '@reown/appkit/networks';
 import { createAppKit, type AppKitOptions } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
-import * as networks from 'viem/chains';
+import * as viemNetworks from 'viem/chains';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { InMemoryStore } from '../../store/inMemoryStore';
 
@@ -53,6 +60,20 @@ export function init(options: InitOptions) {
   store.setItem('mvxApiURL', options.mvxApiURL);
   store.setItem('mvxExplorerAddress', options.mvxExplorerAddress);
   store.setItem('mvxChainId', options.mvxChainId);
+
+  const networks = {
+    solana,
+    solanaDevnet,
+    solanaTestnet,
+    bitcoin,
+    bitcoinTestnet,
+    ...viemNetworks
+  };
+
+  console.log('supported chains', {
+    networks,
+    viemNetworks
+  });
 
   const acceptedNetworks = Object.values(networks)
     .filter(

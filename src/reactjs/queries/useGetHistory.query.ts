@@ -3,11 +3,8 @@ import { AxiosError } from 'axios';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
 import { getQueryClient } from '../context/queryClient';
-import { useAccount } from '../hooks/useAccount';
 
-export const useGetHistoryQuery = () => {
-  const { address } = useAccount();
-
+export const useGetHistoryQuery = ({ address }: { address?: string }) => {
   const queryFn = async () => {
     if (!address) {
       throw new Error('User is not connected');
