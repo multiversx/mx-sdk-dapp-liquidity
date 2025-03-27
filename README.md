@@ -184,3 +184,8 @@ const App = () => {
   )
 }
 ```
+
+## Disclaimer
+
+1. This package is in active development and is subject to change. We recommend to check the latest version and update your code accordingly.
+2. This package is not fully supported on the Next.js framework. We are working on a solution to make it compatible with Next.js.
