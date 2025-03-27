@@ -1,3 +1,5 @@
+import { faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons/faArrowDownShortWide';
+import { faArrowUpShortWide } from '@fortawesome/free-solid-svg-icons/faArrowUpShortWide';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons/faCircleCheck';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons/faCircleXmark';
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
@@ -16,6 +18,7 @@ import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetHistoryQuery } from '../../queries/useGetHistory.query';
 import { formatAmount } from '../../utils/formatAmount';
 import { mxClsx } from '../../utils/mxClsx';
+import { MxTooltip } from '../base';
 import { MxButton } from '../base/MxButton';
 import { MxCard } from '../base/MxCard';
 import { MxLink } from '../base/MxLink';
@@ -198,8 +201,18 @@ export const BridgeHistory = ({
 
                     {MVX_CHAIN_IDS.includes(Number(transaction.toChainId)) ? (
                       <>
-                        <span>Deposit </span>
-                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                        <MxTooltip
+                          placement="top"
+                          buttonText={
+                            <FontAwesomeIcon
+                              icon={faArrowDownShortWide}
+                              className="liq-mx-1 liq-flex liq-items-center"
+                            />
+                          }
+                        >
+                          Deposit
+                        </MxTooltip>
+                        <span className="liq-text-wrap">
                           {formatAmount({
                             decimals:
                               tokensMap[transaction.tokenDestination]?.decimals,
@@ -217,7 +230,7 @@ export const BridgeHistory = ({
                           className="liq-h-[1.5rem] liq-w-[1.5rem]"
                         />
                         <span className="liq-whitespace-nowrap">from</span>
-                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                        <span className="liq-text-wrap">
                           {formatAmount({
                             decimals:
                               tokensMap[transaction.tokenSource]?.decimals,
@@ -248,8 +261,19 @@ export const BridgeHistory = ({
                       </>
                     ) : (
                       <>
-                        <span>Transfer </span>
-                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                        <MxTooltip
+                          placement="top"
+                          buttonText={
+                            <FontAwesomeIcon
+                              icon={faArrowUpShortWide}
+                              spin
+                              className="liq-mx-1 liq-flex liq-items-center"
+                            />
+                          }
+                        >
+                          Transfer
+                        </MxTooltip>
+                        <span className="liq-text-wrap">
                           {formatAmount({
                             decimals:
                               tokensMap[transaction.tokenSource]?.decimals,
@@ -267,7 +291,7 @@ export const BridgeHistory = ({
                           className="liq-h-[1.5rem] liq-w-[1.5rem]"
                         />
                         <span className="liq-whitespace-nowrap">to</span>
-                        <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
+                        <span className="liq-text-wrap">
                           {formatAmount({
                             decimals:
                               tokensMap[transaction.tokenDestination]?.decimals,

@@ -8,11 +8,10 @@ export async function getTransactions({
   url: string;
   userWalletAddress: string;
 }): Promise<AxiosResponse<TransactionDTO[]>> {
-  const endpoint = userWalletAddress
-    ? `/transactions/${userWalletAddress}`
-    : '/transactions';
-
-  return await axios.get<TransactionDTO[]>(endpoint, {
-    baseURL: url
-  });
+  return await axios.get<TransactionDTO[]>(
+    `/transactions/${userWalletAddress}?receiver=${userWalletAddress}`,
+    {
+      baseURL: url
+    }
+  );
 }
