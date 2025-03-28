@@ -50,7 +50,7 @@ export const TokenSelector = ({
   const chains = useMemo(() => {
     return (
       data?.filter(
-        (chain) => !MVX_CHAIN_IDS.includes(Number(chain.chainId.toString()))
+        (chain) => !MVX_CHAIN_IDS.includes(chain.chainId.toString())
       ) ?? []
     );
   }, [data]);

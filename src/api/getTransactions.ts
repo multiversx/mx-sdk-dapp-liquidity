@@ -28,14 +28,16 @@ export async function getTransactions({
     tokenOut: tokenOut || ''
   });
 
-  for (const [key, value] of queryParams.entries()) {
-    if (!value) {
+  const params = Object.entries(Object.fromEntries(queryParams.entries()));
+
+  for (const [key, value] of params) {
+    if (value === '') {
       queryParams.delete(key);
     }
   }
 
   const queryString = queryParams.toString();
-  const endpointWithParams = `/transactions/?${queryString}`;
+  const endpointWithParams = `/transactions?${queryString}`;
 
   return await axios.get<TransactionDTO[]>(endpointWithParams, {
     baseURL: url

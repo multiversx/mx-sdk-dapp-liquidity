@@ -199,7 +199,7 @@ export const BridgeHistory = ({
                   >
                     {transaction.statusIcon}
 
-                    {MVX_CHAIN_IDS.includes(Number(transaction.toChainId)) ? (
+                    {MVX_CHAIN_IDS.includes(transaction.toChainId) ? (
                       <>
                         <MxTooltip
                           placement="top"
