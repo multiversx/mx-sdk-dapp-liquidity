@@ -24,7 +24,7 @@ export const useFiatData = ({
   const mvxTokens = useMemo(
     () =>
       tokens?.filter((token) =>
-        MVX_CHAIN_IDS.includes(Number(token.chainId.toString()))
+        MVX_CHAIN_IDS.includes(token.chainId.toString())
       ),
     [tokens]
   );

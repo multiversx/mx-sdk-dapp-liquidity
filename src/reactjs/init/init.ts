@@ -25,7 +25,7 @@ export type InitOptions = {
   /**
    * Accepted chain IDs. The chains with ids [31, 44, 54] will be ignored as these are mapped to the mvx networks as [1, D, T]
    */
-  acceptedChainIDs: number[];
+  acceptedChainIDs: string[];
   /**
    * Accepted connectors IDs
    */
@@ -78,8 +78,8 @@ export function init(options: InitOptions) {
   const acceptedNetworks = Object.values(networks)
     .filter(
       (chain) =>
-        options.acceptedChainIDs.includes(Number(chain.id)) &&
-        !MVX_CHAIN_IDS.includes(Number(chain.id))
+        options.acceptedChainIDs.includes(chain.id.toString()) &&
+        !MVX_CHAIN_IDS.includes(chain.id.toString())
     )
     .map((network) => network) as AppKitNetwork[];
 

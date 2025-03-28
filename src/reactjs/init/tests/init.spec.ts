@@ -41,7 +41,7 @@ describe('init', () => {
         metadata: mockMetadata,
         debug: true
       },
-      acceptedChainIDs: [1],
+      acceptedChainIDs: ['1'],
       apiURL: 'https://localhost:3000',
       bridgeURL: 'https://devnet-bridge.example.com',
       mvxApiURL: 'https://devnet-api.multiversx.com',
@@ -75,7 +75,7 @@ describe('init', () => {
         projectId: projectID,
         metadata: mockMetadata
       },
-      acceptedChainIDs: [1],
+      acceptedChainIDs: ['1'],
       apiURL: 'https://localhost:3000',
       bridgeURL: 'https://devnet-bridge.example.com',
       mvxApiURL: 'https://devnet-api.multiversx.com',
@@ -100,7 +100,7 @@ describe('init', () => {
         metadata: mockMetadata,
         debug: false
       },
-      acceptedChainIDs: [1],
+      acceptedChainIDs: ['1'],
       apiURL: 'https://localhost:3000',
       bridgeURL: 'https://devnet-bridge.example.com',
       mvxApiURL: 'https://devnet-api.multiversx.com',
