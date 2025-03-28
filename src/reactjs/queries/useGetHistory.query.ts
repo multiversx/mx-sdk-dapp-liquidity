@@ -1,10 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { ProviderType } from 'types/providerType';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
 import { getQueryClient } from '../context/queryClient';
 
-export const useGetHistoryQuery = ({ address }: { address?: string }) => {
+export const useGetHistoryQuery = ({
+  address,
+  sender,
+  provider,
+  status,
+  tokenIn,
+  tokenOut
+}: {
+  address?: string;
+  sender?: string;
+  provider?: ProviderType;
+  status?: string;
+  tokenIn?: string;
+  tokenOut?: string;
+}) => {
   const queryFn = async () => {
     if (!address) {
       throw new Error('User is not connected');
@@ -13,7 +28,12 @@ export const useGetHistoryQuery = ({ address }: { address?: string }) => {
     try {
       const { data } = await getTransactions({
         url: getApiURL(),
-        userWalletAddress: address
+        address,
+        sender,
+        provider,
+        status,
+        tokenIn,
+        tokenOut
       });
       return data;
     } catch (error) {
@@ -26,7 +46,15 @@ export const useGetHistoryQuery = ({ address }: { address?: string }) => {
   };
 
   return useQuery({
-    queryKey: ['user-history', address],
+    queryKey: [
+      'user-history',
+      address,
+      sender,
+      provider,
+      status,
+      tokenIn,
+      tokenOut
+    ],
     queryFn,
     retry,
     enabled: Boolean(address),
