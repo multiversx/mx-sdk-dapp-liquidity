@@ -333,12 +333,18 @@ export const BridgeHistory = ({
                         showExternalIcon={false}
                         className="liq-flex"
                       >
-                        <div className="max-sm:liq-hidden">View</div>
-                        <img
-                          src={ArrowUpRight}
-                          alt=""
-                          className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
-                        />
+                        <MxTooltip
+                          placement="top"
+                          buttonText={
+                            <img
+                              src={ArrowUpRight}
+                              alt=""
+                              className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
+                            />
+                          }
+                        >
+                          View
+                        </MxTooltip>
                       </MxLink>
                     </div>
                   )}
