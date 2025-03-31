@@ -176,6 +176,11 @@ export const BridgeForm = ({
     [activeChain?.id, chains]
   );
 
+  console.log({
+    chains,
+    selectedChainOption
+  });
+
   const defaultReceivingToken = useMemo(
     () => toOptions.find((x) => x.symbol.toLowerCase().includes('usdc')),
     [toOptions]
