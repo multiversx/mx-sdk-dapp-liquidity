@@ -7,7 +7,7 @@ import {
 } from '@reown/appkit/networks';
 import { createAppKit, type AppKitOptions } from '@reown/appkit/react';
 import { BitcoinAdapter } from '@reown/appkit-adapter-bitcoin';
-import { SolanaAdapter } from '@reown/appkit-adapter-solana';
+import { SolanaAdapter } from '@reown/appkit-adapter-solana/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
