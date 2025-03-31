@@ -351,7 +351,7 @@ export const BridgeForm = ({
       toOptions?.find(
         ({ address }) =>
           address.toLowerCase() ===
-          (firstOption?.symbol ?? initialTokens?.secondTokenId).toLowerCase()
+          (firstOption?.symbol ?? initialTokens?.secondTokenId)?.toLowerCase()
       ) ??
       toOptions.find(
         (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()

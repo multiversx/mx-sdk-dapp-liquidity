@@ -85,11 +85,20 @@ export function init(options: InitOptions) {
     )
     .map((network) => network) as AppKitNetwork[];
 
+  const supportedChains = [
+    ...acceptedNetworks,
+    bitcoin,
+    bitcoinTestnet,
+    solana,
+    solanaDevnet,
+    solanaTestnet
+  ];
+
   const wagmiAdapter = new WagmiAdapter({
     ...options.adapterConfig,
     ssr: options.adapterConfig.ssr ?? true,
     projectId: options.appKitOptions.projectId,
-    networks: acceptedNetworks
+    networks: supportedChains
   });
   const solanaAdapter = new SolanaAdapter();
   const bitcoinAdapter = new BitcoinAdapter({
@@ -99,7 +108,7 @@ export function init(options: InitOptions) {
   const appKit = createAppKit({
     ...options.appKitOptions,
     adapters: [wagmiAdapter, solanaAdapter, bitcoinAdapter],
-    networks: [acceptedNetworks[0], ...acceptedNetworks.slice(1)]
+    networks: [supportedChains[0], ...supportedChains.slice(1)]
   });
 
   return {
