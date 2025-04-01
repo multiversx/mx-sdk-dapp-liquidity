@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ChainDTO } from 'dto/Chain.dto';
+import { ChainType } from 'types/chainType';
 import { getChains } from '../getChains';
 
 jest.mock('axios');
@@ -17,7 +18,7 @@ describe('getChains', () => {
           'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.png',
         svgUrl:
           'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.svg',
-        chainType: 'type1',
+        chainType: ChainType.evm,
         rpc: 'rpc1',
         blockExplorerUrls: ['explorer1'],
         nativeCurrency: {

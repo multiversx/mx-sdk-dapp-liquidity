@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTokens } from '../../api/getTokens';
-import { NON_EVM_CHAIN_IDS_MAP } from '../../constants';
 import { getApiURL } from '../../helpers/getApiURL';
 
 export const useGetAllTokensQuery = () => {
@@ -10,12 +9,7 @@ export const useGetAllTokensQuery = () => {
       const { data } = await getTokens({
         url: getApiURL()
       });
-      return data.map((token) => ({
-        ...token,
-        chainId: NON_EVM_CHAIN_IDS_MAP[token.chainId]
-          ? NON_EVM_CHAIN_IDS_MAP[token.chainId]
-          : token.chainId
-      }));
+      return data;
     } catch (error) {
       throw error;
     }
