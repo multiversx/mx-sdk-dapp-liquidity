@@ -1,9 +1,11 @@
+import { ChainType } from '../types/chainType';
+
 export interface ChainDTO {
   chainId: string;
   chainName: string;
   pngUrl: string;
   svgUrl: string;
-  chainType: string;
+  chainType: ChainType;
   rpc: string;
   networkName: string;
   nativeCurrency: {

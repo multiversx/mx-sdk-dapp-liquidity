@@ -1,4 +1,5 @@
 export const MVX_CHAIN_IDS = ['31', '44', '54'];
+// TODO remove this when we will have full support on the API level
 export const NON_EVM_CHAIN_IDS_MAP: Record<string, string> = {
   '0': '000000000019d6689c085ae165831e93', // Bitcoin
   // TODO chain ID to be defined at the API level

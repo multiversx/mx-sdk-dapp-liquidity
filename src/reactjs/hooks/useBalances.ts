@@ -3,7 +3,6 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { getBalance, GetBalanceReturnType } from '@wagmi/core';
 import { useCallback, useMemo } from 'react';
 import { useGetChainId } from './useGetChainId.ts';
-import { NON_EVM_CHAIN_IDS_MAP } from '../../constants';
 import { TokenType } from '../../types';
 import { useWeb3App } from '../context/useWeb3App';
 import { useGetChainsQuery } from '../queries';
@@ -33,18 +32,22 @@ export const useBalances = () => {
     };
   };
 
-  // const getBtcBalance = async (rpcUrl: string) => {
-  //   if (!isConnected || !address) {
-  //     return;
-  //   }
-  //
-  //   const response = await fetch(
-  //     `https://blockstream.info/api/address/${address}/utxo`
-  //   );
-  //   const utxos = await response.json();
-  //   const balance = utxos.reduce((sum, utxo) => sum + utxo.value, 0);
-  //   console.log(`BTC Balance: ${balance / 1e8} BTC`);
-  // };
+  const getBtcBalance = async (rpcUrl: string) => {
+    const response = await fetch(rpcUrl);
+    const utxos = await response.json();
+    const balance = utxos.reduce(
+      (sum: number, utxo: { value: number }) => sum + utxo.value,
+      0
+    );
+    console.log(`BTC Balance: ${balance / 1e8} BTC`);
+
+    return {
+      value: BigInt(balance.toString()),
+      decimals: 8,
+      formatted: (balance / 1e8).toString(),
+      symbol: 'BTC'
+    };
+  };
 
   const fetchBalances = useCallback(
     async ({ tokens }: { chainId: string; tokens: TokenType[] }) => {
@@ -60,20 +63,34 @@ export const useBalances = () => {
           try {
             let balance: GetBalanceReturnType;
 
-            if (Object.values(NON_EVM_CHAIN_IDS_MAP).includes(chainId)) {
-              if (!activeChain?.rpc) {
-                throw new Error(`RPC URL not found for chain ID: ${chainId}`);
-              }
-              balance = await getSolBalance(activeChain?.rpc, address);
-            } else {
-              balance = await getBalance(config, {
-                address: address as `0x${string}`,
-                chainId: Number(chainId),
-                // omit passing the token for fetching the native currency balance
-                token: token.isNative
-                  ? undefined
-                  : (token.address as `0x${string}`)
-              });
+            switch (activeChain?.chainType) {
+              case 'evm':
+                balance = await getBalance(config, {
+                  address: address as `0x${string}`,
+                  chainId: Number(chainId),
+                  // omit passing the token for fetching the native currency balance
+                  token: token.isNative
+                    ? undefined
+                    : (token.address as `0x${string}`)
+                });
+                break;
+              case 'sol':
+                if (!activeChain?.rpc) {
+                  throw new Error(`RPC URL not found for chain ID: ${chainId}`);
+                }
+                balance = await getSolBalance(activeChain?.rpc, address);
+                break;
+              case 'btc':
+                if (!activeChain?.rpc) {
+                  throw new Error(`RPC URL not found for chain ID: ${chainId}`);
+                }
+                balance = await getBtcBalance(activeChain?.rpc);
+                break;
+              case 'mvx':
+              default:
+                throw new Error(
+                  `Unsupported chain type: ${activeChain?.chainType}`
+                );
             }
 
             return {
