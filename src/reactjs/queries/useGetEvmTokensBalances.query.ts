@@ -26,7 +26,6 @@ export const useGetEvmTokensBalancesQuery = ({
       }
 
       const assets = await fetchBalances({
-        address: address as `0x${string}`,
         chainId: chainId.toString(),
         tokens
       });

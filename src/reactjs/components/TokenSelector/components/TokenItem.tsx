@@ -1,8 +1,8 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { useCallback, useMemo } from 'react';
-import { useSwitchChain } from 'wagmi';
 import { TokenIcon } from './TokenIcon';
 import { TokenType } from '../../../../types/token';
+import { useWeb3App } from '../../../context/useWeb3App';
 import { useGetChainId } from '../../../hooks/useGetChainId';
 import { useResolveTokenChain } from '../../../hooks/useResolveTokenChain';
 
@@ -19,7 +19,7 @@ export const TokenItem = ({
     token
   });
 
-  const { chains: sdkChains } = useSwitchChain();
+  const { supportedChains: sdkChains } = useWeb3App();
   const { switchNetwork } = useAppKitNetwork();
   const chainId = useGetChainId();
 
@@ -30,7 +30,7 @@ export const TokenItem = ({
   });
 
   const activeChain = useMemo(() => {
-    return sdkChains.find(
+    return sdkChains?.find(
       (chain) => chain.id.toString() === chainId?.toString()
     );
   }, [chainId, sdkChains]);
@@ -41,11 +41,10 @@ export const TokenItem = ({
       tokenChain?.chainId &&
       activeChain?.id.toString() !== tokenChain?.chainId.toString()
     ) {
-      // TODO remove any when sdk is updated
       switchNetwork(
-        (sdkChains.find(
+        sdkChains?.find(
           (chain) => chain.id.toString() === tokenChain?.chainId.toString()
-        ) ?? activeChain) as any
+        ) ?? activeChain
       );
     }
   }, [activeChain, sdkChains, tokenChain?.chainId, activeChain?.id]);

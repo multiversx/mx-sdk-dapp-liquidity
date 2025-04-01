@@ -1,5 +1,5 @@
 export interface TokenDTO {
-  chainId: number;
+  chainId: string;
   address: string;
   name: string;
   symbol: string;

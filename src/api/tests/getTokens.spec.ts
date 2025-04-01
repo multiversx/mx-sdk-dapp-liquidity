@@ -11,7 +11,7 @@ describe('getTokens', () => {
   it('fetches tokens successfully without chainId', async () => {
     const response: TokenDTO[] = [
       {
-        chainId: 1,
+        chainId: '1',
         address: '0x123',
         name: 'Token One',
         symbol: 'T1',
@@ -37,7 +37,7 @@ describe('getTokens', () => {
     const chainId = 1;
     const response: TokenDTO[] = [
       {
-        chainId: 1,
+        chainId: '1',
         address: '0x123',
         name: 'Token One',
         symbol: 'T1',

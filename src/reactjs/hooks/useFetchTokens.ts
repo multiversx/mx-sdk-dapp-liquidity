@@ -33,7 +33,9 @@ export const useFetchTokens = ({
   const evmTokens = useMemo(
     () =>
       tokens?.filter(
-        (token) => !MVX_CHAIN_IDS.includes(token.chainId.toString())
+        (token) =>
+          !MVX_CHAIN_IDS.includes(token.chainId.toString()) &&
+          Boolean(token.chainId)
       ),
     [tokens]
   );

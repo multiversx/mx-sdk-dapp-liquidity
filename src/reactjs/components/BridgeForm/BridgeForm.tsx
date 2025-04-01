@@ -6,7 +6,6 @@ import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useSwitchChain } from 'wagmi';
 import { getApiURL } from '../../../helpers/getApiURL';
 import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
@@ -81,8 +80,7 @@ export const BridgeForm = ({
   const [siginingTransactionsCount, setSigningTransactionsCount] =
     useState<number>(0);
   const account = useAccount();
-  const { chains: sdkChains } = useSwitchChain();
-  const { config, options } = useWeb3App();
+  const { config, options, supportedChains: sdkChains } = useWeb3App();
   const chainId = useGetChainId();
 
   const {

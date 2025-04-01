@@ -1,6 +1,5 @@
 import { useFormik } from 'formik';
 import { useEffect, useRef, useState } from 'react';
-import { useSwitchChain } from 'wagmi';
 import { object, string } from 'yup';
 import { useAccount } from './useAccount';
 import { useAmountSchema } from './validation/useAmountSchema';
@@ -66,7 +65,6 @@ export const useBridgeFormik = ({
   >(null);
   const pendingSigningRef = useRef<boolean>();
   const account = useAccount();
-  const { switchChainAsync } = useSwitchChain();
 
   const initialValues: TradeFormikValuesType = {
     firstAmount: '',
@@ -83,12 +81,6 @@ export const useBridgeFormik = ({
   };
 
   const onSubmitFormik = async (values: TradeFormikValuesType) => {
-    if (values.fromChainId) {
-      await switchChainAsync({
-        chainId: Number(values.fromChainId)
-      });
-    }
-
     if (pendingSigningRef.current) {
       return;
     }

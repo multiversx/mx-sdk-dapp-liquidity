@@ -55,6 +55,12 @@ export const TokenSelector = ({
     );
   }, [data]);
 
+  console.log(`TokenSelector - ${name}`, {
+    chains,
+    options,
+    selectedOption
+  });
+
   const handleOnClick = () => setShow(true);
 
   useEffect(() => {
