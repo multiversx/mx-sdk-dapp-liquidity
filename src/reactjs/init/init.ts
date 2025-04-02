@@ -6,6 +6,8 @@ import {
   solanaTestnet
 } from '@reown/appkit/networks';
 import { createAppKit, type AppKitOptions } from '@reown/appkit/react';
+import { BitcoinAdapter } from '@reown/appkit-adapter-bitcoin';
+import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
@@ -89,10 +91,14 @@ export function init(options: InitOptions) {
     projectId: options.appKitOptions.projectId,
     networks: acceptedNetworks
   });
+  const solanaAdapter = new SolanaAdapter();
+  const bitcoinAdapter = new BitcoinAdapter({
+    projectId: options.appKitOptions.projectId
+  });
 
   const appKit = createAppKit({
     ...options.appKitOptions,
-    adapters: [wagmiAdapter],
+    adapters: [wagmiAdapter, solanaAdapter, bitcoinAdapter],
     networks: [acceptedNetworks[0], ...acceptedNetworks.slice(1)]
   });
 
