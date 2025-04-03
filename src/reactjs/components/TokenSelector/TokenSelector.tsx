@@ -20,6 +20,7 @@ export const TokenSelector = ({
   areOptionsLoading = false,
   className = '',
   disabled = false,
+  isMvxSelector = false,
   omitDisableClass = false,
   color = 'neutral-750',
   onBlur,
@@ -32,6 +33,7 @@ export const TokenSelector = ({
   selectedOption?: TokenType;
   areOptionsLoading?: boolean;
   disabled?: boolean;
+  isMvxSelector?: boolean;
   omitDisableClass?: boolean;
   className?: string;
   color?: 'neutral-750' | 'neutral-850';
@@ -48,6 +50,14 @@ export const TokenSelector = ({
   });
 
   const chains = useMemo(() => {
+    if (isMvxSelector) {
+      return (
+        data?.filter((chain) =>
+          MVX_CHAIN_IDS.includes(chain.chainId.toString())
+        ) ?? []
+      );
+    }
+
     return (
       data?.filter(
         (chain) => !MVX_CHAIN_IDS.includes(chain.chainId.toString())
@@ -99,6 +109,7 @@ export const TokenSelector = ({
             }}
             tokens={options}
             chains={chains}
+            isMvxSelector={true}
             areChainsLoading={areChainsLoading}
             selectedToken={selectedOption}
           />

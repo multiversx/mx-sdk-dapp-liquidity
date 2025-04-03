@@ -756,6 +756,7 @@ export const BridgeForm = ({
               omitDisableClass={true}
               options={toOptions}
               areOptionsLoading={isTokensLoading}
+              isMvxSelector={true}
               color="neutral-850"
               onChange={onChangeSecondSelect}
               onBlur={handleBlur}

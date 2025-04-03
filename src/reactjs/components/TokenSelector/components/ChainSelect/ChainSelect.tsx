@@ -10,11 +10,13 @@ import { ALL_NETWORK_ID } from '../../../../constants';
 export const ChainSelect = ({
   isLoading,
   selectedChainId,
+  ignoreAllChains = false,
   onChange,
   chains
 }: {
   isLoading?: boolean;
   selectedChainId?: string;
+  ignoreAllChains?: boolean;
   onChange?: (chainId: string) => void;
   chains: ChainDTO[];
 }) => {
@@ -29,6 +31,10 @@ export const ChainSelect = ({
         svgUrl: chain.svgUrl
       }
     }));
+
+    if (ignoreAllChains) {
+      return options;
+    }
 
     options.unshift({
       label: 'All',
