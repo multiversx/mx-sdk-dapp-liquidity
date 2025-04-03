@@ -200,10 +200,11 @@ export const BridgeForm = ({
     selectedChainOption
   });
 
-  // TODO just for testing. To be changed back in 'usdc'
   const defaultReceivingToken = useMemo(
-    () => toOptions.find((x) => x.symbol.toLowerCase().includes('egld')),
-    [toOptions]
+    () =>
+      availableTokens?.[0] ??
+      toOptions.find((x) => x.symbol.toLowerCase().includes('usdc')),
+    [toOptions, availableTokens]
   );
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
@@ -356,6 +357,14 @@ export const BridgeForm = ({
     },
     [fromOptions, updateUrlParams]
   );
+
+  console.log(`BridgeForm`, {
+    chains,
+    fromOptions,
+    toOptions,
+    firstToken,
+    secondToken
+  });
 
   const setInitialSelectedTokens = () => {
     if (isTokensLoading) {
@@ -705,6 +714,7 @@ export const BridgeForm = ({
               disabled={isPendingRate}
               options={fromOptions}
               areOptionsLoading={isTokensLoading}
+              isMvxSelector={false}
               color="neutral-850"
               onChange={onChangeFirstSelect}
               onBlur={handleBlur}

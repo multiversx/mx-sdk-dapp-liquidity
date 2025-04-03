@@ -65,6 +65,8 @@ export const TokenSelector = ({
     );
   }, [data]);
 
+  const isVisuallyDisabled = disabled || chains.length < 2;
+
   console.log(`TokenSelector - ${name}`, {
     chains,
     options,
@@ -109,7 +111,7 @@ export const TokenSelector = ({
             }}
             tokens={options}
             chains={chains}
-            isMvxSelector={true}
+            isMvxSelector={isMvxSelector}
             areChainsLoading={areChainsLoading}
             selectedToken={selectedOption}
           />
@@ -135,21 +137,22 @@ export const TokenSelector = ({
                   color === 'neutral-850'
               },
               {
-                'disabled:!liq-opacity-70': disabled && !omitDisableClass
+                'disabled:!liq-opacity-70':
+                  isVisuallyDisabled && !omitDisableClass
               },
               {
                 '!liq-cursor-not-allowed !liq-bg-transparent !liq-outline-transparent':
-                  disabled
+                  isVisuallyDisabled
               },
               className
             )}
             onBlur={onBlur}
             onClick={handleOnClick}
-            disabled={disabled}
+            disabled={isVisuallyDisabled}
           >
             <SelectedOption value={selectedOption} />
 
-            {!disabled && (
+            {!isVisuallyDisabled && (
               <FontAwesomeIcon
                 icon={faChevronDown}
                 className="liq-text-neutral-200 group-hover:liq-text-neutral-50"
