@@ -153,10 +153,30 @@ export const BridgeForm = ({
     [evmTokensWithBalances]
   );
 
+  const availableTokens = useMemo(() => {
+    if (!firstToken?.availableTokens) {
+      return [];
+    }
+
+    const foundTokens: TokenType[] = [];
+
+    for (const availableToken of firstToken.availableTokens) {
+      const foundToken = mvxTokensWithBalances?.find(
+        (mvxToken) => mvxToken.address === availableToken.address
+      );
+
+      if (foundToken) {
+        foundTokens.push(foundToken);
+      }
+    }
+
+    return foundTokens;
+  }, [mvxTokensWithBalances, firstToken?.availableTokens]);
+
   const toOptions = useMemo(
     () =>
-      (mvxTokensWithBalances &&
-        mvxTokensWithBalances.map((token) => {
+      (availableTokens &&
+        availableTokens.map((token) => {
           return {
             ...token,
             identifier: token.address,
@@ -164,7 +184,7 @@ export const BridgeForm = ({
           };
         })) ??
       [],
-    [mvxTokensWithBalances]
+    [availableTokens]
   );
 
   const selectedChainOption = useMemo(
@@ -375,17 +395,31 @@ export const BridgeForm = ({
       return;
     }
 
-    if (!firstOption || !secondOption) {
-      return;
+    if (firstOption) {
+      setFirstToken(firstOption);
+      updateUrlParams({
+        firstTokenId: firstOption?.address
+      });
     }
 
-    setFirstToken(firstOption);
-    setSecondToken(secondOption);
+    if (secondOption) {
+      setSecondToken(secondOption);
+      updateUrlParams({
+        secondTokenId: secondOption?.address
+      });
+    }
 
-    updateUrlParams({
-      firstTokenId: firstOption?.address,
-      secondTokenId: secondOption?.address
-    });
+    // if (!firstOption || !secondOption) {
+    //   return;
+    // }
+    //
+    // setFirstToken(firstOption);
+    // setSecondToken(secondOption);
+    //
+    // updateUrlParams({
+    //   firstTokenId: firstOption?.address,
+    //   secondTokenId: secondOption?.address
+    // });
   };
 
   const onSubmit = useCallback(
@@ -574,7 +608,12 @@ export const BridgeForm = ({
     }
   }, [rateValidationError]);
 
-  useEffect(setInitialSelectedTokens, [isTokensLoading, chainId]);
+  useEffect(setInitialSelectedTokens, [
+    isTokensLoading,
+    fromOptions,
+    toOptions,
+    chainId
+  ]);
 
   useEffect(() => {
     const selectedTokenOption = evmTokensWithBalances?.find(
@@ -713,7 +752,7 @@ export const BridgeForm = ({
             />
             <TokenSelector
               name={'secondToken'}
-              disabled={true}
+              disabled={isPendingRate}
               omitDisableClass={true}
               options={toOptions}
               areOptionsLoading={isTokensLoading}
