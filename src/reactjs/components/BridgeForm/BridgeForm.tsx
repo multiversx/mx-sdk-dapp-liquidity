@@ -404,18 +404,6 @@ export const BridgeForm = ({
         secondTokenId: secondOption?.address
       });
     }
-
-    // if (!firstOption || !secondOption) {
-    //   return;
-    // }
-    //
-    // setFirstToken(firstOption);
-    // setSecondToken(secondOption);
-    //
-    // updateUrlParams({
-    //   firstTokenId: firstOption?.address,
-    //   secondTokenId: secondOption?.address
-    // });
   };
 
   const onSubmit = useCallback(
@@ -431,35 +419,24 @@ export const BridgeForm = ({
       setSigningTransactionsCount(() => transactions.length);
 
       try {
-        switch (selectedChainOption?.chainType) {
-          case ChainType.sol:
-            try {
-              for (const transaction of transactions) {
+        let txIndex = -1;
+        for (const transaction of transactions) {
+          ++txIndex;
+          let txHash: string | `0x${string}` | undefined;
+          try {
+            switch (selectedChainOption?.chainType) {
+              case ChainType.sol:
                 if (!transaction.instructions || !transaction.feePayer) {
-                  continue;
+                  break;
                 }
 
-                await solana.signTransaction({
+                txHash = await solana.signTransaction({
                   feePayer: transaction.feePayer,
                   instructions: transaction.instructions
                 });
-              }
-
-              setPendingSigning(false);
-            } catch (e) {
-              toast.dismiss();
-              toast.error('Transaction aborted');
-              onFailedSentTransaction?.('Transaction aborted');
-              setPendingSigning(false);
-              return;
-            }
-            break;
-          case ChainType.evm:
-            let txIndex = -1;
-            for (const transaction of transactions) {
-              ++txIndex;
-              try {
-                const txHash = await evm.signTransaction({
+                break;
+              case ChainType.evm:
+                txHash = await evm.signTransaction({
                   ...transaction,
                   value: BigInt(transaction.value),
                   gas: BigInt(transaction.gasLimit),
@@ -470,53 +447,53 @@ export const BridgeForm = ({
                   ...transaction,
                   txHash
                 });
-
-                setSigningTransactionsCount(
-                  () => transactions.length - 1 - txIndex
-                );
-
-                if (txIndex === transactions.length - 1) {
-                  continue;
-                }
-
-                const transactionReceipt = await waitForTransactionReceipt(
-                  config,
-                  {
-                    confirmations: 1,
-                    hash: txHash
-                  }
-                );
-
-                console.info({
-                  transactionReceipt,
-                  hash: txHash
-                });
-              } catch (e) {
-                toast.dismiss();
-                toast.error('Transaction aborted');
-                onFailedSentTransaction?.('Transaction aborted');
+                break;
+              default:
+                toast.error('Provider not supported');
                 setPendingSigning(false);
                 return;
-              }
             }
 
-            await sendTransactions({
-              transactions: signedTransactions,
-              provider,
-              url: getApiURL() ?? '',
-              token: nativeAuthToken ?? ''
+            setSigningTransactionsCount(
+              () => transactions.length - 1 - txIndex
+            );
+
+            if (
+              txIndex === transactions.length - 1 ||
+              !txHash ||
+              selectedChainOption?.chainType !== ChainType.evm
+            ) {
+              continue;
+            }
+
+            const transactionReceipt = await waitForTransactionReceipt(config, {
+              confirmations: 1,
+              hash: txHash as `0x${string}`
             });
 
-            const txHashes = signedTransactions.map((tx) => tx.txHash);
-            onSuccess(txHashes);
-            setPendingSigning(false);
-
-            break;
-          default:
-            toast.error('Provider not supported');
+            console.info({
+              transactionReceipt,
+              hash: txHash
+            });
+          } catch (e) {
+            toast.dismiss();
+            toast.error('Transaction aborted');
+            onFailedSentTransaction?.('Transaction aborted');
             setPendingSigning(false);
             return;
+          }
         }
+
+        await sendTransactions({
+          transactions: signedTransactions,
+          provider,
+          url: getApiURL() ?? '',
+          token: nativeAuthToken ?? ''
+        });
+
+        const txHashes = signedTransactions.map((tx) => tx.txHash);
+        onSuccess(txHashes);
+        setPendingSigning(false);
       } catch (e) {
         console.error(e);
         toast.dismiss();

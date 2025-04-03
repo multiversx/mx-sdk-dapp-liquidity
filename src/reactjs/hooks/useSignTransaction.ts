@@ -51,7 +51,7 @@ export const useSignTransaction = () => {
         ).blockhash;
       }
 
-      await walletProvider.signAndSendTransaction(transaction);
+      return await walletProvider.signAndSendTransaction(transaction);
     }
   }
 
