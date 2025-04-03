@@ -72,11 +72,6 @@ export function init(options: InitOptions) {
     ...viemNetworks
   };
 
-  console.log('supported chains', {
-    networks,
-    viemNetworks
-  });
-
   const acceptedNetworks = Object.values(networks)
     .filter(
       (chain) =>
@@ -109,13 +104,6 @@ export function init(options: InitOptions) {
     ...options.appKitOptions,
     adapters: [wagmiAdapter, solanaAdapter, bitcoinAdapter],
     networks: [supportedChains[0], ...supportedChains.slice(1)]
-  });
-
-  console.log('init', {
-    config: wagmiAdapter.wagmiConfig,
-    appKit,
-    options,
-    supportedChains
   });
 
   return {

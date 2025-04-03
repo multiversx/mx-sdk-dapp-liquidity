@@ -195,11 +195,6 @@ export const BridgeForm = ({
     [activeChain?.id, chains]
   );
 
-  console.log({
-    chains,
-    selectedChainOption
-  });
-
   const defaultReceivingToken = useMemo(
     () =>
       availableTokens?.[0] ??
@@ -357,14 +352,6 @@ export const BridgeForm = ({
     },
     [fromOptions, updateUrlParams]
   );
-
-  console.log(`BridgeForm`, {
-    chains,
-    fromOptions,
-    toOptions,
-    firstToken,
-    secondToken
-  });
 
   const setInitialSelectedTokens = () => {
     if (isTokensLoading) {

@@ -23,7 +23,6 @@ export const useBalances = () => {
     const connection = new Connection(rpcUrl);
     const publicKey = new PublicKey(addr);
     const balance = await connection.getBalance(publicKey);
-    console.log(`SOL Balance: ${balance / 1e9} SOL`);
     return {
       value: BigInt(balance.toString()),
       decimals: 9,
@@ -39,8 +38,6 @@ export const useBalances = () => {
       (sum: number, utxo: { value: number }) => sum + utxo.value,
       0
     );
-    console.log(`BTC Balance: ${balance / 1e8} BTC`);
-
     return {
       value: BigInt(balance.toString()),
       decimals: 8,

@@ -23,12 +23,6 @@ export const TokenItem = ({
   const { switchNetwork } = useAppKitNetwork();
   const chainId = useGetChainId();
 
-  console.log({
-    tokenChain,
-    sdkChains,
-    chainId
-  });
-
   const activeChain = useMemo(() => {
     return sdkChains?.find(
       (chain) => chain.id.toString() === chainId?.toString()

@@ -67,12 +67,6 @@ export const TokenSelector = ({
 
   const isVisuallyDisabled = disabled || chains.length < 2;
 
-  console.log(`TokenSelector - ${name}`, {
-    chains,
-    options,
-    selectedOption
-  });
-
   const handleOnClick = () => setShow(true);
 
   useEffect(() => {
