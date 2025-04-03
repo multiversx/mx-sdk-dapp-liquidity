@@ -3,6 +3,15 @@ import {
   Transaction as ViemTransaction
 } from 'viem/types/transaction';
 
+export type ServerTransactionInstruction = {
+  keys: [
+    { pubkey: string; isSigner: boolean; isWritable: boolean },
+    { pubkey: string; isSigner: boolean; isWritable: boolean }
+  ];
+  programId: string;
+  data: ArrayBuffer;
+};
+
 export type ServerTransaction = {
   to: `0x${string}`;
   data: `0x${string}`;
@@ -10,6 +19,9 @@ export type ServerTransaction = {
   value: bigint;
   account: string;
   txHash: string;
+  signatures?: string[];
+  feePayer?: string;
+  instructions?: ServerTransactionInstruction[];
 };
 
 export type TransactionType = TransactionBase & {

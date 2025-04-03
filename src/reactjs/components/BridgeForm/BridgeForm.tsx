@@ -7,6 +7,7 @@ import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getApiURL } from '../../../helpers/getApiURL';
+import { ChainType } from '../../../types/chainType';
 import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
 import { ServerTransaction } from '../../../types/transaction';
@@ -115,7 +116,7 @@ export const BridgeForm = ({
     );
   }, [chainId, chains]);
 
-  const { signTransaction } = useSignTransaction();
+  const { evm, solana } = useSignTransaction();
   const sendTransactions = useSendTransactions();
 
   const {
@@ -179,8 +180,9 @@ export const BridgeForm = ({
     selectedChainOption
   });
 
+  // TODO just for testing. To be changed back in 'usdc'
   const defaultReceivingToken = useMemo(
-    () => toOptions.find((x) => x.symbol.toLowerCase().includes('usdc')),
+    () => toOptions.find((x) => x.symbol.toLowerCase().includes('egld')),
     [toOptions]
   );
 
@@ -399,58 +401,92 @@ export const BridgeForm = ({
       setSigningTransactionsCount(() => transactions.length);
 
       try {
-        let txIndex = -1;
-        for (const transaction of transactions) {
-          ++txIndex;
-          try {
-            const txHash = await signTransaction({
-              ...transaction,
-              value: BigInt(transaction.value),
-              gas: BigInt(transaction.gasLimit),
-              account: bridgeAddress as `0x${string}`
-            });
+        switch (selectedChainOption?.chainType) {
+          case ChainType.sol:
+            try {
+              for (const transaction of transactions) {
+                if (!transaction.instructions || !transaction.feePayer) {
+                  continue;
+                }
 
-            signedTransactions.push({
-              ...transaction,
-              txHash
-            });
+                await solana.signTransaction({
+                  feePayer: transaction.feePayer,
+                  instructions: transaction.instructions
+                });
+              }
 
-            setSigningTransactionsCount(
-              () => transactions.length - 1 - txIndex
-            );
+              setPendingSigning(false);
+            } catch (e) {
+              toast.dismiss();
+              toast.error('Transaction aborted');
+              onFailedSentTransaction?.('Transaction aborted');
+              setPendingSigning(false);
+              return;
+            }
+            break;
+          case ChainType.evm:
+            let txIndex = -1;
+            for (const transaction of transactions) {
+              ++txIndex;
+              try {
+                const txHash = await evm.signTransaction({
+                  ...transaction,
+                  value: BigInt(transaction.value),
+                  gas: BigInt(transaction.gasLimit),
+                  account: bridgeAddress as `0x${string}`
+                });
 
-            if (txIndex === transactions.length - 1) {
-              continue;
+                signedTransactions.push({
+                  ...transaction,
+                  txHash
+                });
+
+                setSigningTransactionsCount(
+                  () => transactions.length - 1 - txIndex
+                );
+
+                if (txIndex === transactions.length - 1) {
+                  continue;
+                }
+
+                const transactionReceipt = await waitForTransactionReceipt(
+                  config,
+                  {
+                    confirmations: 1,
+                    hash: txHash
+                  }
+                );
+
+                console.info({
+                  transactionReceipt,
+                  hash: txHash
+                });
+              } catch (e) {
+                toast.dismiss();
+                toast.error('Transaction aborted');
+                onFailedSentTransaction?.('Transaction aborted');
+                setPendingSigning(false);
+                return;
+              }
             }
 
-            const transactionReceipt = await waitForTransactionReceipt(config, {
-              confirmations: 1,
-              hash: txHash
+            await sendTransactions({
+              transactions: signedTransactions,
+              provider,
+              url: getApiURL() ?? '',
+              token: nativeAuthToken ?? ''
             });
 
-            console.info({
-              transactionReceipt,
-              hash: txHash
-            });
-          } catch (e) {
-            toast.dismiss();
-            toast.error('Transaction aborted');
-            onFailedSentTransaction?.('Transaction aborted');
+            const txHashes = signedTransactions.map((tx) => tx.txHash);
+            onSuccess(txHashes);
+            setPendingSigning(false);
+
+            break;
+          default:
+            toast.error('Provider not supported');
             setPendingSigning(false);
             return;
-          }
         }
-
-        await sendTransactions({
-          transactions: signedTransactions,
-          provider,
-          url: getApiURL() ?? '',
-          token: nativeAuthToken ?? ''
-        });
-
-        const txHashes = signedTransactions.map((tx) => tx.txHash);
-        onSuccess(txHashes);
-        setPendingSigning(false);
       } catch (e) {
         console.error(e);
         toast.dismiss();
@@ -470,7 +506,7 @@ export const BridgeForm = ({
       nativeAuthToken,
       onSuccess,
       sendTransactions,
-      signTransaction
+      evm.signTransaction
     ]
   );
 
