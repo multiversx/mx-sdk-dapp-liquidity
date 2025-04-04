@@ -434,6 +434,15 @@ export const BridgeForm = ({
                   feePayer: transaction.feePayer,
                   instructions: transaction.instructions
                 });
+
+                if (!txHash) {
+                  break;
+                }
+
+                signedTransactions.push({
+                  ...transaction,
+                  txHash
+                });
                 break;
               case ChainType.evm:
                 txHash = await evm.signTransaction({
