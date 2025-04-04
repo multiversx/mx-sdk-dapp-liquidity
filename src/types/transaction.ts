@@ -22,6 +22,15 @@ export type ServerTransaction = {
   signatures?: string[];
   feePayer?: string;
   instructions?: ServerTransactionInstruction[];
+  bitcoinParams?: {
+    psbt: string;
+    signInputs: {
+      address: string;
+      index: number;
+      sighashTypes: number[];
+    }[];
+    broadcast: boolean;
+  };
 };
 
 export type TransactionType = TransactionBase & {

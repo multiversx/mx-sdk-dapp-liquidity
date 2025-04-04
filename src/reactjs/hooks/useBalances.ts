@@ -1,9 +1,12 @@
 import { useAppKitAccount } from '@reown/appkit/react';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { getBalance, GetBalanceReturnType } from '@wagmi/core';
+import { getBalance } from '@wagmi/core';
+import axios from 'axios';
 import { useCallback, useMemo } from 'react';
+import { Utxo } from 'types/utxo.ts';
 import { useGetChainId } from './useGetChainId.ts';
 import { TokenType } from '../../types';
+import { ChainType } from '../../types/chainType.ts';
 import { useWeb3App } from '../context/useWeb3App';
 import { useGetChainsQuery } from '../queries';
 
@@ -23,27 +26,30 @@ export const useBalances = () => {
     const connection = new Connection(rpcUrl);
     const publicKey = new PublicKey(addr);
     const balance = await connection.getBalance(publicKey);
-    return {
-      value: BigInt(balance.toString()),
-      decimals: 9,
-      formatted: (balance / 1e9).toString(),
-      symbol: 'SOL'
-    };
+    return BigInt(balance.toString());
   };
 
   const getBtcBalance = async (rpcUrl: string) => {
-    const response = await fetch(rpcUrl);
-    const utxos = await response.json();
-    const balance = utxos.reduce(
-      (sum: number, utxo: { value: number }) => sum + utxo.value,
-      0
-    );
-    return {
-      value: BigInt(balance.toString()),
-      decimals: 8,
-      formatted: (balance / 1e8).toString(),
-      symbol: 'BTC'
-    };
+    const url = `${rpcUrl}utxo/${address}`;
+    try {
+      const { data } = await axios.get<Utxo[]>(url);
+      const utxos = data || [];
+
+      if (!utxos || utxos.length === 0) {
+        throw new Error(`No UTXOs found for address ${address}`);
+      }
+
+      let totalInput = 0;
+      const chosenUtxos = [];
+      for (const utxo of utxos) {
+        chosenUtxos.push(utxo);
+        totalInput += Number(utxo.value);
+      }
+
+      return BigInt(totalInput);
+    } catch (error) {
+      throw new Error(`Error fetching UTXOs from Trezor: ${error}`);
+    }
   };
 
   const fetchBalances = useCallback(
@@ -58,32 +64,35 @@ export const useBalances = () => {
           }
 
           try {
-            let balance: GetBalanceReturnType;
+            let balance: bigint = BigInt(0);
 
             switch (activeChain?.chainType) {
-              case 'evm':
-                balance = await getBalance(config, {
-                  address: address as `0x${string}`,
-                  chainId: Number(chainId),
-                  // omit passing the token for fetching the native currency balance
-                  token: token.isNative
-                    ? undefined
-                    : (token.address as `0x${string}`)
-                });
+              case ChainType.evm:
+                balance = (
+                  await getBalance(config, {
+                    address: address as `0x${string}`,
+                    chainId: Number(chainId),
+                    // omit passing the token for fetching the native currency balance
+                    token: token.isNative
+                      ? undefined
+                      : (token.address as `0x${string}`)
+                  })
+                ).value;
                 break;
-              case 'sol':
+              case ChainType.sol:
                 if (!activeChain?.rpc) {
                   throw new Error(`RPC URL not found for chain ID: ${chainId}`);
                 }
                 balance = await getSolBalance(activeChain?.rpc, address);
                 break;
-              case 'btc':
+              case ChainType.btc:
                 if (!activeChain?.rpc) {
                   throw new Error(`RPC URL not found for chain ID: ${chainId}`);
                 }
                 balance = await getBtcBalance(activeChain?.rpc);
                 break;
-              case 'mvx':
+              case ChainType.mvx:
+                break;
               default:
                 throw new Error(
                   `Unsupported chain type: ${activeChain?.chainType}`
@@ -92,7 +101,7 @@ export const useBalances = () => {
 
             return {
               tokenId: token.address,
-              balance: balance.value.toString()
+              balance: balance?.toString()
             };
           } catch (error) {
             console.warn('Error fetching balance for: ', token.address, error);

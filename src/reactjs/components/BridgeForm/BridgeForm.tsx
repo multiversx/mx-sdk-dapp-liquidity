@@ -116,7 +116,7 @@ export const BridgeForm = ({
     );
   }, [chainId, chains]);
 
-  const { evm, solana } = useSignTransaction();
+  const { evm, solana, bitcoin } = useSignTransaction();
   const sendTransactions = useSendTransactions();
 
   const {
@@ -422,15 +422,49 @@ export const BridgeForm = ({
         let txIndex = -1;
         for (const transaction of transactions) {
           ++txIndex;
-          let txHash: string | `0x${string}` | undefined;
           try {
             switch (selectedChainOption?.chainType) {
+              case ChainType.evm:
+                const hash = await evm.signTransaction({
+                  ...transaction,
+                  value: BigInt(transaction.value),
+                  gas: BigInt(transaction.gasLimit),
+                  account: bridgeAddress as `0x${string}`
+                });
+
+                if (!hash) {
+                  break;
+                }
+
+                signedTransactions.push({
+                  ...transaction,
+                  txHash: hash
+                });
+
+                if (txIndex === transactions.length - 1 || !hash) {
+                  break;
+                }
+
+                const transactionReceipt = await waitForTransactionReceipt(
+                  config,
+                  {
+                    confirmations: 1,
+                    hash: hash as `0x${string}`
+                  }
+                );
+
+                console.info({
+                  transactionReceipt,
+                  hash
+                });
+
+                break;
               case ChainType.sol:
                 if (!transaction.instructions || !transaction.feePayer) {
                   break;
                 }
 
-                txHash = await solana.signTransaction({
+                const txHash = await solana.signTransaction({
                   feePayer: transaction.feePayer,
                   instructions: transaction.instructions
                 });
@@ -444,17 +478,24 @@ export const BridgeForm = ({
                   txHash
                 });
                 break;
-              case ChainType.evm:
-                txHash = await evm.signTransaction({
-                  ...transaction,
-                  value: BigInt(transaction.value),
-                  gas: BigInt(transaction.gasLimit),
-                  account: bridgeAddress as `0x${string}`
+
+              case ChainType.btc:
+                if (!transaction.bitcoinParams) {
+                  console.error('No bitcoin params');
+                  break;
+                }
+
+                console.log({
+                  transaction
                 });
+
+                const psbt = await bitcoin.signTransaction(
+                  transaction.bitcoinParams
+                );
 
                 signedTransactions.push({
                   ...transaction,
-                  txHash
+                  txHash: psbt
                 });
                 break;
               default:
@@ -466,24 +507,6 @@ export const BridgeForm = ({
             setSigningTransactionsCount(
               () => transactions.length - 1 - txIndex
             );
-
-            if (
-              txIndex === transactions.length - 1 ||
-              !txHash ||
-              selectedChainOption?.chainType !== ChainType.evm
-            ) {
-              continue;
-            }
-
-            const transactionReceipt = await waitForTransactionReceipt(config, {
-              confirmations: 1,
-              hash: txHash as `0x${string}`
-            });
-
-            console.info({
-              transactionReceipt,
-              hash: txHash
-            });
           } catch (e) {
             toast.dismiss();
             toast.error('Transaction aborted');

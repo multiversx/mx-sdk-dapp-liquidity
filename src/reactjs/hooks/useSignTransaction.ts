@@ -1,4 +1,5 @@
 import { useAppKitProvider } from '@reown/appkit/react';
+import type { BitcoinConnector } from '@reown/appkit-adapter-bitcoin';
 import {
   useAppKitConnection,
   type Provider
@@ -19,15 +20,18 @@ export const useSignTransaction = () => {
   } = useSendTransaction();
 
   const { connection } = useAppKitConnection();
-  const { walletProvider } = useAppKitProvider<Provider>('solana');
+  const { walletProvider: solWalletProvider } =
+    useAppKitProvider<Provider>('solana');
+  const { walletProvider: btcWalletProvider } =
+    useAppKitProvider<BitcoinConnector>('bip122');
 
-  async function signTransactionSolanaTransaction({
+  const signTransactionSolanaTransaction = async ({
     feePayer,
     instructions
   }: {
     feePayer: string;
     instructions: ServerTransactionInstruction[];
-  }) {
+  }) => {
     for (const instruction of instructions) {
       const instructionData = Buffer.from(instruction.data);
       const sender = new PublicKey(instruction.keys[0].pubkey);
@@ -51,9 +55,29 @@ export const useSignTransaction = () => {
         ).blockhash;
       }
 
-      return await walletProvider.signAndSendTransaction(transaction);
+      return await solWalletProvider.signAndSendTransaction(transaction);
     }
-  }
+  };
+
+  const signPSBT = async (params: {
+    psbt: string;
+    signInputs: {
+      address: string;
+      index: number;
+      sighashTypes: number[];
+    }[];
+    broadcast: boolean;
+  }) => {
+    if (!btcWalletProvider) {
+      throw Error('user is disconnected');
+    }
+
+    params.signInputs = [];
+
+    const signature = await btcWalletProvider.signPSBT(params);
+
+    return signature.psbt;
+  };
 
   return {
     evm: {
@@ -64,7 +88,11 @@ export const useSignTransaction = () => {
     solana: {
       signTransaction: signTransactionSolanaTransaction,
       connection,
-      walletProvider
+      walletProvider: solWalletProvider
+    },
+    bitcoin: {
+      signTransaction: signPSBT,
+      walletProvider: btcWalletProvider
     }
   };
 };
