@@ -76,6 +76,7 @@ export const BridgeForm = ({
   onNavigate
 }: BridgeFormProps) => {
   const ref = useRef(null);
+  const initializedInitialTokensRef = useRef(false);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
@@ -153,30 +154,33 @@ export const BridgeForm = ({
     [evmTokensWithBalances]
   );
 
-  const availableTokens = useMemo(() => {
-    if (!firstToken?.availableTokens) {
-      return [];
-    }
-
-    const foundTokens: TokenType[] = [];
-
-    for (const availableToken of firstToken.availableTokens) {
-      const foundToken = mvxTokensWithBalances?.find(
-        (mvxToken) => mvxToken.address === availableToken.address
-      );
-
-      if (foundToken) {
-        foundTokens.push(foundToken);
+  const getAvailableTokens = useCallback(
+    (option: TokenType) => {
+      if (!option?.availableTokens) {
+        return [];
       }
-    }
 
-    return foundTokens;
-  }, [mvxTokensWithBalances, firstToken?.availableTokens]);
+      const foundTokens: TokenType[] = [];
+
+      for (const availableToken of option.availableTokens) {
+        const foundToken = mvxTokensWithBalances?.find(
+          (mvxToken) => mvxToken.address === availableToken.address
+        );
+
+        if (foundToken) {
+          foundTokens.push(foundToken);
+        }
+      }
+
+      return foundTokens;
+    },
+    [mvxTokensWithBalances]
+  );
 
   const toOptions = useMemo(
     () =>
-      (availableTokens &&
-        availableTokens.map((token) => {
+      (firstToken?.availableTokens &&
+        getAvailableTokens(firstToken).map((token) => {
           return {
             ...token,
             identifier: token.address,
@@ -184,7 +188,7 @@ export const BridgeForm = ({
           };
         })) ??
       [],
-    [availableTokens]
+    [firstToken?.availableTokens]
   );
 
   const selectedChainOption = useMemo(
@@ -195,11 +199,13 @@ export const BridgeForm = ({
     [activeChain?.id, chains]
   );
 
-  const defaultReceivingToken = useMemo(
-    () =>
-      availableTokens?.[0] ??
-      toOptions.find((x) => x.symbol.toLowerCase().includes('usdc')),
-    [toOptions, availableTokens]
+  const getDefaultReceivingToken = useCallback(
+    (values: TokenType[]) =>
+      values.find((x) => x.symbol.toLowerCase().includes('usdc')) ??
+      mvxTokensWithBalances?.find((x) =>
+        x.symbol.toLowerCase().includes('usdc')
+      ),
+    [mvxTokensWithBalances]
   );
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
@@ -281,7 +287,7 @@ export const BridgeForm = ({
 
   const updateUrlParams = useCallback(
     ({ firstTokenId, secondTokenId }: InitialTokensType) => {
-      if (isTokensLoading || !bridgeAddress) {
+      if (isTokensLoading) {
         return;
       }
 
@@ -303,8 +309,15 @@ export const BridgeForm = ({
       }
       onNavigate?.(newUrl, { replace: true });
     },
-    [bridgeAddress, callbackRoute, isTokensLoading, onNavigate]
+    [callbackRoute, isTokensLoading, onNavigate]
   );
+
+  console.log('BridgeForm', {
+    firstToken,
+    secondToken,
+    fromOptions,
+    toOptions
+  });
 
   const onChangeFirstSelect = useCallback(
     (option?: TokenType) => {
@@ -315,10 +328,13 @@ export const BridgeForm = ({
       setFirstToken(() => option);
       updateUrlParams({ firstTokenId: option?.address });
 
+      const availableTokens = getAvailableTokens(option);
       const secondOption =
-        toOptions.find(
-          (x) => x.symbol.toLowerCase() === option?.symbol.toLowerCase()
-        ) ?? defaultReceivingToken;
+        availableTokens.find(
+          (x) =>
+            x.symbol.toLowerCase() ===
+            availableTokens?.[0]?.symbol.toLowerCase()
+        ) ?? getDefaultReceivingToken(availableTokens);
 
       if (!secondOption) {
         return;
@@ -354,7 +370,7 @@ export const BridgeForm = ({
   );
 
   const setInitialSelectedTokens = () => {
-    if (isTokensLoading) {
+    if (isTokensLoading || initializedInitialTokensRef.current) {
       return;
     }
 
@@ -366,18 +382,20 @@ export const BridgeForm = ({
       ) ??
       fromOptions.find(
         (option) => option.chainId.toString() === activeChain?.id?.toString()
-      );
+      ) ??
+      fromOptions?.[0];
 
+    const availableTokens = getAvailableTokens(firstOption);
     const secondOption =
-      toOptions?.find(
+      availableTokens?.find(
         ({ address }) =>
           address.toLowerCase() ===
           (firstOption?.symbol ?? initialTokens?.secondTokenId)?.toLowerCase()
       ) ??
-      toOptions.find(
+      availableTokens.find(
         (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()
       ) ??
-      defaultReceivingToken;
+      getDefaultReceivingToken(availableTokens);
 
     const hasOptionsSelected =
       Boolean(firstToken) &&
@@ -391,19 +409,26 @@ export const BridgeForm = ({
       return;
     }
 
+    let initializedFirstToken = false;
     if (firstOption) {
       setFirstToken(firstOption);
       updateUrlParams({
         firstTokenId: firstOption?.address
       });
+      initializedFirstToken = true;
     }
 
+    let initializedSecondToken = false;
     if (secondOption) {
       setSecondToken(secondOption);
       updateUrlParams({
         secondTokenId: secondOption?.address
       });
+      initializedSecondToken = true;
     }
+
+    initializedInitialTokensRef.current =
+      initializedFirstToken && initializedSecondToken;
   };
 
   const onSubmit = useCallback(
@@ -613,12 +638,7 @@ export const BridgeForm = ({
     }
   }, [rateValidationError]);
 
-  useEffect(setInitialSelectedTokens, [
-    isTokensLoading,
-    fromOptions,
-    toOptions,
-    chainId
-  ]);
+  useEffect(setInitialSelectedTokens, [isTokensLoading, fromOptions, chainId]);
 
   useEffect(() => {
     const selectedTokenOption = evmTokensWithBalances?.find(
