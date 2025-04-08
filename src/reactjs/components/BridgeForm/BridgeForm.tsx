@@ -638,7 +638,46 @@ export const BridgeForm = ({
     }
   }, [rateValidationError]);
 
-  useEffect(setInitialSelectedTokens, [isTokensLoading, fromOptions, chainId]);
+  useEffect(setInitialSelectedTokens, [isTokensLoading, fromOptions]);
+
+  // useEffect(() => {
+  //   const firstOption =
+  //     fromOptions.find(
+  //       (option) => option.chainId.toString() === chainId?.toString()
+  //     ) ?? fromOptions?.[0];
+  //
+  //   const availableTokens = getAvailableTokens(firstOption);
+  //   const secondOption =
+  //     availableTokens.find(
+  //       (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()
+  //     ) ?? getDefaultReceivingToken(availableTokens);
+  //
+  //   const hasOptionsSelected =
+  //     Boolean(firstToken) &&
+  //     Boolean(secondToken) &&
+  //     firstToken?.address?.toLowerCase() ===
+  //       firstOption?.address?.toLowerCase() &&
+  //     secondToken?.address?.toLowerCase() ===
+  //       secondOption?.address?.toLowerCase();
+  //
+  //   if (hasOptionsSelected) {
+  //     return;
+  //   }
+  //
+  //   if (firstOption) {
+  //     setFirstToken(firstOption);
+  //     updateUrlParams({
+  //       firstTokenId: firstOption?.address
+  //     });
+  //   }
+  //
+  //   if (secondOption) {
+  //     setSecondToken(secondOption);
+  //     updateUrlParams({
+  //       secondTokenId: secondOption?.address
+  //     });
+  //   }
+  // }, [chainId, fromOptions, firstToken, secondToken]);
 
   useEffect(() => {
     const selectedTokenOption = evmTokensWithBalances?.find(

@@ -3,8 +3,8 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { getBalance } from '@wagmi/core';
 import axios from 'axios';
 import { useCallback, useMemo } from 'react';
-import { Utxo } from 'types/utxo.ts';
-import { useGetChainId } from './useGetChainId.ts';
+import { getApiURL } from 'helpers/getApiURL.ts';
+import { useGetChainId } from './useGetChainId';
 import { TokenType } from '../../types';
 import { ChainType } from '../../types/chainType.ts';
 import { useWeb3App } from '../context/useWeb3App';
@@ -29,26 +29,17 @@ export const useBalances = () => {
     return BigInt(balance.toString());
   };
 
-  const getBtcBalance = async (rpcUrl: string) => {
-    const url = `${rpcUrl}utxo/${address}`;
+  const getBtcBalance = async () => {
+    const url = `${getApiURL()}/user/balance/${address}`;
     try {
-      const { data } = await axios.get<Utxo[]>(url);
-      const utxos = data || [];
-
-      if (!utxos || utxos.length === 0) {
-        throw new Error(`No UTXOs found for address ${address}`);
-      }
-
-      let totalInput = 0;
-      const chosenUtxos = [];
-      for (const utxo of utxos) {
-        chosenUtxos.push(utxo);
-        totalInput += Number(utxo.value);
-      }
-
-      return BigInt(totalInput);
+      const { data } = await axios.get<{
+        address: string;
+        chainId: string;
+        balance: string;
+      }>(url);
+      return BigInt(data.balance);
     } catch (error) {
-      throw new Error(`Error fetching UTXOs from Trezor: ${error}`);
+      throw new Error(`Error fetching BTC balance: ${error}`);
     }
   };
 
@@ -89,7 +80,7 @@ export const useBalances = () => {
                 if (!activeChain?.rpc) {
                   throw new Error(`RPC URL not found for chain ID: ${chainId}`);
                 }
-                balance = await getBtcBalance(activeChain?.rpc);
+                balance = await getBtcBalance();
                 break;
               case ChainType.mvx:
                 break;
