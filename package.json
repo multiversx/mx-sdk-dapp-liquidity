@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/multiversx/mx-sdk-dapp-liquidity#readme",
   "license": "MIT",
-  "version": "1.1.0-alpha.19",
+  "version": "1.1.0-alpha.20",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
