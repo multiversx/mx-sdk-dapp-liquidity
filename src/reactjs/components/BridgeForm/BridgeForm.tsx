@@ -52,6 +52,7 @@ interface BridgeFormProps {
   secondTokenIdentifier?: string;
   refetchTrigger?: number;
   showHistory?: boolean;
+  forcedDestinationTokenSymbol?: string;
   onSuccessfullySentTransaction?: (txHashes?: string[]) => void;
   onFailedSentTransaction?: (message?: string) => void;
   onHistoryClose?: () => void;
@@ -72,6 +73,7 @@ export const BridgeForm = ({
   secondTokenIdentifier,
   refetchTrigger,
   showHistory,
+  forcedDestinationTokenSymbol,
   onSuccessfullySentTransaction,
   onFailedSentTransaction,
   onHistoryClose,
@@ -160,6 +162,19 @@ export const BridgeForm = ({
 
   const getAvailableTokens = useCallback(
     (option: TokenType) => {
+      if (forcedDestinationTokenSymbol) {
+        const forcedToken = mvxTokensWithBalances?.find(
+          (mvxToken) =>
+            mvxToken.symbol.toLowerCase() ===
+            forcedDestinationTokenSymbol.toLowerCase()
+        );
+
+        if (forcedToken) {
+          return [forcedToken];
+        }
+        return [];
+      }
+
       if (!option?.availableTokens) {
         return [];
       }
