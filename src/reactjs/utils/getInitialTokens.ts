@@ -5,12 +5,15 @@ export interface InitialTokensType {
   secondTokenId?: string;
 }
 
-export const getInitialTokens = () => {
+export const getInitialTokens = (initialTokens?: {
+  firstTokenId?: string;
+  secondTokenId?: string;
+}) => {
   const urlParams = new URLSearchParams(safeWindow.location.search);
   const { firstToken, secondToken } = Object.fromEntries(urlParams);
 
   return {
-    firstTokenId: firstToken,
-    secondTokenId: secondToken
+    firstTokenId: initialTokens?.firstTokenId || firstToken,
+    secondTokenId: initialTokens?.secondTokenId || secondToken
   };
 };
