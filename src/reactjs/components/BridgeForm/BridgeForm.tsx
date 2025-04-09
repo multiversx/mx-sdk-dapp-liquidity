@@ -801,7 +801,7 @@ export const BridgeForm = ({
           {!mvxAddress && (
             <MvxConnectButton
               mvxAccountAddress={mvxAddress}
-              chain={mvxChain}
+              icon={mvxChain?.svgUrl}
               onClick={onMvxConnect}
             />
           )}
