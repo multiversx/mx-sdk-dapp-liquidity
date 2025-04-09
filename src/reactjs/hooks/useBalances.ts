@@ -76,6 +76,9 @@ export const useBalances = () => {
 
             switch (chainType) {
               case ChainType.evm:
+                if (activeChain?.chainType !== ChainType.evm) {
+                  break;
+                }
                 balance = (
                   await getBalance(config, {
                     address: address as `0x${string}`,
@@ -88,6 +91,9 @@ export const useBalances = () => {
                 ).value;
                 break;
               case ChainType.sol:
+                if (activeChain?.chainType !== ChainType.sol) {
+                  break;
+                }
                 if (!activeChain?.rpc) {
                   throw new Error(
                     `RPC URL not found for chain ID: ${token.chainId}`
@@ -96,6 +102,9 @@ export const useBalances = () => {
                 balance = await getSolBalance(activeChain?.rpc, address);
                 break;
               case ChainType.btc:
+                if (activeChain?.chainType !== ChainType.btc) {
+                  break;
+                }
                 balance = await getBtcBalance();
                 break;
               case ChainType.mvx:
