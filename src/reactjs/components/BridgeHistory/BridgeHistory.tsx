@@ -197,7 +197,14 @@ export const BridgeHistory = ({
                       'liq-text-red-200': transaction.status === 'failed'
                     })}
                   >
-                    {transaction.statusIcon}
+                    <MxTooltip
+                      placement="top"
+                      buttonText={transaction.statusIcon}
+                    >
+                      {new Date(
+                        transaction.depositTimestamp * 1000
+                      ).toLocaleString()}
+                    </MxTooltip>
 
                     {MVX_CHAIN_IDS.includes(transaction.toChainId) ? (
                       <>
