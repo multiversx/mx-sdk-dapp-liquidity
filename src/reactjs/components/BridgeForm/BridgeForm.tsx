@@ -316,13 +316,6 @@ export const BridgeForm = ({
     [callbackRoute, isTokensLoading, onNavigate]
   );
 
-  console.log('BridgeForm', {
-    firstToken,
-    secondToken,
-    fromOptions,
-    toOptions
-  });
-
   const onChangeFirstSelect = useCallback(
     (option?: TokenType) => {
       if (!option) {
@@ -516,10 +509,6 @@ export const BridgeForm = ({
                   console.error('No bitcoin params');
                   break;
                 }
-
-                console.log({
-                  transaction
-                });
 
                 const psbt = await bitcoin.signTransaction(
                   transaction.bitcoinParams

@@ -67,10 +67,6 @@ export const useBalances = () => {
 
           const chainType = chainsMap[token.chainId]?.chainType;
 
-          console.log('chainType', {
-            chainType
-          });
-
           try {
             let balance: bigint = BigInt(0);
 
