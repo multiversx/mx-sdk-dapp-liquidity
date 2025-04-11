@@ -50,6 +50,8 @@ interface BridgeFormProps {
   callbackRoute?: string;
   firstTokenIdentifier?: string;
   secondTokenIdentifier?: string;
+  firstTokenAmount?: string;
+  secondTokenAmount?: string;
   refetchTrigger?: number;
   showHistory?: boolean;
   forcedDestinationTokenSymbol?: string;
@@ -71,6 +73,8 @@ export const BridgeForm = ({
   callbackRoute = '/',
   firstTokenIdentifier,
   secondTokenIdentifier,
+  firstTokenAmount,
+  secondTokenAmount,
   refetchTrigger,
   showHistory,
   forcedDestinationTokenSymbol,
@@ -692,6 +696,18 @@ export const BridgeForm = ({
       };
     });
   }, [mvxTokensWithBalances, secondToken?.address]);
+
+  useEffect(() => {
+    if (firstTokenAmount) {
+      handleOnChangeFirstAmount(firstTokenAmount);
+    }
+  }, [firstTokenAmount]);
+
+  useEffect(() => {
+    if (secondTokenAmount) {
+      handleOnChangeSecondAmount(secondTokenAmount);
+    }
+  }, [secondTokenAmount]);
 
   return (
     <>
