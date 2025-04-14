@@ -699,7 +699,6 @@ export const BridgeForm = ({
 
   useEffect(() => {
     if (firstTokenAmount) {
-      console.log('firstTokenAmount', firstTokenAmount);
       formik.setFieldValue(
         BridgeFormikValuesEnum.firstAmount,
         firstTokenAmount
