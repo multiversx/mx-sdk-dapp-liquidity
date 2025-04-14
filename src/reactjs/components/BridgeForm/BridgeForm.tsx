@@ -143,9 +143,9 @@ export const BridgeForm = ({
       : undefined;
 
   const [firstToken, setFirstToken] = useState<TokenType | undefined>();
-  const [firstAmount, setFirstAmount] = useState('');
+  const [firstAmount, setFirstAmount] = useState(firstTokenAmount ?? '');
   const [secondToken, setSecondToken] = useState<TokenType | undefined>();
-  const [secondAmount, setSecondAmount] = useState('');
+  const [secondAmount, setSecondAmount] = useState(secondTokenAmount ?? '');
 
   const bridgeAddress = account.address;
   const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
@@ -699,12 +699,21 @@ export const BridgeForm = ({
 
   useEffect(() => {
     if (firstTokenAmount) {
+      console.log('firstTokenAmount', firstTokenAmount);
+      formik.setFieldValue(
+        BridgeFormikValuesEnum.firstAmount,
+        firstTokenAmount
+      );
       handleOnChangeFirstAmount(firstTokenAmount);
     }
-  }, [firstTokenAmount]);
+  }, []);
 
   useEffect(() => {
     if (secondTokenAmount) {
+      formik.setFieldValue(
+        BridgeFormikValuesEnum.secondAmount,
+        secondTokenAmount
+      );
       handleOnChangeSecondAmount(secondTokenAmount);
     }
   }, [secondTokenAmount]);
