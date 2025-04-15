@@ -1,6 +1,7 @@
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
@@ -92,6 +93,7 @@ export const BridgeForm = ({
   const [siginingTransactionsCount, setSigningTransactionsCount] =
     useState<number>(0);
   const account = useAccount();
+  const { switchNetwork } = useAppKitNetwork();
   const { config, options, supportedChains: sdkChains } = useWeb3App();
   const chainId = useGetChainId();
 
@@ -434,6 +436,16 @@ export const BridgeForm = ({
       updateUrlParams({
         firstTokenId: firstOption?.address
       });
+
+      const selectedOptionChain =
+        sdkChains?.find(
+          (chain) => chain.id.toString() === firstOption?.chainId.toString()
+        ) ?? activeChain;
+
+      if (selectedOptionChain) {
+        switchNetwork(selectedOptionChain);
+      }
+
       initializedFirstToken = true;
     }
 
