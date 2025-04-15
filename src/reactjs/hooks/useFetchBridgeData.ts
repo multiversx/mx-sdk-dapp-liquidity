@@ -19,7 +19,6 @@ export const useFetchBridgeData = ({
     mvxTokensWithBalances,
     isLoadingMvxTokensBalances,
     isErrorEvmTokensBalances,
-    fiatCurrencies,
     tokens
   } = useFetchTokens({
     mvxApiURL,
@@ -44,7 +43,6 @@ export const useFetchBridgeData = ({
     chains,
     isChainsLoading,
     isChainsError,
-    fiatCurrencies,
     tokens
   };
 };

@@ -48,10 +48,6 @@ export const useFetchTokens = ({
     [tokens]
   );
 
-  const fiatCurrencies = useMemo(() => {
-    return tokens?.filter((token) => !token.chainId);
-  }, [tokens]);
-
   const {
     data: evmTokensBalances,
     isLoading: isLoadingEvmTokensBalances,
@@ -130,7 +126,6 @@ export const useFetchTokens = ({
     isLoadingMvxTokensBalances,
     isErrorMvxTokensBalances,
     mvxTokensWithBalances,
-    fiatCurrencies,
     tokens
   };
 };
