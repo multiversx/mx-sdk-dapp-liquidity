@@ -68,7 +68,7 @@ describe('getTransactions', () => {
     });
 
     expect(mockedAxios.get).toHaveBeenCalledWith(
-      '/transactions?receiver=0x123&sender=0xABC&provider=multiversx-bridge&status=success&tokenIn=0xTOKEN&tokenOut=WEGLD-123456',
+      '/transactions?receiver=0x123&sender=0xABC&provider=multiversxBridge&status=success&tokenIn=0xTOKEN&tokenOut=WEGLD-123456',
       { baseURL: url }
     );
     expect(result.data).toEqual(mockResponse);
@@ -86,7 +86,7 @@ describe('getTransactions', () => {
     });
 
     expect(mockedAxios.get).toHaveBeenCalledWith(
-      '/transactions?receiver=0x123&provider=multiversx-bridge&tokenIn=0xTOKEN',
+      '/transactions?receiver=0x123&provider=multiversxBridge&tokenIn=0xTOKEN',
       { baseURL: url }
     );
     expect(result.data).toEqual(mockResponse);

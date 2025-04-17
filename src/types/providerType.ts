@@ -1,5 +1,5 @@
 export enum ProviderType {
-  MultiversxBridge = 'multiversx-bridge',
+  MultiversxBridge = 'multiversxBridge',
   XMoney = 'xmoney',
   None = 'none'
 }
