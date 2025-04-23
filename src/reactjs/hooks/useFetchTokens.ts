@@ -35,7 +35,7 @@ export const useFetchTokens = ({
       tokens?.filter(
         (token) =>
           !MVX_CHAIN_IDS.includes(token.chainId.toString()) &&
-          Boolean(token.chainId)
+          token.chainId.toLowerCase() === 'fiat'
       ),
     [tokens]
   );
