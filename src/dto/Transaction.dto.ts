@@ -14,4 +14,5 @@ export interface TransactionDTO {
   fee: string;
   txHash: string;
   provider: ProviderType;
+  orderId?: string;
 }
