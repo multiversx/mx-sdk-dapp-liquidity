@@ -387,6 +387,20 @@ export const BridgeForm = ({
     [fromOptions, updateUrlParams]
   );
 
+  useEffect(() => {
+    if (selectedChainOption?.chainId !== firstToken?.chainId) {
+      const selectedOption = fromOptions?.find(
+        (option) => option.chainId.toString() === selectedChainOption?.chainId
+      );
+
+      if (!selectedOption) {
+        return;
+      }
+
+      onChangeFirstSelect(selectedOption);
+    }
+  }, [selectedChainOption?.chainId]);
+
   const setInitialSelectedTokens = () => {
     if (isTokensLoading || initializedInitialTokensRef.current) {
       return;
