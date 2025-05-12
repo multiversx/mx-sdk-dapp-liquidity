@@ -269,12 +269,10 @@ export const BridgeForm = ({
 
   const handleOnChangeFirstAmount = useCallback((amount: string) => {
     setFirstAmount(() => amount);
-    setLastChangedField(BridgeFormikValuesEnum.firstAmount);
   }, []);
 
   const handleOnChangeSecondAmount = useCallback((amount: string) => {
     setSecondAmount(() => amount);
-    setLastChangedField(BridgeFormikValuesEnum.secondAmount);
   }, []);
 
   const handleHistoryClose = useCallback(() => {
@@ -623,8 +621,7 @@ export const BridgeForm = ({
     handleBlur,
     handleChange,
     handleSubmit,
-    resetSwapForm,
-    setLastChangedField
+    resetSwapForm
   } = useBridgeFormik({
     rate,
     nativeAuthToken,
@@ -781,7 +778,7 @@ export const BridgeForm = ({
                   ? rateValidationError ?? firstAmountError
                   : undefined
               }
-              disabled={false}
+              disabled={true}
               onInputDebounceChange={handleOnChangeFirstAmount}
               onInputChange={handleChange}
               onBlur={handleBlur}
