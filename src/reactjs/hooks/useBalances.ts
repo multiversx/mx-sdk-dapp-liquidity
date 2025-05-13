@@ -41,7 +41,7 @@ export const useBalances = () => {
   };
 
   const getBtcBalance = async () => {
-    const url = `${getApiURL()}/user/balance/${address}`;
+    const url = `${getApiURL()}/user/balance/${address}?chainId=${activeChain?.chainId}`;
     try {
       const { data } = await axios.get<{
         address: string;
