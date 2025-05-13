@@ -4,11 +4,13 @@ import { useGetChainsQuery } from '../queries/useGetChains.query';
 export const useFetchBridgeData = ({
   refetchTrigger,
   mvxAddress,
-  mvxApiURL
+  mvxApiURL,
+  nativeAuthToken
 }: {
   refetchTrigger?: number;
   mvxAddress?: string;
   mvxApiURL: string;
+  nativeAuthToken?: string;
 }) => {
   const {
     isTokensError,
@@ -23,7 +25,8 @@ export const useFetchBridgeData = ({
   } = useFetchTokens({
     mvxApiURL,
     mvxAddress,
-    refetchTrigger
+    refetchTrigger,
+    nativeAuthToken
   });
   const {
     data: chains,

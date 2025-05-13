@@ -11,7 +11,11 @@ import { ChainType } from '../../types/chainType';
 import { useWeb3App } from '../context/useWeb3App';
 import { useGetChainsQuery } from '../queries';
 
-export const useBalances = () => {
+export const useBalances = ({
+  nativeAuthToken
+}: {
+  nativeAuthToken?: string;
+}) => {
   const { config } = useWeb3App();
   const { address, isConnected } = useAppKitAccount();
   const chainId = useGetChainId() as string;
@@ -42,12 +46,18 @@ export const useBalances = () => {
 
   const getBtcBalance = async () => {
     const url = `${getApiURL()}/user/balance/${address}?chainId=${activeChain?.chainId}`;
+
     try {
       const { data } = await axios.get<{
         address: string;
         chainId: string;
         balance: string;
-      }>(url);
+      }>(url, {
+        baseURL: url,
+        headers: {
+          Authorization: `Bearer ${nativeAuthToken}`
+        }
+      });
       return BigInt(data.balance);
     } catch (error) {
       throw new Error(`Error fetching BTC balance: ${error}`);

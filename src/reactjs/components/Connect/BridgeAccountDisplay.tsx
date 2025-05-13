@@ -3,23 +3,31 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDisconnect } from '@reown/appkit/react';
 import { useEffect } from 'react';
 import { useSignMessage } from 'wagmi';
+import { checkAccount } from 'api/checkAccount.ts';
 import { SwitchChainButton } from './SwitchChainButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
+import { getApiURL } from '../../../helpers';
 import { useAccount } from '../../hooks/useAccount';
+import { useLinkAccountMutation } from '../../queries/useLinkAccount.mutation';
 import { MxLink } from '../base';
 import { CopyButton } from '../CopyButton';
 import { TrimAddress } from '../TrimAddress';
 
 export const BridgeAccountDisplay = ({
   activeChain,
+  nativeAuthToken,
   disabled
 }: {
   activeChain?: ChainDTO;
+  nativeAuthToken?: string;
   disabled: boolean;
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
+
+  // const { data: checkAccount } = useCheckAccountQuery();
+  const { mutateAsync: linkAccount } = useLinkAccountMutation();
 
   const handleDisconnect = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
@@ -30,43 +38,46 @@ export const BridgeAccountDisplay = ({
     }
   };
 
-  const checkIfHasOwnership = async () => {
-    if (account.address) {
-      const { isAssociated } = await new Promise<{ isAssociated: boolean }>(
-        (resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                isAssociated: true
-              }),
-            100
-          )
-      );
-
-      return isAssociated;
-    }
-
-    return false;
-  };
-
   const validateOwnership = async () => {
-    if (account.address) {
-      const hasOwnership = await checkIfHasOwnership();
-
-      if (!hasOwnership) {
-        const signature = await signMessageAsync({
-          message: 'Please sign the message to proceed with the transaction'
+    if (account.address && activeChain?.chainId) {
+      try {
+        const { data: ownership } = await checkAccount({
+          url: getApiURL(),
+          walletAddress: account.address,
+          chainId: activeChain?.chainId ?? '',
+          nativeAuthToken
         });
-        console.log('signature = ', signature);
+
+        if (!ownership?.isLinked) {
+          try {
+            const signature = await signMessageAsync({
+              message: ownership?.signMessage ?? 'Missing message'
+            });
+            console.log('signature = ', signature);
+
+            await linkAccount({
+              nativeAuthToken: nativeAuthToken ?? '',
+              body: {
+                chainId: activeChain?.chainId ?? '',
+                address: account.address,
+                signature,
+                message: ownership?.signMessage ?? ''
+              }
+            });
+          } catch (error) {
+            console.error('Failed to link account:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to check account:', error);
+        return;
       }
     }
   };
 
   useEffect(() => {
-    if (account.address) {
-      validateOwnership();
-    }
-  }, [account.address]);
+    validateOwnership();
+  }, [account.address, activeChain?.chainId]);
 
   return (
     <>

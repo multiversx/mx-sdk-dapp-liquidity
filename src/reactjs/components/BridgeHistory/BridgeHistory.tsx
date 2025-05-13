@@ -24,9 +24,11 @@ import { MxLink } from '../base/MxLink';
 
 export const BridgeHistory = ({
   mvxAddress,
+  nativeAuthToken,
   onClose
 }: {
   mvxAddress?: string;
+  nativeAuthToken?: string;
   onClose: () => void;
 }) => {
   const { options } = useWeb3App();
@@ -85,7 +87,8 @@ export const BridgeHistory = ({
     isChainsLoading
   } = useFetchBridgeData({
     mvxAddress,
-    mvxApiURL: options.mvxApiURL
+    mvxApiURL: options.mvxApiURL,
+    nativeAuthToken
   });
 
   const tokensMap = useMemo<Record<string, TokenType>>(() => {

@@ -15,11 +15,13 @@ import {
 export const useFetchTokens = ({
   mvxAddress,
   mvxApiURL,
-  refetchTrigger
+  refetchTrigger,
+  nativeAuthToken
 }: {
   mvxAddress?: string;
   mvxApiURL: string;
   refetchTrigger?: number;
+  nativeAuthToken?: string;
 }) => {
   const chainId = useGetChainId();
   const account = useAccount();
@@ -54,7 +56,8 @@ export const useFetchTokens = ({
     isError: isErrorEvmTokensBalances
   } = useGetEvmTokensBalancesQuery({
     tokens: evmTokens ?? [],
-    chainId: chainId?.toString()
+    chainId: chainId?.toString(),
+    nativeAuthToken
   });
 
   const {

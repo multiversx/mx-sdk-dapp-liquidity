@@ -108,7 +108,8 @@ export const BridgeForm = ({
   } = useFetchBridgeData({
     refetchTrigger,
     mvxAddress,
-    mvxApiURL: options.mvxApiURL
+    mvxApiURL: options.mvxApiURL,
+    nativeAuthToken
   });
 
   const isTokensLoading =
@@ -750,7 +751,11 @@ export const BridgeForm = ({
         onSubmit={handleSubmit}
       >
         {showHistory && (
-          <BridgeHistory mvxAddress={mvxAddress} onClose={handleHistoryClose} />
+          <BridgeHistory
+            mvxAddress={mvxAddress}
+            onClose={handleHistoryClose}
+            nativeAuthToken={nativeAuthToken}
+          />
         )}
         <AmountCard
           className={mxClsx(
@@ -767,6 +772,7 @@ export const BridgeForm = ({
             <BridgeAccountDisplay
               disabled={isPendingRate}
               activeChain={selectedChainOption}
+              nativeAuthToken={nativeAuthToken}
             />
           </div>
           <div className="liq-flex liq-justify-between liq-gap-1">

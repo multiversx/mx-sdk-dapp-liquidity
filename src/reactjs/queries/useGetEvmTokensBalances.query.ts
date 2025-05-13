@@ -7,13 +7,15 @@ import { useBalances } from '../hooks';
 
 export const useGetEvmTokensBalancesQuery = ({
   tokens,
-  chainId
+  chainId,
+  nativeAuthToken
 }: {
   tokens: TokenType[];
   chainId?: string;
+  nativeAuthToken?: string;
 }) => {
   const { address } = useAppKitAccount();
-  const { fetchBalances } = useBalances();
+  const { fetchBalances } = useBalances({ nativeAuthToken });
 
   const queryFn = async () => {
     try {
