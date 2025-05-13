@@ -1,6 +1,8 @@
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDisconnect } from '@reown/appkit/react';
+import { useEffect } from 'react';
+import { useSignMessage } from 'wagmi';
 import { SwitchChainButton } from './SwitchChainButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { useAccount } from '../../hooks/useAccount';
@@ -17,6 +19,7 @@ export const BridgeAccountDisplay = ({
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
+  const { signMessageAsync } = useSignMessage();
 
   const handleDisconnect = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
@@ -26,6 +29,44 @@ export const BridgeAccountDisplay = ({
       console.error('Failed to disconnect:', error);
     }
   };
+
+  const checkIfHasOwnership = async () => {
+    if (account.address) {
+      const { isAssociated } = await new Promise<{ isAssociated: boolean }>(
+        (resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                isAssociated: true
+              }),
+            100
+          )
+      );
+
+      return isAssociated;
+    }
+
+    return false;
+  };
+
+  const validateOwnership = async () => {
+    if (account.address) {
+      const hasOwnership = await checkIfHasOwnership();
+
+      if (!hasOwnership) {
+        const signature = await signMessageAsync({
+          message: 'Please sign the message to proceed with the transaction'
+        });
+        console.log('signature = ', signature);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (account.address) {
+      validateOwnership();
+    }
+  }, [account.address]);
 
   return (
     <>
