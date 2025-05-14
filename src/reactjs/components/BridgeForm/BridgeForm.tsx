@@ -97,10 +97,6 @@ export const BridgeForm = ({
   const { config, options, supportedChains: sdkChains } = useWeb3App();
   const chainId = useGetChainId();
 
-  console.log('BridgeForm', {
-    nativeAuthToken
-  });
-
   const {
     evmTokensWithBalances,
     mvxTokensWithBalances,
