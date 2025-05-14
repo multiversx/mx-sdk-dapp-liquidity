@@ -32,7 +32,7 @@ export const useCheckAccountQuery = ({
   };
 
   return useQuery({
-    queryKey: ['check-account', address, chainId],
+    queryKey: ['check-account', address, chainId, nativeAuthToken],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

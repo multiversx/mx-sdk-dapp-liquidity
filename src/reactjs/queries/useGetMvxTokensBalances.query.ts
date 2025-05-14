@@ -53,7 +53,12 @@ export const useGetMvxTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['mvx-tokens-balances', mvxAddress, tokenIdentifiers.sort()],
+    queryKey: [
+      'mvx-tokens-balances',
+      mvxAddress,
+      tokenIdentifiers.sort(),
+      nativeAuthToken
+    ],
     queryFn,
     retry,
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,

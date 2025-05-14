@@ -56,7 +56,8 @@ export const useGetHistoryQuery = ({
       provider,
       status,
       tokenIn,
-      tokenOut
+      tokenOut,
+      nativeAuthToken
     ],
     queryFn,
     retry,

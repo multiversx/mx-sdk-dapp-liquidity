@@ -55,7 +55,7 @@ export const useGetEvmTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['evm-tokens-balances', address, chainId],
+    queryKey: ['evm-tokens-balances', address, chainId, nativeAuthToken],
     queryFn,
     retry,
     enabled: Boolean(address) && Boolean(chainId),
