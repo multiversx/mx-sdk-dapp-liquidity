@@ -97,6 +97,10 @@ export const BridgeForm = ({
   const { config, options, supportedChains: sdkChains } = useWeb3App();
   const chainId = useGetChainId();
 
+  console.log('BridgeForm', {
+    nativeAuthToken
+  });
+
   const {
     evmTokensWithBalances,
     mvxTokensWithBalances,
@@ -803,6 +807,7 @@ export const BridgeForm = ({
               onTokenSelectorDisplay={(visible) =>
                 setIsTokenSelectorVisible(visible)
               }
+              nativeAuthToken={nativeAuthToken}
             />
           </div>
         </AmountCard>
@@ -851,6 +856,7 @@ export const BridgeForm = ({
               onChange={onChangeSecondSelect}
               onBlur={handleBlur}
               selectedOption={secondToken}
+              nativeAuthToken={nativeAuthToken}
             />
           </div>
         </AmountCard>

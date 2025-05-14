@@ -1,12 +1,19 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ChainDTO } from '../dto/Chain.dto';
 
 export async function getChains({
-  url
+  url,
+  nativeAuthToken
 }: {
   url: string;
+  nativeAuthToken?: string;
 }): Promise<AxiosResponse<ChainDTO[]>> {
-  return await axios.get<ChainDTO[]>('/chains', {
-    baseURL: url
-  });
+  const config: AxiosRequestConfig = {
+    baseURL: url,
+    headers: {
+      Authorization: `Bearer ${nativeAuthToken}`
+    }
+  };
+
+  return await axios.get<ChainDTO[]>('/chains', config);
 }

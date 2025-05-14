@@ -30,7 +30,9 @@ export const useFetchTokens = ({
     data: tokens,
     isLoading: isTokensLoading,
     isError: isTokensError
-  } = useGetAllTokensQuery();
+  } = useGetAllTokensQuery({
+    nativeAuthToken
+  });
 
   const evmTokens = useMemo(
     () =>

@@ -32,7 +32,7 @@ describe('getChains', () => {
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
 
-    const result = await getChains({ url });
+    const result = await getChains({ url, nativeAuthToken: 'ZKssadass' });
 
     expect(mockedAxios.get).toHaveBeenCalledWith('/chains', { baseURL: url });
     expect(result.data).toEqual(response);
@@ -41,6 +41,8 @@ describe('getChains', () => {
   it('handles error when fetching chains', async () => {
     mockedAxios.get.mockRejectedValue(new Error('Network Error'));
 
-    await expect(getChains({ url })).rejects.toThrow('Network Error');
+    await expect(
+      getChains({ url, nativeAuthToken: 'ZKssadass' })
+    ).rejects.toThrow('Network Error');
   });
 });

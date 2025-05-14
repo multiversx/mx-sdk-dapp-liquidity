@@ -3,11 +3,16 @@ import { AxiosError } from 'axios';
 import { getChains } from '../../api/getChains';
 import { getApiURL } from '../../helpers/getApiURL';
 
-export const useGetChainsQuery = () => {
+export const useGetChainsQuery = ({
+  nativeAuthToken
+}: {
+  nativeAuthToken?: string;
+}) => {
   const queryFn = async () => {
     try {
       const { data } = await getChains({
-        url: getApiURL()
+        url: getApiURL(),
+        nativeAuthToken
       });
       return data;
     } catch (error) {

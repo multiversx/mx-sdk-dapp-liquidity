@@ -19,7 +19,9 @@ export const useBalances = ({
   const { config } = useWeb3App();
   const { address, isConnected } = useAppKitAccount();
   const chainId = useGetChainId() as string;
-  const { data: chains } = useGetChainsQuery();
+  const { data: chains } = useGetChainsQuery({
+    nativeAuthToken
+  });
 
   const activeChain = useMemo(() => {
     return chains?.find(
@@ -53,7 +55,6 @@ export const useBalances = ({
         chainId: string;
         balance: string;
       }>(url, {
-        baseURL: url,
         headers: {
           Authorization: `Bearer ${nativeAuthToken}`
         }

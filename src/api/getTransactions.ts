@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { TransactionDTO } from 'dto/Transaction.dto';
 import { ProviderType } from 'types/providerType';
 
@@ -9,7 +9,8 @@ export async function getTransactions({
   provider,
   status,
   tokenIn,
-  tokenOut
+  tokenOut,
+  nativeAuthToken
 }: {
   url: string;
   address: string;
@@ -18,6 +19,7 @@ export async function getTransactions({
   status?: string;
   tokenIn?: string;
   tokenOut?: string;
+  nativeAuthToken?: string;
 }): Promise<AxiosResponse<TransactionDTO[]>> {
   const queryParams = new URLSearchParams({
     receiver: address || '',
@@ -39,7 +41,12 @@ export async function getTransactions({
   const queryString = queryParams.toString();
   const endpointWithParams = `/transactions?${queryString}`;
 
-  return await axios.get<TransactionDTO[]>(endpointWithParams, {
-    baseURL: url
-  });
+  const config: AxiosRequestConfig = {
+    baseURL: url,
+    headers: {
+      Authorization: `Bearer ${nativeAuthToken}`
+    }
+  };
+
+  return await axios.get<TransactionDTO[]>(endpointWithParams, config);
 }

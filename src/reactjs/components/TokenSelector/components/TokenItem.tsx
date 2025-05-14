@@ -9,14 +9,17 @@ import { useResolveTokenChain } from '../../../hooks/useResolveTokenChain';
 export const TokenItem = ({
   token,
   onClick,
-  selected
+  selected,
+  nativeAuthToken
 }: {
   token: TokenType;
   onClick: (token: TokenType) => void;
   selected: boolean;
+  nativeAuthToken?: string;
 }) => {
   const { tokenChain, chainIcon } = useResolveTokenChain({
-    token
+    token,
+    nativeAuthToken
   });
 
   const { supportedChains: sdkChains } = useWeb3App();

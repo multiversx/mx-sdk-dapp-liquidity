@@ -5,3 +5,5 @@ export * from './getTokens';
 export * from './getTokensBalances';
 export * from './getTransactions';
 export * from './sendTransactions';
+export * from './checkAccount';
+export * from './linkAccount';

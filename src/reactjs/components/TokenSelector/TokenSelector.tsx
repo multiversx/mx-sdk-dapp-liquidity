@@ -26,7 +26,8 @@ export const TokenSelector = ({
   onBlur,
   onChange,
   onMaxBtnClick,
-  onTokenSelectorDisplay
+  onTokenSelectorDisplay,
+  nativeAuthToken
 }: {
   name: string;
   options: TokenType[];
@@ -41,12 +42,16 @@ export const TokenSelector = ({
   onBlur?: (e: React.FocusEvent<any, HTMLButtonElement>) => void;
   onMaxBtnClick?: () => void;
   onTokenSelectorDisplay?: (visible: boolean) => void;
+  nativeAuthToken?: string;
 }) => {
   const [show, setShow] = useState(false);
 
-  const { data, isLoading: areChainsLoading } = useGetChainsQuery();
+  const { data, isLoading: areChainsLoading } = useGetChainsQuery({
+    nativeAuthToken
+  });
   const { chainIcon } = useResolveTokenChain({
-    token: selectedOption
+    token: selectedOption,
+    nativeAuthToken
   });
 
   const chains = useMemo(() => {

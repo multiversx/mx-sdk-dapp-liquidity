@@ -32,7 +32,9 @@ export const useFetchBridgeData = ({
     data: chains,
     isLoading: isChainsLoading,
     isError: isChainsError
-  } = useGetChainsQuery();
+  } = useGetChainsQuery({
+    nativeAuthToken
+  });
 
   return {
     isTokensError,

@@ -3,8 +3,16 @@ import { TokenDTO } from '../../dto/Token.dto';
 import { chainIdentifier, ChainNameType } from '../constants';
 import { useGetChainsQuery } from '../queries/useGetChains.query';
 
-export const useResolveTokenChain = ({ token }: { token?: TokenDTO }) => {
-  const { data: chains, isLoading } = useGetChainsQuery();
+export const useResolveTokenChain = ({
+  token,
+  nativeAuthToken
+}: {
+  token?: TokenDTO;
+  nativeAuthToken?: string;
+}) => {
+  const { data: chains, isLoading } = useGetChainsQuery({
+    nativeAuthToken
+  });
 
   const tokenChain = useMemo(() => {
     return chains?.find(

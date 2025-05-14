@@ -11,7 +11,8 @@ export const useGetHistoryQuery = ({
   provider,
   status,
   tokenIn,
-  tokenOut
+  tokenOut,
+  nativeAuthToken
 }: {
   address?: string;
   sender?: string;
@@ -19,6 +20,7 @@ export const useGetHistoryQuery = ({
   status?: string;
   tokenIn?: string;
   tokenOut?: string;
+  nativeAuthToken?: string;
 }) => {
   const queryFn = async () => {
     if (!address) {
@@ -33,7 +35,8 @@ export const useGetHistoryQuery = ({
         provider,
         status,
         tokenIn,
-        tokenOut
+        tokenOut,
+        nativeAuthToken
       });
       return data;
     } catch (error) {

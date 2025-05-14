@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
 import { getQueryClient } from '../context/queryClient';
@@ -7,21 +7,28 @@ import { getQueryClient } from '../context/queryClient';
 export const useGetMvxTokensBalancesQuery = ({
   tokens,
   mvxAddress,
-  apiURL
+  apiURL,
+  nativeAuthToken
 }: {
   tokens: TokenType[];
   mvxAddress?: string;
   apiURL: string;
+  nativeAuthToken?: string;
 }) => {
   const tokenIdentifiers = useMemo(() => {
     return tokens.map(({ address }) => address);
   }, [tokens]);
   const url = `${apiURL}/accounts/${mvxAddress}/tokens?identifiers=${tokenIdentifiers}`;
 
+  const config: AxiosRequestConfig = {
+    headers: {
+      Authorization: `Bearer ${nativeAuthToken}`
+    },
+    timeout: 3000
+  };
+
   const queryFn = async () => {
-    const { data } = await axios.get<MvxTokenType[]>(url, {
-      timeout: 3000
-    });
+    const { data } = await axios.get<MvxTokenType[]>(url, config);
 
     return data.map((asset) => {
       const foundToken = tokens.find(
