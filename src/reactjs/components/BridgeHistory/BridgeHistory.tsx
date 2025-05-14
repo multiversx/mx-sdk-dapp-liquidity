@@ -33,7 +33,8 @@ export const BridgeHistory = ({
 }) => {
   const { options } = useWeb3App();
   const { data, isLoading, isError } = useGetHistoryQuery({
-    address: mvxAddress
+    address: mvxAddress,
+    nativeAuthToken
   });
 
   const resolveTransactionIcon = useCallback((transaction: TransactionDTO) => {
