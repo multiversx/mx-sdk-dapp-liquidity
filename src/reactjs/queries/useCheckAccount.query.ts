@@ -5,7 +5,11 @@ import { checkAccount } from '../../api/checkAccount';
 import { getApiURL } from '../../helpers/getApiURL';
 import { useGetChainId } from '../hooks';
 
-export const useCheckAccountQuery = () => {
+export const useCheckAccountQuery = ({
+  nativeAuthToken
+}: {
+  nativeAuthToken?: string;
+}) => {
   const { address } = useAppKitAccount();
   const chainId = useGetChainId();
 
@@ -14,7 +18,8 @@ export const useCheckAccountQuery = () => {
       const { data } = await checkAccount({
         url: getApiURL(),
         walletAddress: address ?? '',
-        chainId: chainId ? chainId.toString() : ''
+        chainId: chainId ? chainId.toString() : '',
+        nativeAuthToken
       });
       return data;
     } catch (error) {

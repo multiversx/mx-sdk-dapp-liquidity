@@ -1,13 +1,14 @@
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDisconnect } from '@reown/appkit/react';
-import { useEffect } from 'react';
-import { useSignMessage } from 'wagmi';
+import { useCallback, useEffect } from 'react';
 import { checkAccount } from 'api/checkAccount.ts';
 import { SwitchChainButton } from './SwitchChainButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { getApiURL } from '../../../helpers';
+import { useGetChainId } from '../../hooks';
 import { useAccount } from '../../hooks/useAccount';
+import { useGenericSignMessage } from '../../hooks/useGenericSignMessage.ts';
 import { useLinkAccountMutation } from '../../queries/useLinkAccount.mutation';
 import { MxLink } from '../base';
 import { CopyButton } from '../CopyButton';
@@ -24,9 +25,9 @@ export const BridgeAccountDisplay = ({
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
-  const { signMessageAsync } = useSignMessage();
+  const chainId = useGetChainId();
+  const { signMessage } = useGenericSignMessage();
 
-  // const { data: checkAccount } = useCheckAccountQuery();
   const { mutateAsync: linkAccount } = useLinkAccountMutation();
 
   const handleDisconnect = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,27 +39,33 @@ export const BridgeAccountDisplay = ({
     }
   };
 
-  const validateOwnership = async () => {
-    if (account.address && activeChain?.chainId) {
+  const validateOwnership = useCallback(async () => {
+    if (account.address && chainId) {
       try {
         const { data: ownership } = await checkAccount({
           url: getApiURL(),
           walletAddress: account.address,
-          chainId: activeChain?.chainId ?? '',
+          chainId: chainId ? chainId.toString() : '',
           nativeAuthToken
+        });
+
+        console.log('ownership', {
+          ownership,
+          accountAddress: account.address,
+          chainId: chainId ? chainId.toString() : ''
         });
 
         if (!ownership?.isLinked) {
           try {
-            const signature = await signMessageAsync({
-              message: ownership?.signMessage ?? 'Missing message'
-            });
+            const signature = await signMessage(
+              ownership?.signMessage ?? 'Missing message'
+            );
             console.log('signature = ', signature);
 
             await linkAccount({
               nativeAuthToken: nativeAuthToken ?? '',
               body: {
-                chainId: activeChain?.chainId ?? '',
+                chainId: chainId ? chainId.toString() : '',
                 address: account.address,
                 signature,
                 message: ownership?.signMessage ?? ''
@@ -73,11 +80,11 @@ export const BridgeAccountDisplay = ({
         return;
       }
     }
-  };
+  }, [account.address, chainId, nativeAuthToken]);
 
   useEffect(() => {
     validateOwnership();
-  }, [account.address, activeChain?.chainId]);
+  }, [account.address]);
 
   return (
     <>
