@@ -10,6 +10,7 @@ import { RateRequestResponse } from '../../types';
 import { ProviderType } from '../../types/providerType';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
+import { useWeb3App } from '../context/useWeb3App.ts';
 
 export enum BridgeFormikValuesEnum {
   firstToken = 'firstToken',
@@ -30,7 +31,6 @@ export interface TradeFormikValuesType {
 }
 
 export const useBridgeFormik = ({
-  nativeAuthToken,
   mvxAccountAddress,
   firstToken,
   firstAmount,
@@ -42,7 +42,6 @@ export const useBridgeFormik = ({
   onSubmit
 }: {
   mvxAccountAddress?: string;
-  nativeAuthToken?: string;
   firstAmount?: string;
   secondAmount?: string;
   fromChainId?: string;
@@ -60,6 +59,7 @@ export const useBridgeFormik = ({
 }) => {
   const pendingSigningRef = useRef<boolean>();
   const account = useAccount();
+  const { nativeAuthToken } = useWeb3App();
 
   const initialValues: TradeFormikValuesType = {
     firstAmount: '',

@@ -10,7 +10,7 @@ export async function checkAccount({
   url: string;
   walletAddress: string;
   chainId: string;
-  nativeAuthToken?: string;
+  nativeAuthToken: string;
 }): Promise<AxiosResponse<CheckAccountDto>> {
   const config: AxiosRequestConfig = {
     baseURL: url,

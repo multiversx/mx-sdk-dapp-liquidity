@@ -19,7 +19,7 @@ export async function getTransactions({
   status?: string;
   tokenIn?: string;
   tokenOut?: string;
-  nativeAuthToken?: string;
+  nativeAuthToken: string;
 }): Promise<AxiosResponse<TransactionDTO[]>> {
   const queryParams = new URLSearchParams({
     receiver: address || '',

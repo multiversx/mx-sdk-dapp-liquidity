@@ -10,7 +10,7 @@ export async function getTokensBalances({
   url: string;
   userAddress: string;
   chainId: string;
-  nativeAuthToken?: string;
+  nativeAuthToken: string;
 }): Promise<AxiosResponse<TokenBalanceDTO[]>> {
   const config: AxiosRequestConfig = {
     baseURL: url,

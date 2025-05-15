@@ -6,7 +6,7 @@ export async function getChains({
   nativeAuthToken
 }: {
   url: string;
-  nativeAuthToken?: string;
+  nativeAuthToken: string;
 }): Promise<AxiosResponse<ChainDTO[]>> {
   const config: AxiosRequestConfig = {
     baseURL: url,

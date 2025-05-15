@@ -11,17 +11,12 @@ import { ChainType } from '../../types/chainType';
 import { useWeb3App } from '../context/useWeb3App';
 import { useGetChainsQuery } from '../queries';
 
-export const useBalances = ({
-  nativeAuthToken
-}: {
-  nativeAuthToken?: string;
-}) => {
+export const useBalances = () => {
   const { config } = useWeb3App();
   const { address, isConnected } = useAppKitAccount();
   const chainId = useGetChainId() as string;
-  const { data: chains } = useGetChainsQuery({
-    nativeAuthToken
-  });
+  const { nativeAuthToken } = useWeb3App();
+  const { data: chains } = useGetChainsQuery();
 
   const activeChain = useMemo(() => {
     return chains?.find(

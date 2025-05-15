@@ -4,6 +4,7 @@ import { ProviderType } from 'types/providerType';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
 import { getQueryClient } from '../context/queryClient';
+import { useWeb3App } from '../context/useWeb3App.ts';
 
 export const useGetHistoryQuery = ({
   address,
@@ -11,8 +12,7 @@ export const useGetHistoryQuery = ({
   provider,
   status,
   tokenIn,
-  tokenOut,
-  nativeAuthToken
+  tokenOut
 }: {
   address?: string;
   sender?: string;
@@ -20,8 +20,9 @@ export const useGetHistoryQuery = ({
   status?: string;
   tokenIn?: string;
   tokenOut?: string;
-  nativeAuthToken?: string;
 }) => {
+  const { nativeAuthToken } = useWeb3App();
+
   const queryFn = async () => {
     if (!address) {
       throw new Error('User is not connected');

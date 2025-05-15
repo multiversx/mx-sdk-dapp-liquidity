@@ -3,18 +3,19 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
 import { getQueryClient } from '../context/queryClient';
+import { useWeb3App } from '../context/useWeb3App.ts';
 
 export const useGetMvxTokensBalancesQuery = ({
   tokens,
   mvxAddress,
-  apiURL,
-  nativeAuthToken
+  apiURL
 }: {
   tokens: TokenType[];
   mvxAddress?: string;
   apiURL: string;
-  nativeAuthToken?: string;
 }) => {
+  const { nativeAuthToken } = useWeb3App();
+
   const tokenIdentifiers = useMemo(() => {
     return tokens.map(({ address }) => address);
   }, [tokens]);

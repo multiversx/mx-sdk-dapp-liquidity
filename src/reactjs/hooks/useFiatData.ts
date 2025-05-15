@@ -9,21 +9,17 @@ import {
 export const useFiatData = ({
   mvxAddress,
   mvxApiURL,
-  refetchTrigger,
-  nativeAuthToken
+  refetchTrigger
 }: {
   mvxAddress?: string;
   mvxApiURL: string;
   refetchTrigger?: number;
-  nativeAuthToken?: string;
 }) => {
   const {
     data: tokens,
     isLoading: isTokensLoading,
     isError: isTokensError
-  } = useGetAllTokensQuery({
-    nativeAuthToken
-  });
+  } = useGetAllTokensQuery();
 
   const mvxTokens = useMemo(
     () =>

@@ -24,17 +24,14 @@ import { MxLink } from '../base/MxLink';
 
 export const BridgeHistory = ({
   mvxAddress,
-  nativeAuthToken,
   onClose
 }: {
   mvxAddress?: string;
-  nativeAuthToken?: string;
   onClose: () => void;
 }) => {
   const { options } = useWeb3App();
   const { data, isLoading, isError } = useGetHistoryQuery({
-    address: mvxAddress,
-    nativeAuthToken
+    address: mvxAddress
   });
 
   const resolveTransactionIcon = useCallback((transaction: TransactionDTO) => {
@@ -88,8 +85,7 @@ export const BridgeHistory = ({
     isChainsLoading
   } = useFetchBridgeData({
     mvxAddress,
-    mvxApiURL: options.mvxApiURL,
-    nativeAuthToken
+    mvxApiURL: options.mvxApiURL
   });
 
   const tokensMap = useMemo<Record<string, TokenType>>(() => {

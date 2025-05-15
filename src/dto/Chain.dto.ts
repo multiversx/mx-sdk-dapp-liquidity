@@ -15,4 +15,5 @@ export interface ChainDTO {
     icon: string;
   };
   blockExplorerUrls: string[];
+  isBridge?: boolean;
 }

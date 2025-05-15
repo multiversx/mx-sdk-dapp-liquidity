@@ -8,7 +8,7 @@ export async function getTokens({
 }: {
   url: string;
   chainId?: number;
-  nativeAuthToken?: string;
+  nativeAuthToken: string;
 }): Promise<AxiosResponse<TokenType[]>> {
   const config: AxiosRequestConfig = {
     baseURL: url,

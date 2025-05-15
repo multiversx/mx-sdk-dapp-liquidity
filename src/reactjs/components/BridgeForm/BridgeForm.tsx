@@ -47,7 +47,6 @@ interface BridgeFormProps {
   mvxChainId: string;
   mvxAddress?: string;
   username?: string;
-  nativeAuthToken?: string;
   callbackRoute?: string;
   firstTokenIdentifier?: string;
   secondTokenIdentifier?: string;
@@ -70,7 +69,6 @@ export const BridgeForm = ({
   mvxChainId,
   mvxAddress,
   username,
-  nativeAuthToken,
   callbackRoute = '/',
   firstTokenIdentifier,
   secondTokenIdentifier,
@@ -94,7 +92,12 @@ export const BridgeForm = ({
     useState<number>(0);
   const account = useAccount();
   const { switchNetwork } = useAppKitNetwork();
-  const { config, options, supportedChains: sdkChains } = useWeb3App();
+  const {
+    config,
+    options,
+    supportedChains: sdkChains,
+    nativeAuthToken
+  } = useWeb3App();
   const chainId = useGetChainId();
 
   const {
@@ -108,8 +111,7 @@ export const BridgeForm = ({
   } = useFetchBridgeData({
     refetchTrigger,
     mvxAddress,
-    mvxApiURL: options.mvxApiURL,
-    nativeAuthToken
+    mvxApiURL: options.mvxApiURL
   });
 
   const isTokensLoading =
@@ -625,7 +627,6 @@ export const BridgeForm = ({
     resetSwapForm
   } = useBridgeFormik({
     rate,
-    nativeAuthToken,
     mvxAccountAddress: mvxAddress,
     firstToken,
     firstAmount,
@@ -741,6 +742,11 @@ export const BridgeForm = ({
     }
   }, [secondTokenAmount]);
 
+  console.log('BridgeForm=', {
+    nativeAuthToken,
+    chains
+  });
+
   return (
     <>
       <form
@@ -751,11 +757,7 @@ export const BridgeForm = ({
         onSubmit={handleSubmit}
       >
         {showHistory && (
-          <BridgeHistory
-            mvxAddress={mvxAddress}
-            onClose={handleHistoryClose}
-            nativeAuthToken={nativeAuthToken}
-          />
+          <BridgeHistory mvxAddress={mvxAddress} onClose={handleHistoryClose} />
         )}
         <AmountCard
           className={mxClsx(
@@ -772,7 +774,6 @@ export const BridgeForm = ({
             <BridgeAccountDisplay
               disabled={isPendingRate}
               activeChain={selectedChainOption}
-              nativeAuthToken={nativeAuthToken}
             />
           </div>
           <div className="liq-flex liq-justify-between liq-gap-1">
@@ -803,7 +804,6 @@ export const BridgeForm = ({
               onTokenSelectorDisplay={(visible) =>
                 setIsTokenSelectorVisible(visible)
               }
-              nativeAuthToken={nativeAuthToken}
             />
           </div>
         </AmountCard>
@@ -852,7 +852,6 @@ export const BridgeForm = ({
               onChange={onChangeSecondSelect}
               onBlur={handleBlur}
               selectedOption={secondToken}
-              nativeAuthToken={nativeAuthToken}
             />
           </div>
         </AmountCard>

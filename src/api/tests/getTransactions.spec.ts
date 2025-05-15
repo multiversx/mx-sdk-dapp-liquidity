@@ -36,7 +36,7 @@ describe('getTransactions', () => {
   it('fetches transactions with only address parameter', async () => {
     const address = '0x123';
 
-    const result = await getTransactions({ url, address });
+    const result = await getTransactions({ url, address, nativeAuthToken: '' });
 
     expect(mockedAxios.get).toHaveBeenCalledWith(
       '/transactions?receiver=0x123',
@@ -48,7 +48,7 @@ describe('getTransactions', () => {
   it('fetches transactions with empty address', async () => {
     const address = '';
 
-    const result = await getTransactions({ url, address });
+    const result = await getTransactions({ url, address, nativeAuthToken: '' });
 
     expect(mockedAxios.get).toHaveBeenCalledWith('/transactions?', {
       baseURL: url
@@ -64,7 +64,8 @@ describe('getTransactions', () => {
       provider: ProviderType.MultiversxBridge,
       status: 'success',
       tokenIn: '0xTOKEN',
-      tokenOut: 'WEGLD-123456'
+      tokenOut: 'WEGLD-123456',
+      nativeAuthToken: ''
     });
 
     expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -82,7 +83,8 @@ describe('getTransactions', () => {
       provider: ProviderType.MultiversxBridge,
       status: '',
       tokenIn: '0xTOKEN',
-      tokenOut: ''
+      tokenOut: '',
+      nativeAuthToken: ''
     });
 
     expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -96,9 +98,9 @@ describe('getTransactions', () => {
     const error = new Error('Network error');
     mockedAxios.get.mockRejectedValueOnce(error);
 
-    await expect(getTransactions({ url, address: '0x123' })).rejects.toThrow(
-      'Network error'
-    );
+    await expect(
+      getTransactions({ url, address: '0x123', nativeAuthToken: '' })
+    ).rejects.toThrow('Network error');
 
     expect(mockedAxios.get).toHaveBeenCalledWith(
       '/transactions?receiver=0x123',
@@ -117,7 +119,11 @@ describe('getTransactions', () => {
 
     mockedAxios.get.mockResolvedValueOnce(axiosResponse);
 
-    const result = await getTransactions({ url, address: '0x123' });
+    const result = await getTransactions({
+      url,
+      address: '0x123',
+      nativeAuthToken: ''
+    });
 
     expect(result).toEqual(axiosResponse);
   });

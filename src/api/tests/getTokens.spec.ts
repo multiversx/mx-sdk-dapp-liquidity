@@ -27,7 +27,7 @@ describe('getTokens', () => {
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
 
-    const result = await getTokens({ url });
+    const result = await getTokens({ url, nativeAuthToken: '' });
 
     expect(mockedAxios.get).toHaveBeenCalledWith('/tokens', { baseURL: url });
     expect(result.data).toEqual(response);
@@ -53,7 +53,7 @@ describe('getTokens', () => {
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
 
-    const result = await getTokens({ url, chainId });
+    const result = await getTokens({ url, chainId, nativeAuthToken: '' });
 
     expect(mockedAxios.get).toHaveBeenCalledWith(`/tokens/${chainId}`, {
       baseURL: url
@@ -64,6 +64,8 @@ describe('getTokens', () => {
   it('handles error when fetching tokens', async () => {
     mockedAxios.get.mockRejectedValue(new Error('Network Error'));
 
-    await expect(getTokens({ url })).rejects.toThrow('Network Error');
+    await expect(getTokens({ url, nativeAuthToken: '' })).rejects.toThrow(
+      'Network Error'
+    );
   });
 });

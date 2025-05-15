@@ -2,12 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTokens } from '../../api/getTokens';
 import { getApiURL } from '../../helpers/getApiURL';
+import { useWeb3App } from '../context/useWeb3App.ts';
 
-export const useGetAllTokensQuery = ({
-  nativeAuthToken
-}: {
-  nativeAuthToken?: string;
-}) => {
+export const useGetAllTokensQuery = () => {
+  const { nativeAuthToken } = useWeb3App();
+
   const queryFn = async () => {
     try {
       const { data } = await getTokens({

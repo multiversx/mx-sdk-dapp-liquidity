@@ -6,6 +6,7 @@ import { checkAccount } from 'api/checkAccount.ts';
 import { SwitchChainButton } from './SwitchChainButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { getApiURL } from '../../../helpers';
+import { useWeb3App } from '../../context/useWeb3App.ts';
 import { useGetChainId } from '../../hooks';
 import { useAccount } from '../../hooks/useAccount';
 import { useGenericSignMessage } from '../../hooks/useGenericSignMessage.ts';
@@ -16,17 +17,16 @@ import { TrimAddress } from '../TrimAddress';
 
 export const BridgeAccountDisplay = ({
   activeChain,
-  nativeAuthToken,
   disabled
 }: {
   activeChain?: ChainDTO;
-  nativeAuthToken?: string;
   disabled: boolean;
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
   const chainId = useGetChainId();
   const { signMessage } = useGenericSignMessage();
+  const { nativeAuthToken } = useWeb3App();
 
   const { mutateAsync: linkAccount } = useLinkAccountMutation();
 

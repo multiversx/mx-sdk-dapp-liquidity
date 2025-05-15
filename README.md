@@ -161,12 +161,11 @@ const App = () => {
   
   return (
     // Wrap your app with Web3AppProvider to enable multi-chain connections
-    <Web3AppProvider appKit={provider.appKit} config={provider.config} options={provider.options}>
+    <Web3AppProvider appKit={provider.appKit} config={provider.config} options={provider.options} nativeAuthToken={nativeAuthToken}>
       <BridgeForm
         mvxChainId={"44"}
         mvxAddress={mvxAccount?.address}
         username={mvxAccount?.username}
-        nativeAuthToken={nativeAuthToken}
         callbackRoute={"/deposit"}
         showHistory={showHistory}
         onSuccessfullySentTransaction={(txHashes) => {
