@@ -5,13 +5,14 @@ import { getChains } from '../../api/getChains';
 import { getApiURL } from '../../helpers/getApiURL';
 
 export const useGetChainsQuery = () => {
-  const { nativeAuthToken } = useWeb3App();
+  const { nativeAuthToken, bridgeOnly } = useWeb3App();
 
   const queryFn = async () => {
     try {
       const { data } = await getChains({
         url: getApiURL(),
-        nativeAuthToken
+        nativeAuthToken,
+        bridgeOnly: Boolean(bridgeOnly)
       });
       return data;
     } catch (error) {

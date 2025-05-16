@@ -3,10 +3,12 @@ import { ChainDTO } from '../dto/Chain.dto';
 
 export async function getChains({
   url,
-  nativeAuthToken
+  nativeAuthToken,
+  bridgeOnly
 }: {
   url: string;
   nativeAuthToken: string;
+  bridgeOnly: boolean;
 }): Promise<AxiosResponse<ChainDTO[]>> {
   const config: AxiosRequestConfig = {
     baseURL: url,
@@ -15,5 +17,5 @@ export async function getChains({
     }
   };
 
-  return await axios.get<ChainDTO[]>('/chains', config);
+  return await axios.get<ChainDTO[]>(`/chains?isBridge=${bridgeOnly}`, config);
 }
