@@ -5,13 +5,14 @@ import { getApiURL } from '../../helpers/getApiURL';
 import { useWeb3App } from '../context/useWeb3App.ts';
 
 export const useGetAllTokensQuery = () => {
-  const { nativeAuthToken } = useWeb3App();
+  const { nativeAuthToken, bridgeOnly } = useWeb3App();
 
   const queryFn = async () => {
     try {
       const { data } = await getTokens({
         url: getApiURL(),
-        nativeAuthToken
+        nativeAuthToken,
+        bridgeOnly: Boolean(bridgeOnly)
       });
       return data;
     } catch (error) {

@@ -14,6 +14,7 @@ export type Web3AppContextProps = {
   options: InitOptions;
   supportedChains: AppKitNetwork[];
   nativeAuthToken: string;
+  bridgeOnly?: boolean;
 };
 
 const queryClient = getQueryClient();
@@ -28,7 +29,8 @@ export function Web3AppProvider({
   appKit,
   options,
   supportedChains,
-  nativeAuthToken
+  nativeAuthToken,
+  bridgeOnly
 }: PropsWithChildren<Web3AppContextProps>) {
   const value = useMemo<Web3AppContextProps>(() => {
     return {
@@ -36,7 +38,8 @@ export function Web3AppProvider({
       appKit,
       options,
       supportedChains,
-      nativeAuthToken
+      nativeAuthToken,
+      bridgeOnly
     };
   }, [config, appKit, options, nativeAuthToken]);
 
