@@ -742,11 +742,6 @@ export const BridgeForm = ({
     }
   }, [secondTokenAmount]);
 
-  console.log('BridgeForm=', {
-    nativeAuthToken,
-    chains
-  });
-
   return (
     <>
       <form

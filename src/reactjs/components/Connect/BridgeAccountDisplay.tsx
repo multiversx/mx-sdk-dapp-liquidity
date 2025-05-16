@@ -49,18 +49,11 @@ export const BridgeAccountDisplay = ({
           nativeAuthToken
         });
 
-        console.log('ownership', {
-          ownership,
-          accountAddress: account.address,
-          chainId: chainId ? chainId.toString() : ''
-        });
-
         if (!ownership?.isLinked) {
           try {
             const signature = await signMessage(
               ownership?.signMessage ?? 'Missing message'
             );
-            console.log('signature = ', signature);
 
             await linkAccount({
               nativeAuthToken: nativeAuthToken ?? '',
