@@ -6,5 +6,6 @@ export type ChainSelectOptionType = {
     name: string;
     networkName: string;
     svgUrl?: string;
+    pngUrl?: string;
   };
 };

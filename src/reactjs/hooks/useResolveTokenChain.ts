@@ -16,7 +16,7 @@ export const useResolveTokenChain = ({ token }: { token?: TokenDTO }) => {
     tokenChain,
     isLoading,
     chainIcon: tokenChain
-      ? tokenChain.svgUrl ??
+      ? tokenChain.pngUrl ??
         chainIdentifier[tokenChain.chainName as ChainNameType]
       : null
   };

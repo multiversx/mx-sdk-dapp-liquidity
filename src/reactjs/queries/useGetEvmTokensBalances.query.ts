@@ -59,7 +59,7 @@ export const useGetEvmTokensBalancesQuery = ({
     enabled: Boolean(address) && Boolean(chainId),
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: true,
-    refetchInterval: 20000,
+    refetchInterval: 5 * 60000, // 5 minutes,
     gcTime: 0
   });
 };

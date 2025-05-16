@@ -232,7 +232,7 @@ export const BridgeHistory = ({
                           {tokensMap[transaction.tokenDestination]?.symbol}
                         </span>
                         <img
-                          src={tokensMap[transaction.tokenDestination]?.svgUrl}
+                          src={tokensMap[transaction.tokenDestination]?.pngUrl}
                           alt=""
                           className="liq-h-[1.5rem] liq-w-[1.5rem]"
                         />
@@ -253,14 +253,14 @@ export const BridgeHistory = ({
                           <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
                             <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
                               <img
-                                src={tokensMap[transaction.tokenSource]?.svgUrl}
+                                src={tokensMap[transaction.tokenSource]?.pngUrl}
                                 alt=""
                                 className="liq-asset-icon liq-sm liq-p-0"
                               />
                             </div>
                           </div>
                           <img
-                            src={chainsMap[transaction.fromChainId]?.svgUrl}
+                            src={chainsMap[transaction.fromChainId]?.pngUrl}
                             alt=""
                             className="liq-absolute liq-left-3 liq-bottom-[-2px] liq-chain-icon liq-sm liq-w-5 liq-h-5 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
                           />
@@ -293,7 +293,7 @@ export const BridgeHistory = ({
                           {tokensMap[transaction.tokenSource]?.symbol}
                         </span>
                         <img
-                          src={tokensMap[transaction.tokenSource]?.svgUrl}
+                          src={tokensMap[transaction.tokenSource]?.pngUrl}
                           alt=""
                           className="liq-h-[1.5rem] liq-w-[1.5rem]"
                         />
@@ -316,7 +316,7 @@ export const BridgeHistory = ({
                               <img
                                 src={
                                   tokensMap[transaction.tokenDestination]
-                                    ?.svgUrl
+                                    ?.pngUrl
                                 }
                                 alt=""
                                 className="liq-asset-icon liq-sm liq-p-0"
@@ -324,7 +324,7 @@ export const BridgeHistory = ({
                             </div>
                           </div>
                           <img
-                            src={chainsMap[transaction.toChainId]?.svgUrl}
+                            src={chainsMap[transaction.toChainId]?.pngUrl}
                             alt=""
                             className="liq-absolute liq-left-3 liq-bottom-[-2px] liq-chain-icon liq-sm liq-w-5 liq-h-5 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
                           />

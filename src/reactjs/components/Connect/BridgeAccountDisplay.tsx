@@ -90,7 +90,7 @@ export const BridgeAccountDisplay = ({
     <>
       {account.address && (
         <>
-          <img src={activeChain?.svgUrl} alt="" className="liq-w-6" />
+          <img src={activeChain?.pngUrl} alt="" className="liq-w-6" />
           <span className="liq-truncate liq-text-gray-400">
             {activeChain?.networkName}
           </span>
@@ -128,7 +128,7 @@ export const BridgeAccountDisplay = ({
           <div className="liq-flex liq-items-center">
             <div className="liq-flex liq-justify-center liq-gap-2">
               <div> {account.isConnecting ? 'Connecting...' : 'Connect'} </div>
-              <img src={activeChain?.svgUrl} alt="" className="liq-w-4" />
+              <img src={activeChain?.pngUrl} alt="" className="liq-w-4" />
               <div className="liq-truncate md:liq-text-clip">
                 {activeChain?.networkName}
               </div>

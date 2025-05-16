@@ -819,7 +819,7 @@ export const BridgeForm = ({
             <span>To</span>
             <MvxAccountDisplay
               accountAddress={mvxAddress}
-              chainIcon={mvxChain?.svgUrl ?? ''}
+              chainIcon={mvxChain?.pngUrl ?? ''}
               username={username}
               accountExplorerUrl={`${options.mvxExplorerAddress}/accounts/${mvxAddress}`}
               showTag={true}
@@ -859,7 +859,7 @@ export const BridgeForm = ({
           {!mvxAddress && (
             <MvxConnectButton
               mvxAccountAddress={mvxAddress}
-              icon={mvxChain?.svgUrl}
+              icon={mvxChain?.pngUrl ?? ''}
               onClick={onMvxConnect}
             />
           )}
@@ -888,7 +888,7 @@ export const BridgeForm = ({
                 <div className="liq-flex liq-justify-center liq-gap-2">
                   <div>Deposit on </div>
                   <img
-                    src={mvxChain?.svgUrl ?? ''}
+                    src={mvxChain?.pngUrl ?? ''}
                     alt=""
                     className="liq-h-[1.5rem] liq-w-[1.5rem]"
                   />
@@ -908,7 +908,7 @@ export const BridgeForm = ({
                   />
                   <div>Depositing on</div>
                   <img
-                    src={mvxChain?.svgUrl ?? ''}
+                    src={mvxChain?.pngUrl ?? ''}
                     alt=""
                     className="liq-h-[1.5rem] liq-w-[1.5rem]"
                   />

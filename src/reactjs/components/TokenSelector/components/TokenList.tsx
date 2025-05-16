@@ -14,7 +14,7 @@ export const TokenList = ({
     <div className="token-list liq-flex liq-flex-col liq-gap-1">
       {tokens.map((token) => (
         <TokenItem
-          key={token.address}
+          key={`${token.address}-${token.chainId}`}
           token={token}
           onClick={onSelect}
           selected={selectedToken?.address === token.address}

@@ -28,7 +28,8 @@ export const ChainSelect = ({
         id: chain.chainId.toString(),
         name: chain.chainName,
         networkName: chain.networkName,
-        svgUrl: chain.svgUrl
+        svgUrl: chain.svgUrl,
+        pngUrl: chain.pngUrl
       }
     }));
 
@@ -43,7 +44,8 @@ export const ChainSelect = ({
         id: ALL_NETWORK_ID,
         name: 'all',
         networkName: 'All',
-        svgUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg'
+        svgUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg',
+        pngUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg'
       }
     });
 
