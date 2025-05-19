@@ -659,7 +659,7 @@ export const BridgeForm = ({
 
     fetchRateInterval = setInterval(() => {
       fetchRateDebounced(firstAmount);
-    }, 60 * 1000); // 1min
+    }, 50 * 1000); // 50sec
 
     return () => clearInterval(fetchRateInterval);
   }, [firstAmount, forceRefetchRate, fetchRateDebounced]);
