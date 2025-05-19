@@ -1,6 +1,7 @@
 import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useMemo } from 'react';
 import { TokenType } from '../../types';
 import { getQueryClient } from '../context/queryClient';
 import { useBalances } from '../hooks';
@@ -14,6 +15,10 @@ export const useGetEvmTokensBalancesQuery = ({
 }) => {
   const { address } = useAppKitAccount();
   const { fetchBalances } = useBalances();
+  const identifiers = useMemo(
+    () => tokens.map((token) => token.address),
+    [tokens]
+  );
 
   const queryFn = async () => {
     try {
@@ -53,14 +58,13 @@ export const useGetEvmTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['evm-tokens-balances', address, chainId],
+    queryKey: ['evm-tokens-balances', address, chainId, identifiers],
     queryFn,
     retry,
     enabled: Boolean(address) && Boolean(chainId),
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: true,
-    refetchInterval: 5 * 60000, // 5 minutes,
-    gcTime: 0
+    refetchInterval: 5 * 60000 // 5 minutes,
   });
 };
 
