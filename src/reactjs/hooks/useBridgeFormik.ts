@@ -38,6 +38,7 @@ export const useBridgeFormik = ({
   secondAmount,
   fromChainId,
   toChainId,
+  setForceRefetchRate,
   rate,
   onSubmit
 }: {
@@ -48,6 +49,7 @@ export const useBridgeFormik = ({
   toChainId?: string;
   firstToken?: TokenType;
   secondToken?: TokenType;
+  setForceRefetchRate?: (value: (previous: number) => number) => void;
   rate?: RateRequestResponse;
   onSubmit: ({
     transactions,
@@ -81,37 +83,43 @@ export const useBridgeFormik = ({
     }
     pendingSigningRef.current = true;
 
-    const { data } = await confirmRate({
-      url: getApiURL(),
-      nativeAuthToken: nativeAuthToken ?? '',
-      body: {
-        tokenIn: values.firstToken?.address ?? '',
-        amountIn: firstAmount?.toString() ?? '',
-        fromChainId: values.fromChainId ?? '',
-        tokenOut: values.secondToken?.address ?? '',
-        toChainId: values.toChainId ?? '',
-        amountOut: secondAmount?.toString() ?? '',
-        sender: account.address ?? '',
-        receiver: mvxAccountAddress ?? '',
-        fee: rate?.fee ?? '0',
-        provider: rate?.provider ?? ProviderType.None,
-        orderId: rate?.orderId ?? ''
+    try {
+      const { data } = await confirmRate({
+        url: getApiURL(),
+        nativeAuthToken: nativeAuthToken ?? '',
+        body: {
+          tokenIn: values.firstToken?.address ?? '',
+          amountIn: firstAmount?.toString() ?? '',
+          fromChainId: values.fromChainId ?? '',
+          tokenOut: values.secondToken?.address ?? '',
+          toChainId: values.toChainId ?? '',
+          amountOut: secondAmount?.toString() ?? '',
+          sender: account.address ?? '',
+          receiver: mvxAccountAddress ?? '',
+          fee: rate?.fee ?? '0',
+          provider: rate?.provider ?? ProviderType.None,
+          orderId: rate?.orderId ?? ''
+        }
+      });
+
+      const transactions = data;
+
+      if (!transactions || transactions.length === 0) {
+        pendingSigningRef.current = false;
+        return;
       }
-    });
 
-    const transactions = data;
-
-    if (!transactions || transactions.length === 0) {
+      resetSwapForm();
+      onSubmit({
+        transactions,
+        provider: rate?.provider ?? ProviderType.None
+      });
+    } catch (error) {
+      console.error('Error confirming rate:', error);
+      setForceRefetchRate?.((prevState) => prevState + 1);
+    } finally {
       pendingSigningRef.current = false;
-      return;
     }
-
-    resetSwapForm();
-    onSubmit({
-      transactions,
-      provider: rate?.provider ?? ProviderType.None
-    });
-    pendingSigningRef.current = false;
   };
 
   const formik = useFormik({

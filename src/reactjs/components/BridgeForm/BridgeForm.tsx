@@ -88,6 +88,7 @@ export const BridgeForm = ({
   const initializedInitialTokensRef = useRef(false);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
+  const [forceRefetchRate, setForceRefetchRate] = useState(1);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
     useState<number>(0);
   const account = useAccount();
@@ -634,6 +635,7 @@ export const BridgeForm = ({
     toChainId: mvxChainId,
     secondToken,
     secondAmount,
+    setForceRefetchRate,
     onSubmit
   });
 
@@ -660,7 +662,7 @@ export const BridgeForm = ({
     }, 60 * 1000); // 1min
 
     return () => clearInterval(fetchRateInterval);
-  }, [firstAmount, fetchRateDebounced]);
+  }, [firstAmount, forceRefetchRate, fetchRateDebounced]);
 
   useEffect(() => {
     if (!rate?.amountOut) {
