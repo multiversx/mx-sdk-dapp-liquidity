@@ -243,6 +243,7 @@ export const BridgeForm = ({
     debounce(async (amount: string) => {
       if (
         !amount ||
+        !Number(amount) ||
         !account.address ||
         !firstToken?.address ||
         !secondToken?.address ||
