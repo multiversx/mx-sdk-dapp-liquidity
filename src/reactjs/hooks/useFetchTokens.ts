@@ -90,7 +90,9 @@ export const useFetchTokens = ({
   const evmTokensWithBalances = useMemo(() => {
     return evmTokens?.map((token) => {
       const foundToken = evmTokensBalances?.find(
-        (evmToken) => evmToken.address === token.address
+        (evmToken) =>
+          evmToken.address === token.address &&
+          evmToken.chainId === token.chainId
       );
 
       if (!foundToken) {
