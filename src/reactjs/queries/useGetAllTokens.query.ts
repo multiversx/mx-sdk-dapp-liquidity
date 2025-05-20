@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { getTokens } from '../../api/getTokens';
 import { getApiURL } from '../../helpers/getApiURL';
-import { useWeb3App } from '../context/useWeb3App.ts';
+import { useWeb3App } from '../context/useWeb3App';
 
 export const useGetAllTokensQuery = () => {
   const { nativeAuthToken, bridgeOnly } = useWeb3App();

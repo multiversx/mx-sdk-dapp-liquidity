@@ -1,16 +1,16 @@
+import { useAppKitNetwork } from '@reown/appkit/react';
 import { useEffect, useMemo } from 'react';
 import { useAccount } from './useAccount';
-import { useGetChainId } from './useGetChainId';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
-import {
-  invalidateEvmTokensBalances,
-  useGetEvmTokensBalancesQuery
-} from '../queries/useGetEvmTokensBalances.query';
 import {
   invalidateMvxTokensBalancesQuery,
   useGetMvxTokensBalancesQuery
 } from '../queries/useGetMvxTokensBalances.query';
+import {
+  invalidateEvmTokensBalances,
+  useGetNonMvxTokensBalancesQuery
+} from '../queries/useGetNonMvxTokensBalances.query';
 
 export const useFetchTokens = ({
   mvxAddress,
@@ -21,7 +21,7 @@ export const useFetchTokens = ({
   mvxApiURL: string;
   refetchTrigger?: number;
 }) => {
-  const chainId = useGetChainId();
+  const { chainId } = useAppKitNetwork();
   const account = useAccount();
 
   const {
@@ -52,7 +52,7 @@ export const useFetchTokens = ({
     data: evmTokensBalances,
     isLoading: isLoadingEvmTokensBalances,
     isError: isErrorEvmTokensBalances
-  } = useGetEvmTokensBalancesQuery({
+  } = useGetNonMvxTokensBalancesQuery({
     tokens: evmTokens ?? [],
     chainId: chainId?.toString()
   });
@@ -108,14 +108,18 @@ export const useFetchTokens = ({
   }, [evmTokens, evmTokensBalances]);
 
   useEffect(() => {
-    if (account.address) {
-      invalidateEvmTokensBalances();
-    }
-
     if (mvxAddress) {
       invalidateMvxTokensBalancesQuery();
     }
-  }, [refetchTrigger, chainId, account.address, mvxAddress]);
+  }, [refetchTrigger, mvxAddress]);
+
+  useEffect(() => {
+    if (!account.address) {
+      return;
+    }
+
+    invalidateEvmTokensBalances();
+  }, [refetchTrigger, chainId, account.address]);
 
   return {
     isTokensLoading,

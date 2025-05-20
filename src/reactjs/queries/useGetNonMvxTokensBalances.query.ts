@@ -6,7 +6,7 @@ import { TokenType } from '../../types';
 import { getQueryClient } from '../context/queryClient';
 import { useBalances } from '../hooks';
 
-export const useGetEvmTokensBalancesQuery = ({
+export const useGetNonMvxTokensBalancesQuery = ({
   tokens,
   chainId
 }: {
@@ -14,7 +14,7 @@ export const useGetEvmTokensBalancesQuery = ({
   chainId?: string;
 }) => {
   const { address } = useAppKitAccount();
-  const { fetchBalances } = useBalances();
+  const { getBalances } = useBalances();
   const identifiers = useMemo(
     () => tokens.map((token) => token.address),
     [tokens]
@@ -30,8 +30,9 @@ export const useGetEvmTokensBalancesQuery = ({
         throw new Error('Chain ID is required');
       }
 
-      const assets = await fetchBalances({
-        tokens
+      const assets = await getBalances({
+        tokens,
+        chainId
       });
 
       return assets.map((asset) => {
@@ -58,18 +59,20 @@ export const useGetEvmTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['evm-tokens-balances', address, chainId, identifiers],
+    queryKey: ['non-mvx-tokens-balances', address, chainId, identifiers],
     queryFn,
     retry,
     enabled: Boolean(address) && Boolean(chainId),
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: true,
-    refetchInterval: 5 * 60000 // 5 minutes,
+    refetchInterval: 20000,
+    refetchOnReconnect: 'always',
+    gcTime: 0
   });
 };
 
 export function invalidateEvmTokensBalances() {
-  const queryKey = ['evm-tokens-balances'];
+  const queryKey = ['non-mvx-tokens-balances'];
   const queryClient = getQueryClient();
   queryClient.invalidateQueries({
     queryKey

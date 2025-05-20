@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { checkAccount } from '../../api/checkAccount';
 import { getApiURL } from '../../helpers/getApiURL';
-import { useWeb3App } from '../context/useWeb3App.ts';
+import { useWeb3App } from '../context/useWeb3App';
 import { useGetChainId } from '../hooks';
 
 export const useCheckAccountQuery = () => {

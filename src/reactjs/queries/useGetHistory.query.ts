@@ -4,7 +4,7 @@ import { ProviderType } from 'types/providerType';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
 import { getQueryClient } from '../context/queryClient';
-import { useWeb3App } from '../context/useWeb3App.ts';
+import { useWeb3App } from '../context/useWeb3App';
 
 export const useGetHistoryQuery = ({
   address,

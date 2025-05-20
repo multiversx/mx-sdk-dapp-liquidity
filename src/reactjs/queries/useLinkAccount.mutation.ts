@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { linkAccount } from '../../api/linkAccount.ts';
+import { linkAccount } from '../../api/linkAccount';
 import { getApiURL } from '../../helpers/getApiURL';
 import { LinkAccountRequestBody } from '../../types/linkAccount';
 

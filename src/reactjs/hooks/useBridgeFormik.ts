@@ -10,7 +10,7 @@ import { RateRequestResponse } from '../../types';
 import { ProviderType } from '../../types/providerType';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
-import { useWeb3App } from '../context/useWeb3App.ts';
+import { useWeb3App } from '../context/useWeb3App';
 
 export enum BridgeFormikValuesEnum {
   firstToken = 'firstToken',

@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
 import { getQueryClient } from '../context/queryClient';
-import { useWeb3App } from '../context/useWeb3App.ts';
+import { useWeb3App } from '../context/useWeb3App';
 
 export const useGetMvxTokensBalancesQuery = ({
   tokens,

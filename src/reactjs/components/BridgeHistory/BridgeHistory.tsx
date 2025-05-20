@@ -9,7 +9,7 @@ import { useCallback, useMemo } from 'react';
 import { MVX_CHAIN_IDS } from '../../../constants';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { TransactionDTO } from '../../../dto/Transaction.dto';
-import { ProviderType } from '../../../types/providerType.ts';
+import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
 import ArrowUpRight from '../../assets/arrow-up-right.svg';
 import { useWeb3App } from '../../context/useWeb3App';
