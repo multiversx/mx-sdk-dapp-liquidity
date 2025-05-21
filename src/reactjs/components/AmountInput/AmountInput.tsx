@@ -14,7 +14,7 @@ export const AmountInput = ({
   onInputChange
 }: {
   inputName: string;
-  inputValue: string;
+  inputValue?: string;
   disabled?: boolean;
   amountError?: string;
   omitDisableClass?: boolean;

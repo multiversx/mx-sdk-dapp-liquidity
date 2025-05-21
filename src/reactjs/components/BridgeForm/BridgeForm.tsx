@@ -647,6 +647,18 @@ export const BridgeForm = ({
       rateValidationError
   );
 
+  const amountErrorFirstInput = useMemo(() => {
+    return firstAmount !== ''
+      ? rateValidationError ?? firstAmountError
+      : undefined;
+  }, [firstAmountError, firstAmount, rateValidationError]);
+
+  const amountErrorSecondInput = useMemo(() => {
+    return secondAmount !== ''
+      ? fromChainError ?? secondAmountError
+      : undefined;
+  }, [fromChainError, secondAmountError, secondAmount]);
+
   useEffect(() => {
     if (!firstAmount) {
       setSecondAmount('');
@@ -777,13 +789,9 @@ export const BridgeForm = ({
           <div className="liq-flex liq-justify-between liq-gap-1">
             <AmountInput
               inputName="firstAmount"
-              inputValue={formik.values.firstAmount ?? ''}
-              amountError={
-                firstAmount !== ''
-                  ? rateValidationError ?? firstAmountError
-                  : undefined
-              }
-              disabled={isPendingRate}
+              inputValue={formik.values.firstAmount}
+              amountError={amountErrorFirstInput}
+              disabled={false}
               onInputDebounceChange={handleOnChangeFirstAmount}
               onInputChange={handleChange}
               onBlur={handleBlur}
@@ -828,12 +836,8 @@ export const BridgeForm = ({
           <div className="liq-flex liq-justify-between liq-gap-1">
             <AmountInput
               inputName="secondAmount"
-              inputValue={formik.values.secondAmount ?? ''}
-              amountError={
-                secondAmount !== ''
-                  ? fromChainError ?? secondAmountError
-                  : undefined
-              }
+              inputValue={formik.values.secondAmount}
+              amountError={amountErrorSecondInput}
               disabled={false}
               onInputDebounceChange={handleOnChangeSecondAmount}
               onInputChange={handleChange}
