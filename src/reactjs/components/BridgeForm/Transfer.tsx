@@ -847,6 +847,12 @@ export const Transfer = ({
             />
           </div>
         </AmountCard>
+        <button className="inline-block" onClick={handleChangeDirection}>
+          <FontAwesomeIcon
+            icon={faExchangeAlt}
+            className="liq-h-6 liq-w-6 liq-text-neutral-100 liq-mx-auto liq-my-2"
+          />
+        </button>
         <AmountCard
           className={mxClsx(
             'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
