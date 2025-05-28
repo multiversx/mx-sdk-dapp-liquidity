@@ -789,6 +789,8 @@ export const Transfer = ({
     }
   }, [secondTokenAmount]);
 
+  // TODO change everywhere first token with second token.
+
   return (
     <>
       <form
@@ -801,56 +803,6 @@ export const Transfer = ({
         {showHistory && (
           <BridgeHistory mvxAddress={mvxAddress} onClose={handleHistoryClose} />
         )}
-        <AmountCard
-          className={mxClsx(
-            'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
-            {
-              'liq-pointer-events-none': isTokenSelectorVisible,
-              'focus-within:liq-outline-neutral-700/75 hover:liq-outline-neutral-700/55 hover:focus-within:liq-outline-neutral-700/80':
-                !isTokenSelectorVisible
-            }
-          )}
-        >
-          <div className="liq-flex liq-items-center liq-gap-1">
-            <span>From</span>
-            <BridgeAccountDisplay
-              disabled={isPendingRate}
-              activeChain={selectedChainOption}
-            />
-          </div>
-          <div className="liq-flex liq-justify-between liq-gap-1">
-            <AmountInput
-              inputName="firstAmount"
-              inputValue={formik.values.firstAmount}
-              amountError={amountErrorFirstInput}
-              disabled={false}
-              onInputDebounceChange={handleOnChangeFirstAmount}
-              onInputChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <TokenSelector
-              name={'firstToken'}
-              disabled={isPendingRate}
-              options={fromOptions}
-              areOptionsLoading={isTokensLoading}
-              isMvxSelector={false}
-              color="neutral-850"
-              onChange={onChangeFirstSelect}
-              onBlur={handleBlur}
-              onMaxBtnClick={handleOnFirstMaxBtnChange}
-              selectedOption={firstToken}
-              onTokenSelectorDisplay={(visible) =>
-                setIsTokenSelectorVisible(visible)
-              }
-            />
-          </div>
-        </AmountCard>
-        <button className="inline-block" onClick={handleChangeDirection}>
-          <FontAwesomeIcon
-            icon={faExchangeAlt}
-            className="liq-h-6 liq-w-6 liq-text-neutral-100 liq-mx-auto liq-my-2"
-          />
-        </button>
         <AmountCard
           className={mxClsx(
             'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
@@ -895,6 +847,51 @@ export const Transfer = ({
             />
           </div>
         </AmountCard>
+        <AmountCard
+          className={mxClsx(
+            'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
+            {
+              'liq-pointer-events-none': isTokenSelectorVisible,
+              'focus-within:liq-outline-neutral-700/75 hover:liq-outline-neutral-700/55 hover:focus-within:liq-outline-neutral-700/80':
+                !isTokenSelectorVisible
+            }
+          )}
+        >
+          <div className="liq-flex liq-items-center liq-gap-1">
+            <span>From</span>
+            <BridgeAccountDisplay
+              disabled={isPendingRate}
+              activeChain={selectedChainOption}
+            />
+          </div>
+          <div className="liq-flex liq-justify-between liq-gap-1">
+            <AmountInput
+              inputName="firstAmount"
+              inputValue={formik.values.firstAmount}
+              amountError={amountErrorFirstInput}
+              disabled={false}
+              onInputDebounceChange={handleOnChangeFirstAmount}
+              onInputChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <TokenSelector
+              name={'firstToken'}
+              disabled={isPendingRate}
+              options={fromOptions}
+              areOptionsLoading={isTokensLoading}
+              isMvxSelector={false}
+              color="neutral-850"
+              onChange={onChangeFirstSelect}
+              onBlur={handleBlur}
+              onMaxBtnClick={handleOnFirstMaxBtnChange}
+              selectedOption={firstToken}
+              onTokenSelectorDisplay={(visible) =>
+                setIsTokenSelectorVisible(visible)
+              }
+            />
+          </div>
+        </AmountCard>
+
         <div className="liq-flex liq-items-center liq-justify-center">
           {!mvxAddress && (
             <MvxConnectButton
