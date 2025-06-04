@@ -1,18 +1,11 @@
+import { ITransaction } from '@multiversx/sdk-core/out/interface';
+import { TransactionInstructionCtorFields } from '@solana/web3.js';
 import {
   TransactionBase,
   Transaction as ViemTransaction
 } from 'viem/types/transaction';
 
-export type ServerTransactionInstruction = {
-  keys: [
-    { pubkey: string; isSigner: boolean; isWritable: boolean },
-    { pubkey: string; isSigner: boolean; isWritable: boolean }
-  ];
-  programId: string;
-  data: ArrayBuffer;
-};
-
-export type ServerTransaction = {
+export type BaseTransaction = {
   to: `0x${string}`;
   data: `0x${string}`;
   gasLimit: bigint;
@@ -20,8 +13,9 @@ export type ServerTransaction = {
   account: string;
   txHash: string;
   signatures?: string[];
+  recentBlockhash?: string;
   feePayer?: string;
-  instructions?: ServerTransactionInstruction[];
+  instructions?: TransactionInstructionCtorFields[];
   bitcoinParams?: {
     psbt: string;
     signInputs: {
@@ -32,6 +26,8 @@ export type ServerTransaction = {
     broadcast: boolean;
   };
 };
+
+export type ServerTransaction = BaseTransaction & Partial<ITransaction>;
 
 export type TransactionType = TransactionBase & {
   account: `0x${string}`;

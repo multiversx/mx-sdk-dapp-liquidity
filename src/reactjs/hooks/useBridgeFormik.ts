@@ -1,7 +1,6 @@
 import { useFormik } from 'formik';
 import { useEffect, useRef } from 'react';
 import { object, string } from 'yup';
-import { useAccount } from './useAccount';
 import { useAmountSchema } from './validation/useAmountSchema';
 import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
@@ -31,7 +30,8 @@ export interface TradeFormikValuesType {
 }
 
 export const useBridgeFormik = ({
-  mvxAccountAddress,
+  sender,
+  receiver,
   firstToken,
   firstAmount,
   secondToken,
@@ -42,7 +42,8 @@ export const useBridgeFormik = ({
   rate,
   onSubmit
 }: {
-  mvxAccountAddress?: string;
+  sender: string;
+  receiver: string;
   firstAmount?: string;
   secondAmount?: string;
   fromChainId?: string;
@@ -60,7 +61,6 @@ export const useBridgeFormik = ({
   }) => void;
 }) => {
   const pendingSigningRef = useRef<boolean>();
-  const account = useAccount();
   const { nativeAuthToken } = useWeb3App();
 
   const initialValues: TradeFormikValuesType = {
@@ -94,8 +94,8 @@ export const useBridgeFormik = ({
           tokenOut: values.secondToken?.address ?? '',
           toChainId: values.toChainId ?? '',
           amountOut: secondAmount?.toString() ?? '',
-          sender: account.address ?? '',
-          receiver: mvxAccountAddress ?? '',
+          sender: sender ?? '',
+          receiver: receiver ?? '',
           fee: rate?.fee ?? '0',
           provider: rate?.provider ?? ProviderType.None,
           orderId: rate?.orderId ?? ''

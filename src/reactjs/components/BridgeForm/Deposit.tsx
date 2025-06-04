@@ -12,7 +12,7 @@ import { getApiURL } from '../../../helpers/getApiURL';
 import { ChainType } from '../../../types/chainType';
 import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
-import { ServerTransaction } from '../../../types/transaction';
+import { BaseTransaction, ServerTransaction } from '../../../types/transaction';
 import { safeWindow } from '../../constants';
 import { useWeb3App } from '../../context/useWeb3App';
 import { useAccount } from '../../hooks/useAccount';
@@ -529,7 +529,7 @@ export const Deposit = ({
             switch (selectedChainOption?.chainType) {
               case ChainType.evm:
                 const hash = await evm.signTransaction({
-                  ...transaction,
+                  ...(transaction as BaseTransaction),
                   value: BigInt(transaction.value),
                   gas: BigInt(transaction.gasLimit),
                   account: bridgeAddress as `0x${string}`
@@ -569,7 +569,8 @@ export const Deposit = ({
 
                 const txHash = await solana.signTransaction({
                   feePayer: transaction.feePayer,
-                  instructions: transaction.instructions
+                  instructions: transaction.instructions,
+                  recentBlockhash: transaction.recentBlockhash
                 });
 
                 if (!txHash) {
@@ -659,7 +660,8 @@ export const Deposit = ({
     resetSwapForm
   } = useBridgeFormik({
     rate,
-    mvxAccountAddress: mvxAddress,
+    sender: account.address ?? '',
+    receiver: mvxAddress ?? '',
     firstToken,
     firstAmount,
     fromChainId: chainId?.toString(),

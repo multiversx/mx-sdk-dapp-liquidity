@@ -7,10 +7,10 @@ import {
 import {
   PublicKey,
   Transaction,
-  TransactionInstruction
+  TransactionInstruction,
+  TransactionInstructionCtorFields
 } from '@solana/web3.js';
 import { useSendTransaction } from 'wagmi';
-import { ServerTransactionInstruction } from '../../types';
 
 export const useSignTransaction = () => {
   const {
@@ -27,32 +27,35 @@ export const useSignTransaction = () => {
 
   const signTransactionSolanaTransaction = async ({
     feePayer,
-    instructions
+    instructions,
+    recentBlockhash
   }: {
     feePayer: string;
-    instructions: ServerTransactionInstruction[];
+    instructions: TransactionInstructionCtorFields[];
+    recentBlockhash?: string;
   }) => {
     for (const instruction of instructions) {
-      const instructionData = Buffer.from(instruction.data);
-      const sender = new PublicKey(instruction.keys[0].pubkey);
-      const receiver = new PublicKey(instruction.keys[1].pubkey);
-
       const transactionInstruction = new TransactionInstruction({
-        keys: [
-          { pubkey: sender, isSigner: true, isWritable: true },
-          { pubkey: receiver, isSigner: false, isWritable: true }
-        ],
-        programId: new PublicKey(instruction.programId),
-        data: instructionData
+        ...instruction
       });
+
+      // const instructionData = Buffer.from(instruction.data);
+      // const sender = new PublicKey(instruction.keys[0].pubkey);
+      // const receiver = new PublicKey(instruction.keys[1].pubkey);
+
+      // const transactionInstruction = new TransactionInstruction({
+      //   keys: instruction.keys,
+      //   programId: new PublicKey(instruction.programId),
+      //   data: instruction.data // instructionData
+      // });
 
       const transaction = new Transaction().add(transactionInstruction);
       transaction.feePayer = new PublicKey(feePayer);
 
       if (connection) {
-        transaction.recentBlockhash = (
-          await connection.getLatestBlockhash('confirmed')
-        ).blockhash;
+        transaction.recentBlockhash =
+          recentBlockhash ??
+          (await connection.getLatestBlockhash('confirmed')).blockhash;
       }
 
       return await solWalletProvider.signAndSendTransaction(transaction);

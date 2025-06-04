@@ -1,16 +1,13 @@
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ITransaction } from '@multiversx/sdk-core/out/interface';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
+import { getConnections } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getApiURL } from '../../../helpers/getApiURL';
-import { ChainType } from '../../../types/chainType';
-import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
 import { ServerTransaction } from '../../../types/transaction';
 import { safeWindow } from '../../constants';
@@ -22,8 +19,6 @@ import {
 } from '../../hooks/useBridgeFormik';
 import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetChainId } from '../../hooks/useGetChainId';
-import { useSendTransactions } from '../../hooks/useSendTransactions';
-import { useSignTransaction } from '../../hooks/useSignTransaction';
 import { invalidateHistoryQuery } from '../../queries/useGetHistory.query';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
 import { getCompletePathname } from '../../utils/getCompletePathname';
@@ -91,7 +86,6 @@ export const Transfer = ({
   const ref = useRef(null);
   const initializedInitialTokensRef = useRef(false);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
-  const [pendingSigning, setPendingSigning] = useState(false);
   const [forceRefetchRate, setForceRefetchRate] = useState(1);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
     useState<number>(0);
@@ -104,6 +98,8 @@ export const Transfer = ({
     nativeAuthToken
   } = useWeb3App();
   const chainId = useGetChainId();
+
+  const { signMvxTransactions } = useWeb3App();
 
   const {
     evmTokensWithBalances,
@@ -137,9 +133,6 @@ export const Transfer = ({
     );
   }, [chainId, chains]);
 
-  const { evm, solana, bitcoin } = useSignTransaction();
-  const sendTransactions = useSendTransactions();
-
   const {
     mutate: getRate,
     data: rate,
@@ -162,8 +155,8 @@ export const Transfer = ({
 
   const fromOptions = useMemo(
     () =>
-      (evmTokensWithBalances &&
-        evmTokensWithBalances.map((token) => {
+      (mvxTokensWithBalances &&
+        mvxTokensWithBalances.map((token) => {
           return {
             ...token,
             identifier: token.address,
@@ -171,15 +164,15 @@ export const Transfer = ({
           };
         })) ??
       [],
-    [evmTokensWithBalances]
+    [mvxTokensWithBalances]
   );
 
   const getAvailableTokens = useCallback(
     (option: TokenType) => {
       if (forcedDestinationTokenSymbol) {
-        const forcedToken = mvxTokensWithBalances?.find(
-          (mvxToken) =>
-            mvxToken.symbol.toLowerCase() ===
+        const forcedToken = evmTokensWithBalances?.find(
+          (evmToken) =>
+            evmToken.symbol.toLowerCase() ===
             forcedDestinationTokenSymbol.toLowerCase()
         );
 
@@ -196,8 +189,8 @@ export const Transfer = ({
       const foundTokens: TokenType[] = [];
 
       for (const availableToken of option.availableTokens) {
-        const foundToken = mvxTokensWithBalances?.find(
-          (mvxToken) => mvxToken.address === availableToken.address
+        const foundToken = evmTokensWithBalances?.find(
+          (evmToken) => evmToken.address === availableToken.address
         );
 
         if (foundToken) {
@@ -207,7 +200,7 @@ export const Transfer = ({
 
       return foundTokens;
     },
-    [mvxTokensWithBalances]
+    [evmTokensWithBalances]
   );
 
   const toOptions = useMemo(
@@ -262,9 +255,9 @@ export const Transfer = ({
         body: {
           tokenIn: firstToken.address,
           amountIn: amount,
-          fromChainId: chainId.toString(),
+          fromChainId: mvxChainId,
           tokenOut: secondToken.address,
-          toChainId: mvxChainId
+          toChainId: chainId.toString()
         }
       });
     }, 500),
@@ -510,127 +503,26 @@ export const Transfer = ({
   };
 
   const onSubmit = useCallback(
-    async ({
-      transactions,
-      provider
-    }: {
-      transactions: ServerTransaction[];
-      provider: ProviderType;
-    }) => {
-      const signedTransactions: ServerTransaction[] = [];
-      setPendingSigning(true);
+    async ({ transactions }: { transactions: ServerTransaction[] }) => {
+      // let signedTransactions: ServerTransaction[] = [];
       setSigningTransactionsCount(() => transactions.length);
 
       try {
-        let txIndex = -1;
-        for (const transaction of transactions) {
-          ++txIndex;
-          try {
-            switch (selectedChainOption?.chainType) {
-              case ChainType.evm:
-                const hash = await evm.signTransaction({
-                  ...transaction,
-                  value: BigInt(transaction.value),
-                  gas: BigInt(transaction.gasLimit),
-                  account: bridgeAddress as `0x${string}`
-                });
+        const signedTransactions = await signMvxTransactions(
+          transactions as ITransaction[]
+        );
 
-                if (!hash) {
-                  break;
-                }
-
-                signedTransactions.push({
-                  ...transaction,
-                  txHash: hash
-                });
-
-                if (txIndex === transactions.length - 1 || !hash) {
-                  break;
-                }
-
-                const transactionReceipt = await waitForTransactionReceipt(
-                  config,
-                  {
-                    confirmations: 1,
-                    hash: hash as `0x${string}`
-                  }
-                );
-
-                console.info({
-                  transactionReceipt,
-                  hash
-                });
-
-                break;
-              case ChainType.sol:
-                if (!transaction.instructions || !transaction.feePayer) {
-                  break;
-                }
-
-                const txHash = await solana.signTransaction({
-                  feePayer: transaction.feePayer,
-                  instructions: transaction.instructions
-                });
-
-                if (!txHash) {
-                  break;
-                }
-
-                signedTransactions.push({
-                  ...transaction,
-                  txHash
-                });
-                break;
-
-              case ChainType.btc:
-                if (!transaction.bitcoinParams) {
-                  console.error('No bitcoin params');
-                  break;
-                }
-
-                const psbt = await bitcoin.signTransaction(
-                  transaction.bitcoinParams
-                );
-
-                signedTransactions.push({
-                  ...transaction,
-                  txHash: psbt
-                });
-                break;
-              default:
-                toast.error('Provider not supported');
-                setPendingSigning(false);
-                return;
-            }
-
-            setSigningTransactionsCount(
-              () => transactions.length - 1 - txIndex
-            );
-          } catch (e) {
-            toast.dismiss();
-            toast.error('Transaction aborted');
-            onFailedSentTransaction?.('Transaction aborted');
-            setPendingSigning(false);
-            return;
-          }
-        }
-
-        await sendTransactions({
-          transactions: signedTransactions,
-          provider,
-          url: getApiURL() ?? '',
-          token: nativeAuthToken ?? ''
-        });
-
-        const txHashes = signedTransactions.map((tx) => tx.txHash);
-        onSuccess(txHashes);
-        setPendingSigning(false);
+        console.log('Signed transactions:', signedTransactions);
+        //
+        // // TODO send singed transactions to the backend (the backend will send them to the blockchain)
+        //
+        // const txHashes = signedTransactions.map((tx) => tx.txHash);
+        // onSuccess(txHashes);
       } catch (e) {
         console.error(e);
         toast.dismiss();
         toast.error('Transaction cancelled');
         onFailedSentTransaction?.('Transaction cancelled');
-        setPendingSigning(false);
         setSigningTransactionsCount(0);
         resetSwapForm();
         handleOnChangeFirstAmount('');
@@ -643,8 +535,7 @@ export const Transfer = ({
       handleOnChangeSecondAmount,
       nativeAuthToken,
       onSuccess,
-      sendTransactions,
-      evm.signTransaction
+      signMvxTransactions
     ]
   );
 
@@ -659,11 +550,12 @@ export const Transfer = ({
     resetSwapForm
   } = useBridgeFormik({
     rate,
-    mvxAccountAddress: mvxAddress,
+    sender: mvxAddress ?? '',
+    receiver: account.address ?? '',
     firstToken,
     firstAmount,
-    fromChainId: chainId?.toString(),
-    toChainId: mvxChainId,
+    fromChainId: mvxChainId,
+    toChainId: chainId?.toString(),
     secondToken,
     secondAmount,
     setForceRefetchRate,
@@ -689,7 +581,18 @@ export const Transfer = ({
       : undefined;
   }, [fromChainError, secondAmountError, secondAmount]);
 
+  console.log('Transfer', {
+    firstTokenIdentifier,
+    secondTokenIdentifier,
+    firstTokenAmount,
+    secondTokenAmount
+  });
+
   useEffect(() => {
+    console.log({
+      firstAmount
+    });
+
     if (!firstAmount) {
       setSecondAmount('');
     }
@@ -807,56 +710,6 @@ export const Transfer = ({
           className={mxClsx(
             'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
             {
-              'liq-pointer-events-none': isTokenSelectorVisible
-            }
-          )}
-        >
-          <div className="liq-flex liq-items-center liq-gap-1">
-            <span>To</span>
-            <MvxAccountDisplay
-              accountAddress={mvxAddress}
-              chainIcon={mvxChain?.pngUrl ?? ''}
-              username={username}
-              accountExplorerUrl={`${options.mvxExplorerAddress}/accounts/${mvxAddress}`}
-              showTag={true}
-              onDisconnect={onMvxDisconnect}
-              onConnect={onMvxConnect}
-            />
-          </div>
-          <div className="liq-flex liq-justify-between liq-gap-1">
-            <AmountInput
-              inputName="secondAmount"
-              inputValue={formik.values.secondAmount}
-              amountError={amountErrorSecondInput}
-              disabled={false}
-              onInputDebounceChange={handleOnChangeSecondAmount}
-              onInputChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <TokenSelector
-              name={'secondToken'}
-              disabled={isPendingRate}
-              omitDisableClass={true}
-              options={toOptions}
-              areOptionsLoading={isTokensLoading}
-              isMvxSelector={true}
-              color="neutral-850"
-              onChange={onChangeSecondSelect}
-              onBlur={handleBlur}
-              selectedOption={secondToken}
-            />
-          </div>
-        </AmountCard>
-        <button className="inline-block" onClick={handleChangeDirection}>
-          <FontAwesomeIcon
-            icon={faExchangeAlt}
-            className="liq-h-6 liq-w-6 liq-text-neutral-100 liq-mx-auto liq-my-2"
-          />
-        </button>
-        <AmountCard
-          className={mxClsx(
-            'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
-            {
               'liq-pointer-events-none': isTokenSelectorVisible,
               'focus-within:liq-outline-neutral-700/75 hover:liq-outline-neutral-700/55 hover:focus-within:liq-outline-neutral-700/80':
                 !isTokenSelectorVisible
@@ -865,9 +718,14 @@ export const Transfer = ({
         >
           <div className="liq-flex liq-items-center liq-gap-1">
             <span>From</span>
-            <BridgeAccountDisplay
-              disabled={isPendingRate}
-              activeChain={selectedChainOption}
+            <MvxAccountDisplay
+              accountAddress={mvxAddress}
+              chainIcon={mvxChain?.pngUrl ?? ''}
+              username={username}
+              accountExplorerUrl={`${options.mvxExplorerAddress}/accounts/${mvxAddress}`}
+              showTag={true}
+              onDisconnect={onMvxDisconnect}
+              onConnect={onMvxConnect}
             />
           </div>
           <div className="liq-flex liq-justify-between liq-gap-1">
@@ -897,7 +755,51 @@ export const Transfer = ({
             />
           </div>
         </AmountCard>
-
+        <button className="inline-block" onClick={handleChangeDirection}>
+          <FontAwesomeIcon
+            icon={faExchangeAlt}
+            className="liq-h-6 liq-w-6 liq-text-neutral-100 liq-mx-auto liq-my-2"
+          />
+        </button>
+        <AmountCard
+          className={mxClsx(
+            'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
+            {
+              'liq-pointer-events-none': isTokenSelectorVisible
+            }
+          )}
+        >
+          <div className="liq-flex liq-items-center liq-gap-1">
+            <span>To</span>
+            <BridgeAccountDisplay
+              disabled={isPendingRate}
+              activeChain={selectedChainOption}
+            />
+          </div>
+          <div className="liq-flex liq-justify-between liq-gap-1">
+            <AmountInput
+              inputName="secondAmount"
+              inputValue={formik.values.secondAmount}
+              amountError={amountErrorSecondInput}
+              disabled={false}
+              onInputDebounceChange={handleOnChangeSecondAmount}
+              onInputChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <TokenSelector
+              name={'secondToken'}
+              disabled={isPendingRate}
+              omitDisableClass={true}
+              options={toOptions}
+              areOptionsLoading={isTokensLoading}
+              isMvxSelector={true}
+              color="neutral-850"
+              onChange={onChangeSecondSelect}
+              onBlur={handleBlur}
+              selectedOption={secondToken}
+            />
+          </div>
+        </AmountCard>
         <div className="liq-flex liq-items-center liq-justify-center">
           {!mvxAddress && (
             <MvxConnectButton
@@ -923,40 +825,22 @@ export const Transfer = ({
                 isPendingRate ||
                 !mvxAddress ||
                 !account.address ||
-                hasError ||
-                pendingSigning
+                hasError
               }
             >
-              {hasAmounts && !pendingSigning && (
+              {hasAmounts && (
                 <div className="liq-flex liq-justify-center liq-gap-2">
-                  <div>Deposit on </div>
+                  <div>Transfer to </div>
                   <img
-                    src={mvxChain?.pngUrl ?? ''}
+                    src={selectedChainOption?.pngUrl ?? ''}
                     alt=""
                     className="liq-h-[1.5rem] liq-w-[1.5rem]"
                   />
-                  <div>MultiversX</div>
+                  <div>{activeChain?.name}</div>
                 </div>
               )}
-              {!hasAmounts && !pendingSigning && (
+              {!hasAmounts && (
                 <span className="liq-text-neutral-100">Enter amount</span>
-              )}
-
-              {pendingSigning && (
-                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
-                  <FontAwesomeIcon
-                    icon={faSpinner}
-                    spin
-                    className="liq-mx-1 liq-flex liq-items-center"
-                  />
-                  <div>Depositing on</div>
-                  <img
-                    src={mvxChain?.pngUrl ?? ''}
-                    alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
-                  />
-                  <div>MultiversX</div>
-                </div>
               )}
             </MxButton>
           )}
