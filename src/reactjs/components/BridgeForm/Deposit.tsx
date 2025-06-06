@@ -1,4 +1,3 @@
-import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
@@ -42,6 +41,7 @@ import {
   MvxAccountDisplay,
   MvxConnectButton
 } from '../Connect';
+import { ToggleDirection } from '../ToggleDirection/ToggleDirection.tsx';
 import { TokenSelector } from '../TokenSelector';
 
 interface BridgeFormProps {
@@ -394,23 +394,10 @@ export const Deposit = ({
     [fromOptions, updateUrlParams]
   );
 
-  const handleChangeDirection = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const handleChangeDirection = () => {
     if (!firstToken || !secondToken) {
       return;
     }
-
-    // const tempFirstToken = firstToken;
-    // const tempFirstAmount = firstAmount;
-    //
-    // setFirstToken(secondToken);
-    // setFirstAmount(secondAmount);
-    // setSecondToken(tempFirstToken);
-    // setSecondAmount(tempFirstAmount);
 
     updateUrlParams({
       firstTokenId: secondToken?.address,
@@ -846,12 +833,9 @@ export const Deposit = ({
             />
           </div>
         </AmountCard>
-        <button className="inline-block" onClick={handleChangeDirection}>
-          <FontAwesomeIcon
-            icon={faExchangeAlt}
-            className="liq-h-6 liq-w-6 liq-text-neutral-100 liq-mx-auto liq-my-2"
-          />
-        </button>
+        <div className="liq-absolute liq-left-[6%] liq-top-[40%] -liq-mt-1 liq-z-20">
+          <ToggleDirection onChangeDirection={handleChangeDirection} />
+        </div>
         <AmountCard
           className={mxClsx(
             'liq-pb-8 liq-pt-6 hover:liq-bg-neutral-700/50 sm:liq-pb-6',
