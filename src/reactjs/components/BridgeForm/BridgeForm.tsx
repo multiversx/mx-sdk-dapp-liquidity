@@ -48,8 +48,6 @@ export const BridgeForm = ({
   const [direction, setDirection] = useState<'deposit' | 'withdraw'>('deposit');
 
   const handleChangeDirection = () => {
-    console.log('handleChangeDirection', direction);
-
     setDirection((prevState) =>
       prevState === 'deposit' ? 'withdraw' : 'deposit'
     );

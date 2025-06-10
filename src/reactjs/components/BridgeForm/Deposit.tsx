@@ -757,7 +757,6 @@ export const Deposit = ({
   }, [mvxTokensWithBalances, secondToken?.address]);
 
   useEffect(() => {
-    console.log('Deposit');
     if (firstTokenAmount) {
       formik.setFieldValue(
         BridgeFormikValuesEnum.firstAmount,

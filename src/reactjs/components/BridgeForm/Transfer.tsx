@@ -504,12 +504,8 @@ export const Transfer = ({
       setSigningTransactionsCount(() => transactions.length);
 
       try {
-        const signedTransactions = await signMvxTransactions(
-          transactions as ITransaction[]
-        );
-
+        await signMvxTransactions(transactions as ITransaction[]);
         setLatestTransactions(transactions);
-        console.log('Signed transactions:', signedTransactions);
       } catch (e) {
         console.error(e);
         toast.dismiss();
@@ -574,10 +570,6 @@ export const Transfer = ({
   }, [fromChainError, secondAmountError, secondAmount]);
 
   useEffect(() => {
-    console.log({
-      firstAmount
-    });
-
     if (!firstAmount) {
       setSecondAmount('');
     }
