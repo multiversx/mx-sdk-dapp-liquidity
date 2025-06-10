@@ -7,7 +7,6 @@ import { PropsWithChildren, useMemo } from 'react';
 import { createContext } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { getQueryClient } from './queryClient';
-import { ServerTransaction } from '../../types';
 import { InitOptions } from '../init/init';
 
 export type Web3AppContextProps = {
@@ -17,9 +16,12 @@ export type Web3AppContextProps = {
   supportedChains: AppKitNetwork[];
   nativeAuthToken: string;
   bridgeOnly?: boolean;
-  signMvxTransactions: (
-    transactions: ITransaction[]
-  ) => Promise<ServerTransaction[]>;
+  signMvxTransactions: (transactions: ITransaction[]) => Promise<{
+    error?: string;
+    batchId?: string;
+  }>;
+  latestMvxTransactionHash?: string;
+  resetMvxTransactionHash?: () => void;
 };
 
 const queryClient = getQueryClient();
@@ -36,7 +38,9 @@ export function Web3AppProvider({
   supportedChains,
   nativeAuthToken,
   bridgeOnly = true,
-  signMvxTransactions
+  signMvxTransactions,
+  latestMvxTransactionHash,
+  resetMvxTransactionHash
 }: PropsWithChildren<Web3AppContextProps>) {
   const value = useMemo<Web3AppContextProps>(() => {
     return {
@@ -46,7 +50,9 @@ export function Web3AppProvider({
       supportedChains,
       nativeAuthToken,
       bridgeOnly,
-      signMvxTransactions
+      signMvxTransactions,
+      latestMvxTransactionHash,
+      resetMvxTransactionHash
     };
   }, [config, appKit, options, nativeAuthToken, signMvxTransactions]);
 

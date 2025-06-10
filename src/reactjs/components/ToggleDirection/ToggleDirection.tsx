@@ -14,7 +14,7 @@ export const ToggleDirection = ({
   };
 
   return (
-    <button className="inline-block" onClick={handleChangeDirection}>
+    <button className="liq-inline-block" onClick={handleChangeDirection}>
       <img
         src={HugImage}
         alt={''}

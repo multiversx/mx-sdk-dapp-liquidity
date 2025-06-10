@@ -16,6 +16,8 @@ interface BridgeFormProps {
   forcedDestinationTokenSymbol?: string;
   onSuccessfullySentTransaction?: (txHashes?: string[]) => void;
   onFailedSentTransaction?: (message?: string) => void;
+  onSuccessfullySentMvxTransaction?: (txHashes?: string[]) => void;
+  onFailedSentMvxTransaction?: (message?: string) => void;
   onHistoryClose?: () => void;
   onMvxConnect: () => void;
   onMvxDisconnect?: () => void;
@@ -35,6 +37,8 @@ export const BridgeForm = ({
   showHistory,
   forcedDestinationTokenSymbol,
   onSuccessfullySentTransaction,
+  onSuccessfullySentMvxTransaction,
+  onFailedSentMvxTransaction,
   onFailedSentTransaction,
   onMvxConnect,
   onMvxDisconnect,
@@ -88,8 +92,8 @@ export const BridgeForm = ({
       forcedDestinationTokenSymbol={forcedDestinationTokenSymbol}
       direction={direction}
       onChangeDirection={handleChangeDirection}
-      onSuccessfullySentTransaction={onSuccessfullySentTransaction}
-      onFailedSentTransaction={onFailedSentTransaction}
+      onSuccessfullySentTransaction={onSuccessfullySentMvxTransaction}
+      onFailedSentTransaction={onFailedSentMvxTransaction}
       onHistoryClose={onHistoryClose}
       onMvxConnect={onMvxConnect}
       onMvxDisconnect={onMvxDisconnect}

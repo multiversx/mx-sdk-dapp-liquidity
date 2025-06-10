@@ -2,6 +2,7 @@ import { useAppKitNetwork } from '@reown/appkit/react';
 import { useEffect, useMemo } from 'react';
 import { useAccount } from './useAccount';
 import { MVX_CHAIN_IDS } from '../../constants';
+import { useWeb3App } from '../context/useWeb3App.ts';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import {
   invalidateMvxTokensBalancesQuery,
@@ -23,12 +24,16 @@ export const useFetchTokens = ({
 }) => {
   const { chainId } = useAppKitNetwork();
   const account = useAccount();
+  const { nativeAuthToken, bridgeOnly } = useWeb3App();
 
   const {
     data: tokens,
     isLoading: isTokensLoading,
     isError: isTokensError
-  } = useGetAllTokensQuery();
+  } = useGetAllTokensQuery({
+    nativeAuthToken,
+    bridgeOnly
+  });
 
   const evmTokens = useMemo(
     () =>

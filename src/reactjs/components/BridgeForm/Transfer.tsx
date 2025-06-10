@@ -6,10 +6,13 @@ import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { getApiURL } from '../../../helpers';
+import { ProviderType } from '../../../types/providerType.ts';
 import { TokenType } from '../../../types/token';
 import { ServerTransaction } from '../../../types/transaction';
 import { safeWindow } from '../../constants';
 import { useWeb3App } from '../../context/useWeb3App';
+import { useSendTransactions } from '../../hooks';
 import { useAccount } from '../../hooks/useAccount';
 import {
   BridgeFormikValuesEnum,
@@ -88,6 +91,9 @@ export const Transfer = ({
   const [forceRefetchRate, setForceRefetchRate] = useState(1);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
     useState<number>(0);
+  const [latestTransactions, setLatestTransactions] = useState<
+    ServerTransaction[]
+  >([]);
   const account = useAccount();
   const { switchNetwork } = useAppKitNetwork();
   const {
@@ -97,8 +103,13 @@ export const Transfer = ({
     nativeAuthToken
   } = useWeb3App();
   const chainId = useGetChainId();
+  const sendTransactions = useSendTransactions();
 
-  const { signMvxTransactions } = useWeb3App();
+  const {
+    signMvxTransactions,
+    resetMvxTransactionHash,
+    latestMvxTransactionHash
+  } = useWeb3App();
 
   const {
     evmTokensWithBalances,
@@ -490,7 +501,6 @@ export const Transfer = ({
 
   const onSubmit = useCallback(
     async ({ transactions }: { transactions: ServerTransaction[] }) => {
-      // let signedTransactions: ServerTransaction[] = [];
       setSigningTransactionsCount(() => transactions.length);
 
       try {
@@ -498,12 +508,8 @@ export const Transfer = ({
           transactions as ITransaction[]
         );
 
+        setLatestTransactions(transactions);
         console.log('Signed transactions:', signedTransactions);
-        //
-        // // TODO send singed transactions to the backend (the backend will send them to the blockchain)
-        //
-        // const txHashes = signedTransactions.map((tx) => tx.txHash);
-        // onSuccess(txHashes);
       } catch (e) {
         console.error(e);
         toast.dismiss();
@@ -566,13 +572,6 @@ export const Transfer = ({
       ? fromChainError ?? secondAmountError
       : undefined;
   }, [fromChainError, secondAmountError, secondAmount]);
-
-  console.log('Transfer', {
-    firstTokenIdentifier,
-    secondTokenIdentifier,
-    firstTokenAmount,
-    secondTokenAmount
-  });
 
   useEffect(() => {
     console.log({
@@ -657,8 +656,6 @@ export const Transfer = ({
   }, [mvxTokensWithBalances, secondToken?.address]);
 
   useEffect(() => {
-    console.log('Transfer');
-
     if (firstTokenAmount) {
       formik.setFieldValue(
         BridgeFormikValuesEnum.firstAmount,
@@ -678,7 +675,25 @@ export const Transfer = ({
     }
   }, [secondTokenAmount]);
 
-  // TODO change everywhere first token with second token.
+  useEffect(() => {
+    if (latestMvxTransactionHash) {
+      const txHash = latestMvxTransactionHash;
+      resetMvxTransactionHash?.();
+      onSuccessfullySentTransaction?.([txHash]);
+      sendTransactions({
+        transactions: latestTransactions as ServerTransaction[],
+        provider: rate?.provider ?? ProviderType.None,
+        url: getApiURL() ?? '',
+        token: nativeAuthToken ?? ''
+      });
+      setLatestTransactions([]);
+    }
+  }, [
+    latestMvxTransactionHash,
+    latestTransactions,
+    rate?.provider,
+    sendTransactions
+  ]);
 
   return (
     <>
@@ -741,7 +756,7 @@ export const Transfer = ({
             />
           </div>
         </AmountCard>
-        <div className="liq-absolute liq-left-[6%] liq-top-[40%] -liq-mt-1 liq-z-20">
+        <div className="liq-absolute liq-left-[6%] liq-top-[40%] -liq-mt-1 liq-z-10">
           <ToggleDirection onChangeDirection={handleChangeDirection} />
         </div>
         <AmountCard

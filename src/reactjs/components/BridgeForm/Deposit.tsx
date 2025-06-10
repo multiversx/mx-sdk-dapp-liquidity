@@ -833,7 +833,7 @@ export const Deposit = ({
             />
           </div>
         </AmountCard>
-        <div className="liq-absolute liq-left-[6%] liq-top-[40%] -liq-mt-1 liq-z-20">
+        <div className="liq-absolute liq-left-[6%] liq-top-[40%] -liq-mt-1 liq-z-10">
           <ToggleDirection onChangeDirection={handleChangeDirection} />
         </div>
         <AmountCard
