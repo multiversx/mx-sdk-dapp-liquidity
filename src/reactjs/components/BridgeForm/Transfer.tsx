@@ -669,16 +669,25 @@ export const Transfer = ({
 
   useEffect(() => {
     if (latestMvxTransactionHash) {
-      const txHash = latestMvxTransactionHash;
-      resetMvxTransactionHash?.();
-      onSuccessfullySentTransaction?.([txHash]);
-      sendTransactions({
-        transactions: latestTransactions.map((tx) => ({ ...tx, txHash })),
-        provider: rate?.provider ?? ProviderType.None,
-        url: getApiURL() ?? '',
-        token: nativeAuthToken ?? ''
-      });
-      setLatestTransactions([]);
+      try {
+        const txHash = latestMvxTransactionHash;
+        sendTransactions({
+          transactions: latestTransactions.map((tx) => ({ ...tx, txHash })),
+          provider: rate?.provider ?? ProviderType.None,
+          url: getApiURL() ?? '',
+          token: nativeAuthToken ?? ''
+        });
+        onSuccessfullySentTransaction?.([txHash]);
+      } catch (err) {
+        console.error('Error while sending transactions:', err);
+        onFailedSentTransaction?.(
+          'An error occurred while sending the transaction'
+        );
+        return;
+      } finally {
+        resetMvxTransactionHash?.();
+        setLatestTransactions([]);
+      }
     }
   }, [
     latestMvxTransactionHash,
