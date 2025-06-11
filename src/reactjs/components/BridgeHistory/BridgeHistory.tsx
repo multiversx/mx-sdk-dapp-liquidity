@@ -20,7 +20,6 @@ import { mxClsx } from '../../utils/mxClsx';
 import { MxTooltip } from '../base';
 import { MxButton } from '../base/MxButton';
 import { MxCard } from '../base/MxCard';
-import { MxLink } from '../base/MxLink';
 
 export const BridgeHistory = ({
   mvxAddress,
@@ -169,9 +168,9 @@ export const BridgeHistory = ({
                 />
               </div>
               <div className={mxClsx('liq-flex liq-flex-col liq-items-center')}>
-                <div className="liq-text-xl">No deposit yet</div>
+                <div className="liq-text-xl">No transactions</div>
                 <div className="liq-text-neutral-400">
-                  Your deposit history will appear here
+                  Your transactions history will appear here
                 </div>
               </div>
             </div>
@@ -273,7 +272,6 @@ export const BridgeHistory = ({
                           buttonText={
                             <FontAwesomeIcon
                               icon={faArrowUpShortWide}
-                              spin
                               className="liq-mx-1 liq-flex liq-items-center"
                             />
                           }
@@ -333,13 +331,12 @@ export const BridgeHistory = ({
                     )}
                   </div>
                   {transaction.provider === ProviderType.MultiversxBridge && (
-                    <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
-                      <MxLink
-                        to={`${options.bridgeURL}/status/${transaction.txHash}`}
-                        target="_blank"
-                        showExternalIcon={false}
-                        className="liq-flex"
-                      >
+                    <a
+                      href={`${options.bridgeURL}/status/${transaction.txHash}`}
+                      target="_blank"
+                      className="liq-flex"
+                    >
+                      <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
                         <MxTooltip
                           placement="top"
                           buttonText={
@@ -349,11 +346,12 @@ export const BridgeHistory = ({
                               className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
                             />
                           }
+                          shouldStopPropagation={false}
                         >
                           View
                         </MxTooltip>
-                      </MxLink>
-                    </div>
+                      </div>
+                    </a>
                   )}
                 </div>
               </MxCard>
