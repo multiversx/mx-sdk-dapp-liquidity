@@ -672,7 +672,11 @@ export const Transfer = ({
       try {
         const txHash = latestMvxTransactionHash;
         sendTransactions({
-          transactions: latestTransactions.map((tx) => ({ ...tx, txHash })),
+          transactions: latestTransactions.map((tx) => ({
+            ...tx,
+            txHash,
+            receiver: account.address
+          })),
           provider: rate?.provider ?? ProviderType.None,
           url: getApiURL() ?? '',
           token: nativeAuthToken ?? ''
