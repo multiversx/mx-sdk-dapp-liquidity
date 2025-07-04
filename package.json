@@ -2,6 +2,7 @@
   "name": "@multiversx/sdk-dapp-liquidity",
   "author": "MultiversX",
   "description": "A complete toolkit for bridging assets between MultiversX, Ethereum, and BNB Chain",
+  "version": "1.0.13-alpha.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/multiversx/mx-sdk-dapp-liquidity.git"
@@ -28,7 +29,6 @@
   },
   "homepage": "https://github.com/multiversx/mx-sdk-dapp-liquidity#readme",
   "license": "MIT",
-  "version": "1.0.13-alpha.0",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
