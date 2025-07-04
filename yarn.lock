@@ -1254,10 +1254,10 @@
     axios "^1.7.4"
     bip39 "3.1.0"
 
-"@multiversx/sdk-dapp-utils@1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@multiversx/sdk-dapp-utils/-/sdk-dapp-utils-1.0.5.tgz#e72501fa92ca4977b270405c1e2fe17724d4e88b"
-  integrity sha512-RiylwKK4JPgD67UV8SpK/szN/2L04/Q20qGbvKpQUZr7Sfhjukw0A8xmC4k2gp/MF8WWwnfxPLMVkToKw6Qv/w==
+"@multiversx/sdk-dapp-utils@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@multiversx/sdk-dapp-utils/-/sdk-dapp-utils-2.0.2.tgz#a82252ca166ba24462e925c5a8d249fd8e166906"
+  integrity sha512-qxkYV3qtLxY6nckXsxtYZJ8zLY0zalpxgLQfYWaz2uOjEswraky/2PLxSaws1ts0YP3PPc0SrKIDfN9wVOA7EQ==
 
 "@multiversx/sdk-transaction-decoder@1.0.2":
   version "1.0.2"
