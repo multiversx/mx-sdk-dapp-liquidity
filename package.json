@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/multiversx/mx-sdk-dapp-liquidity#readme",
   "license": "MIT",
-  "version": "1.0.13",
+  "version": "1.0.13-alpha.0",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
@@ -49,8 +49,8 @@
     "@fortawesome/free-solid-svg-icons": "6.5.1",
     "@fortawesome/react-fontawesome": "0.2.0",
     "@headlessui/react": "2.2.0",
-    "@multiversx/sdk-dapp-utils": "1.0.5",
-    "@reown/appkit-adapter-wagmi": "1.6.9",
+    "@multiversx/sdk-dapp-utils": "2.0.2",
+    "@reown/appkit-adapter-wagmi": "1.7.12",
     "@tanstack/react-query": "5.62.7",
     "@types/numeral": "2.0.5",
     "animated-number-react": "0.1.2",
@@ -64,16 +64,16 @@
     "react-select": "5.10.0",
     "react-toastify": "11.0.3",
     "tailwind-merge": "2.6.0",
-    "viem": "2.23.7",
-    "wagmi": "2.14.12",
+    "viem": "2.31.6",
+    "wagmi": "2.15.6",
     "yup": "1.4.0"
   },
   "peerDependencies": {
-    "@multiversx/sdk-core": ">= 13",
-    "react": ">= 18",
-    "react-dom": ">= 18",
-    "react-router-dom": ">= 6",
-    "tailwindcss": ">= 3"
+    "@multiversx/sdk-core": "^14.x",
+    "react": "^18.x",
+    "react-dom": "^18.x",
+    "react-router-dom": "^6.x",
+    "tailwindcss": "^3.x"
   },
   "devDependencies": {
     "@multiversx/sdk-core": "13.17.1",

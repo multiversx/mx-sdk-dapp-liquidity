@@ -63,17 +63,19 @@ function init(options: InitOptions) {
     )
     .map((network) => network) as AppKitNetwork[];
 
+  const supportedChains = [...acceptedNetworks] as AppKitNetwork[];
+
   const wagmiAdapter = new WagmiAdapter({
     ...options.adapterConfig,
     ssr: options.adapterConfig.ssr ?? true,
     projectId: options.appKitOptions.projectId,
-    networks: acceptedNetworks
+    networks: supportedChains
   });
 
   const appKit = createAppKit({
     ...options.appKitOptions,
     adapters: [wagmiAdapter],
-    networks: [acceptedNetworks[0], ...acceptedNetworks.slice(1)]
+    networks: [supportedChains[0], ...supportedChains.slice(1)]
   });
 
   return {
