@@ -39,16 +39,6 @@ export const useSignTransaction = () => {
         ...instruction
       });
 
-      // const instructionData = Buffer.from(instruction.data);
-      // const sender = new PublicKey(instruction.keys[0].pubkey);
-      // const receiver = new PublicKey(instruction.keys[1].pubkey);
-
-      // const transactionInstruction = new TransactionInstruction({
-      //   keys: instruction.keys,
-      //   programId: new PublicKey(instruction.programId),
-      //   data: instruction.data // instructionData
-      // });
-
       const transaction = new Transaction().add(transactionInstruction);
       transaction.feePayer = new PublicKey(feePayer);
 
