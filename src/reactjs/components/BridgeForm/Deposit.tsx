@@ -41,7 +41,7 @@ import {
   MvxAccountDisplay,
   MvxConnectButton
 } from '../Connect';
-import { ToggleDirection } from '../ToggleDirection/ToggleDirection.tsx';
+import { ToggleDirection } from '../ToggleDirection/ToggleDirection';
 import { TokenSelector } from '../TokenSelector';
 
 interface BridgeFormProps {

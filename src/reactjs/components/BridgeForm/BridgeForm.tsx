@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Deposit } from './Deposit.tsx';
-import { Transfer } from './Transfer.tsx';
+import { Deposit } from './Deposit';
+import { Transfer } from './Transfer';
 
 interface BridgeFormProps {
   mvxChainId: string;
