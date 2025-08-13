@@ -1,3 +1,5 @@
+import { ProviderType } from '../types/providerType';
+
 export interface TransactionDTO {
   fromChainId: string;
   toChainId: string;
@@ -11,4 +13,6 @@ export interface TransactionDTO {
   receiver: string;
   fee: string;
   txHash: string;
+  provider: ProviderType;
+  orderId?: string;
 }

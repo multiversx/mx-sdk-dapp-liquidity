@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ChainDTO } from 'dto/Chain.dto';
+import { ChainType } from 'types/chainType';
 import { getChains } from '../getChains';
 
 jest.mock('axios');
@@ -11,13 +12,13 @@ describe('getChains', () => {
   it('fetches chains successfully', async () => {
     const response: ChainDTO[] = [
       {
-        chainId: 1,
+        chainId: '1',
         chainName: 'msx',
         pngUrl:
           'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.png',
         svgUrl:
           'https://devnet-tools.multiversx.com/liquidity-sdk/ethereum/icon.svg',
-        chainType: 'type1',
+        chainType: ChainType.evm,
         rpc: 'rpc1',
         blockExplorerUrls: ['explorer1'],
         nativeCurrency: {
@@ -31,7 +32,11 @@ describe('getChains', () => {
     ];
     mockedAxios.get.mockResolvedValue({ data: response });
 
-    const result = await getChains({ url });
+    const result = await getChains({
+      url,
+      nativeAuthToken: 'ZKssadass',
+      bridgeOnly: false
+    });
 
     expect(mockedAxios.get).toHaveBeenCalledWith('/chains', { baseURL: url });
     expect(result.data).toEqual(response);
@@ -40,6 +45,8 @@ describe('getChains', () => {
   it('handles error when fetching chains', async () => {
     mockedAxios.get.mockRejectedValue(new Error('Network Error'));
 
-    await expect(getChains({ url })).rejects.toThrow('Network Error');
+    await expect(
+      getChains({ url, nativeAuthToken: 'ZKssadass', bridgeOnly: false })
+    ).rejects.toThrow('Network Error');
   });
 });

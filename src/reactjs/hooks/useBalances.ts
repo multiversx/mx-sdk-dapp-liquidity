@@ -1,56 +1,63 @@
-import { getBalance } from '@wagmi/core';
+import { useAppKitAccount } from '@reown/appkit/react';
+import axios from 'axios';
 import { useCallback } from 'react';
+import { getApiURL } from 'helpers/getApiURL';
+import { TokenType } from '../../types';
 import { useWeb3App } from '../context/useWeb3App';
 
 export const useBalances = () => {
   const { config } = useWeb3App();
+  const { address, isConnected } = useAppKitAccount();
+  const { nativeAuthToken } = useWeb3App();
 
-  const fetchBalances = useCallback(
-    async ({
-      address,
-      chainId,
-      tokenIdentifiers
-    }: {
-      address: `0x${string}`;
-      chainId: string;
-      tokenIdentifiers: string[];
-    }) => {
-      return await Promise.all(
-        tokenIdentifiers.map(async (tokenIdentifier) => {
-          try {
-            const balance = await getBalance(config, {
-              address: address as `0x${string}`,
-              chainId: Number(chainId),
-              // TODO: fix this using the API support
-              // omit passing the token for fetching the native currency balance
-              token:
-                tokenIdentifier.length > 10
-                  ? (tokenIdentifier as `0x${string}`)
-                  : undefined
-            });
+  const fetchBalances = async (chainId: string) => {
+    const url = `${getApiURL()}/user/balance/${address}?chainId=${chainId}`;
 
-            return {
-              tokenId: tokenIdentifier,
-              balance: balance.value.toString()
-            };
-          } catch (error) {
-            console.warn(
-              'Error fetching balance for: ',
-              tokenIdentifier,
-              error
-            );
-            return {
-              tokenId: tokenIdentifier,
-              balance: '0'
-            };
-          }
-        })
+    try {
+      const { data } = await axios.get<
+        {
+          tokenAddress: string;
+          balance: string;
+        }[]
+      >(url, {
+        headers: {
+          Authorization: `Bearer ${nativeAuthToken}`
+        }
+      });
+      return data.reduce(
+        (acc, cur) => {
+          acc[cur.tokenAddress] = cur.balance;
+          return acc;
+        },
+        {} as Record<string, string>
       );
+    } catch (error) {
+      throw new Error(`Error fetching balances: ${error}`);
+    }
+  };
+
+  const getBalances = useCallback(
+    async ({ tokens, chainId }: { tokens: TokenType[]; chainId: string }) => {
+      const tokensBalances = await fetchBalances(chainId);
+
+      return tokens.map((token) => {
+        if (!isConnected || !address || !token.chainId) {
+          return {
+            tokenId: token.address,
+            balance: '0'
+          };
+        }
+
+        return {
+          tokenId: token.address,
+          balance: tokensBalances[token.address] ?? '0'
+        };
+      });
     },
-    [config]
+    [config, isConnected, address]
   );
 
   return {
-    fetchBalances
+    getBalances
   };
 };

@@ -17,9 +17,9 @@ export const SelectedChainOption = ({
         className="liq-h-6 liq-w-6 liq-flex liq-justify-between liq-items-center liq-cursor-pointer"
         onClick={onMenuOpen}
       >
-        {chain?.svgUrl ? (
+        {chain?.pngUrl ? (
           <img
-            src={chain.svgUrl ?? chainIdentifier[chain.name as ChainNameType]}
+            src={chain.pngUrl ?? chainIdentifier[chain.name as ChainNameType]}
             alt={''}
             loading="lazy"
             className="liq-h-full liq-w-full"

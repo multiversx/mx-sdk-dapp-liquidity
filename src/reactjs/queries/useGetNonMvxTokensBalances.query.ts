@@ -2,11 +2,11 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useMemo } from 'react';
-import { TokenType } from '../../types/token';
+import { TokenType } from '../../types';
 import { getQueryClient } from '../context/queryClient';
-import { useBalances } from '../hooks/useBalances';
+import { useBalances } from '../hooks';
 
-export const useGetEvmTokensBalancesQuery = ({
+export const useGetNonMvxTokensBalancesQuery = ({
   tokens,
   chainId
 }: {
@@ -14,13 +14,11 @@ export const useGetEvmTokensBalancesQuery = ({
   chainId?: string;
 }) => {
   const { address } = useAppKitAccount();
-  const { fetchBalances } = useBalances();
-
-  const tokenIdentifiers = useMemo(() => {
-    return tokens
-      .filter((token) => token.chainId.toString() === chainId?.toString())
-      .map(({ address: tokenId }) => tokenId);
-  }, [tokens, chainId]);
+  const { getBalances } = useBalances();
+  const identifiers = useMemo(
+    () => tokens.map((token) => token.address),
+    [tokens]
+  );
 
   const queryFn = async () => {
     try {
@@ -32,10 +30,9 @@ export const useGetEvmTokensBalancesQuery = ({
         throw new Error('Chain ID is required');
       }
 
-      const assets = await fetchBalances({
-        address: address as `0x${string}`,
-        chainId: chainId.toString(),
-        tokenIdentifiers
+      const assets = await getBalances({
+        tokens,
+        chainId
       });
 
       return assets.map((asset) => {
@@ -62,24 +59,20 @@ export const useGetEvmTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: [
-      'evm-tokens-balances',
-      address,
-      chainId,
-      tokenIdentifiers.sort()
-    ],
+    queryKey: ['non-mvx-tokens-balances', address, chainId, identifiers],
     queryFn,
     retry,
     enabled: Boolean(address) && Boolean(chainId),
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: true,
     refetchInterval: 20000,
+    refetchOnReconnect: 'always',
     gcTime: 0
   });
 };
 
 export function invalidateEvmTokensBalances() {
-  const queryKey = ['evm-tokens-balances'];
+  const queryKey = ['non-mvx-tokens-balances'];
   const queryClient = getQueryClient();
   queryClient.invalidateQueries({
     queryKey

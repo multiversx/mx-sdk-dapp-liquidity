@@ -1,13 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useWeb3App } from 'reactjs/context/useWeb3App';
 import { getChains } from '../../api/getChains';
 import { getApiURL } from '../../helpers/getApiURL';
 
 export const useGetChainsQuery = () => {
+  const { nativeAuthToken, bridgeOnly } = useWeb3App();
+
   const queryFn = async () => {
     try {
       const { data } = await getChains({
-        url: getApiURL()
+        url: getApiURL(),
+        nativeAuthToken,
+        bridgeOnly: Boolean(bridgeOnly)
       });
       return data;
     } catch (error) {
@@ -20,7 +25,7 @@ export const useGetChainsQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['chains'],
+    queryKey: ['chains', nativeAuthToken],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

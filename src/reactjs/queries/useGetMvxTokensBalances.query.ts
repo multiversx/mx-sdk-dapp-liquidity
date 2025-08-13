@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
 import { getQueryClient } from '../context/queryClient';
+import { useWeb3App } from '../context/useWeb3App';
 
 export const useGetMvxTokensBalancesQuery = ({
   tokens,
@@ -13,15 +14,22 @@ export const useGetMvxTokensBalancesQuery = ({
   mvxAddress?: string;
   apiURL: string;
 }) => {
+  const { nativeAuthToken } = useWeb3App();
+
   const tokenIdentifiers = useMemo(() => {
     return tokens.map(({ address }) => address);
   }, [tokens]);
   const url = `${apiURL}/accounts/${mvxAddress}/tokens?identifiers=${tokenIdentifiers}`;
 
+  const config: AxiosRequestConfig = {
+    headers: {
+      Authorization: `Bearer ${nativeAuthToken}`
+    },
+    timeout: 3000
+  };
+
   const queryFn = async () => {
-    const { data } = await axios.get<MvxTokenType[]>(url, {
-      timeout: 3000
-    });
+    const { data } = await axios.get<MvxTokenType[]>(url, config);
 
     return data.map((asset) => {
       const foundToken = tokens.find(
@@ -46,7 +54,12 @@ export const useGetMvxTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['mvx-tokens-balances', mvxAddress, tokenIdentifiers.sort()],
+    queryKey: [
+      'mvx-tokens-balances',
+      mvxAddress,
+      tokenIdentifiers.sort(),
+      nativeAuthToken
+    ],
     queryFn,
     retry,
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,

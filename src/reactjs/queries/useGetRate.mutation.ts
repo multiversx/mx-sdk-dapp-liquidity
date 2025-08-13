@@ -17,21 +17,6 @@ export const useGetRateMutation = () => {
   };
 
   return useMutation({
-    mutationFn,
-    onSuccess: (data) => {
-      const currentTime = new Date().getTime();
-
-      if (data.expiresAt && new Date(data.expiresAt).getTime() < currentTime) {
-        console.warn('Retrying due to expired rate');
-        throw new Error('Retrying due to expired rate');
-      }
-
-      return data;
-    },
-    retry: (failureCount, error) => {
-      return (
-        error.message === 'Retrying due to expired rate' && failureCount < 2
-      );
-    }
+    mutationFn
   });
 };

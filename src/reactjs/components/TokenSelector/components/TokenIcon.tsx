@@ -31,10 +31,10 @@ export const TokenIcon = ({
         return <img src={DefaultIcon} alt="" />;
       }
 
-      return token.svgUrl && token.svgUrl !== '' ? (
+      return token.pngUrl && token.pngUrl !== '' ? (
         <>
           <img
-            src={token.svgUrl}
+            src={token.pngUrl}
             alt=""
             className="liq-asset-icon liq-sm liq-p-0"
           />

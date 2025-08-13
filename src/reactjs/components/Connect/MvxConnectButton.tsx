@@ -1,10 +1,9 @@
-import { ChainDTO } from '../../../dto/Chain.dto';
 import { mxClsx } from '../../utils/mxClsx';
 import { MxButton } from '../base/MxButton';
 
 interface ConnectButtonProps {
   mvxAccountAddress?: string;
-  chain?: ChainDTO;
+  icon?: string;
   disabled?: boolean;
   className?: string;
   onClick?: () => void;
@@ -12,7 +11,7 @@ interface ConnectButtonProps {
 
 export const MvxConnectButton = ({
   mvxAccountAddress,
-  chain,
+  icon,
   disabled,
   className = '',
   onClick
@@ -35,7 +34,7 @@ export const MvxConnectButton = ({
       <div className="liq-flex liq-justify-center liq-gap-2">
         <div>Connect </div>
         <img
-          src={chain?.svgUrl ?? ''}
+          src={icon ?? ''}
           alt=""
           className="liq-h-[1.5rem] liq-w-[1.5rem]"
         />

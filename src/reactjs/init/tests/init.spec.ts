@@ -1,6 +1,5 @@
-import { Metadata } from '@reown/appkit';
 import { mainnet } from '@reown/appkit/networks';
-import { createAppKit } from '@reown/appkit/react';
+import { Metadata, createAppKit } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import { CreateConfigParameters } from '@wagmi/core';
@@ -11,8 +10,8 @@ const projectID = 'testProjectID';
 
 describe('init', () => {
   const mockMetadata: Metadata = {
-    name: 'mx-sdk-dapp-liquidity',
-    description: 'mx-sdk-dapp-liquidity example',
+    name: 'sdk-dapp-liquidity',
+    description: 'sdk-dapp-liquidity example',
     url: 'https://example.com',
     icons: ['https://avatars.githubusercontent.com/u/179229932']
   };
@@ -42,7 +41,7 @@ describe('init', () => {
         metadata: mockMetadata,
         debug: true
       },
-      acceptedChainIDs: [1],
+      acceptedChainIDs: ['1'],
       apiURL: 'https://localhost:3000',
       bridgeURL: 'https://devnet-bridge.example.com',
       mvxApiURL: 'https://devnet-api.multiversx.com',
@@ -76,7 +75,7 @@ describe('init', () => {
         projectId: projectID,
         metadata: mockMetadata
       },
-      acceptedChainIDs: [1],
+      acceptedChainIDs: ['1'],
       apiURL: 'https://localhost:3000',
       bridgeURL: 'https://devnet-bridge.example.com',
       mvxApiURL: 'https://devnet-api.multiversx.com',
@@ -101,7 +100,7 @@ describe('init', () => {
         metadata: mockMetadata,
         debug: false
       },
-      acceptedChainIDs: [1],
+      acceptedChainIDs: ['1'],
       apiURL: 'https://localhost:3000',
       bridgeURL: 'https://devnet-bridge.example.com',
       mvxApiURL: 'https://devnet-api.multiversx.com',

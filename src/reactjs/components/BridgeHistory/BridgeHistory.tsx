@@ -1,3 +1,5 @@
+import { faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons/faArrowDownShortWide';
+import { faArrowUpShortWide } from '@fortawesome/free-solid-svg-icons/faArrowUpShortWide';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons/faCircleCheck';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons/faCircleXmark';
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
@@ -7,6 +9,7 @@ import { useCallback, useMemo } from 'react';
 import { MVX_CHAIN_IDS } from '../../../constants';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { TransactionDTO } from '../../../dto/Transaction.dto';
+import { ProviderType } from '../../../types/providerType';
 import { TokenType } from '../../../types/token';
 import ArrowUpRight from '../../assets/arrow-up-right.svg';
 import { useWeb3App } from '../../context/useWeb3App';
@@ -14,9 +17,9 @@ import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetHistoryQuery } from '../../queries/useGetHistory.query';
 import { formatAmount } from '../../utils/formatAmount';
 import { mxClsx } from '../../utils/mxClsx';
+import { MxTooltip } from '../base';
 import { MxButton } from '../base/MxButton';
 import { MxCard } from '../base/MxCard';
-import { MxLink } from '../base/MxLink';
 
 export const BridgeHistory = ({
   mvxAddress,
@@ -26,7 +29,9 @@ export const BridgeHistory = ({
   onClose: () => void;
 }) => {
   const { options } = useWeb3App();
-  const { data, isLoading, isError } = useGetHistoryQuery();
+  const { data, isLoading, isError } = useGetHistoryQuery({
+    address: mvxAddress
+  });
 
   const resolveTransactionIcon = useCallback((transaction: TransactionDTO) => {
     switch (transaction.status) {
@@ -163,9 +168,9 @@ export const BridgeHistory = ({
                 />
               </div>
               <div className={mxClsx('liq-flex liq-flex-col liq-items-center')}>
-                <div className="liq-text-xl">No deposit yet</div>
+                <div className="liq-text-xl">No transactions</div>
                 <div className="liq-text-neutral-400">
-                  Your deposit history will appear here
+                  Your transactions history will appear here
                 </div>
               </div>
             </div>
@@ -191,68 +196,163 @@ export const BridgeHistory = ({
                       'liq-text-red-200': transaction.status === 'failed'
                     })}
                   >
-                    {transaction.statusIcon}
-                    <span>
-                      {MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                        ? 'Deposit'
-                        : 'Transfer'}
-                    </span>
-                    <img
-                      src={
-                        MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                          ? tokensMap[transaction.tokenDestination]?.svgUrl
-                          : tokensMap[transaction.tokenSource]?.svgUrl
-                      }
-                      alt=""
-                      className="liq-h-[1.5rem] liq-w-[1.5rem]"
-                    />
-                    <span className="liq-whitespace-nowrap liq-overflow-hidden liq-text-ellipsis">
-                      {formatAmount({
-                        decimals: MVX_CHAIN_IDS.includes(
-                          Number(transaction.toChainId)
-                        )
-                          ? tokensMap[transaction.tokenSource]?.decimals
-                          : tokensMap[transaction.tokenDestination]?.decimals,
-                        amount: transaction.amountIn,
-                        addCommas: false,
-                        digits: 2
-                      })}
-                    </span>
-                    <span className="liq-whitespace-nowrap">
-                      {tokensMap[transaction.tokenSource]?.symbol}
-                    </span>
-                    <span>
-                      {MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                        ? 'from'
-                        : 'to'}
-                    </span>
-                    <img
-                      src={
-                        chainsMap[
-                          MVX_CHAIN_IDS.includes(Number(transaction.toChainId))
-                            ? transaction.fromChainId.toString()
-                            : transaction.toChainId.toString()
-                        ]?.svgUrl ?? ''
-                      }
-                      alt=""
-                      className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
-                    />
+                    <MxTooltip
+                      placement="top"
+                      buttonText={transaction.statusIcon}
+                    >
+                      {new Date(
+                        transaction.depositTimestamp * 1000
+                      ).toLocaleString()}
+                    </MxTooltip>
+
+                    {MVX_CHAIN_IDS.includes(transaction.toChainId) ? (
+                      <>
+                        <MxTooltip
+                          placement="top"
+                          buttonText={
+                            <FontAwesomeIcon
+                              icon={faArrowDownShortWide}
+                              className="liq-mx-1 liq-flex liq-items-center"
+                            />
+                          }
+                        >
+                          Deposit
+                        </MxTooltip>
+                        <span className="liq-text-wrap">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenDestination]?.decimals,
+                            amount: transaction.amountOut,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenDestination]?.symbol}
+                        </span>
+                        <img
+                          src={tokensMap[transaction.tokenDestination]?.pngUrl}
+                          alt=""
+                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                        />
+                        <span className="liq-whitespace-nowrap">from</span>
+                        <span className="liq-text-wrap">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenSource]?.decimals,
+                            amount: transaction.amountIn,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenSource]?.symbol}
+                        </span>
+                        <div className="liq-flex liq-items-center liq-relative">
+                          <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                              <img
+                                src={tokensMap[transaction.tokenSource]?.pngUrl}
+                                alt=""
+                                className="liq-asset-icon liq-sm liq-p-0"
+                              />
+                            </div>
+                          </div>
+                          <img
+                            src={chainsMap[transaction.fromChainId]?.pngUrl}
+                            alt=""
+                            className="liq-absolute liq-left-3 liq-bottom-[-2px] liq-chain-icon liq-sm liq-w-5 liq-h-5 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <MxTooltip
+                          placement="top"
+                          buttonText={
+                            <FontAwesomeIcon
+                              icon={faArrowUpShortWide}
+                              className="liq-mx-1 liq-flex liq-items-center"
+                            />
+                          }
+                        >
+                          Transfer
+                        </MxTooltip>
+                        <span className="liq-text-wrap">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenSource]?.decimals,
+                            amount: transaction.amountIn,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenSource]?.symbol}
+                        </span>
+                        <img
+                          src={tokensMap[transaction.tokenSource]?.pngUrl}
+                          alt=""
+                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                        />
+                        <span className="liq-whitespace-nowrap">to</span>
+                        <span className="liq-text-wrap">
+                          {formatAmount({
+                            decimals:
+                              tokensMap[transaction.tokenDestination]?.decimals,
+                            amount: transaction.amountOut,
+                            addCommas: false,
+                            digits: 2
+                          })}
+                        </span>
+                        <span className="liq-whitespace-nowrap">
+                          {tokensMap[transaction.tokenDestination]?.symbol}
+                        </span>
+                        <div className="liq-flex liq-items-center liq-relative">
+                          <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                              <img
+                                src={
+                                  tokensMap[transaction.tokenDestination]
+                                    ?.pngUrl
+                                }
+                                alt=""
+                                className="liq-asset-icon liq-sm liq-p-0"
+                              />
+                            </div>
+                          </div>
+                          <img
+                            src={chainsMap[transaction.toChainId]?.pngUrl}
+                            alt=""
+                            className="liq-absolute liq-left-3 liq-bottom-[-2px] liq-chain-icon liq-sm liq-w-5 liq-h-5 liq-border-[3px] liq-border-neutral-850  liq-rounded-lg"
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
-                    <MxLink
-                      to={`${options.bridgeURL}/status/${transaction.txHash}`}
+                  {transaction.provider === ProviderType.MultiversxBridge && (
+                    <a
+                      href={`${options.bridgeURL}/status/${transaction.txHash}`}
                       target="_blank"
-                      showExternalIcon={false}
                       className="liq-flex"
                     >
-                      <div className="max-sm:liq-hidden">View</div>
-                      <img
-                        src={ArrowUpRight}
-                        alt=""
-                        className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
-                      />
-                    </MxLink>
-                  </div>
+                      <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
+                        <MxTooltip
+                          placement="top"
+                          buttonText={
+                            <img
+                              src={ArrowUpRight}
+                              alt=""
+                              className="liq-flex liq-items-center liq-justify-center liq-rounded-full liq-text-neutral-200"
+                            />
+                          }
+                          shouldStopPropagation={false}
+                        >
+                          View
+                        </MxTooltip>
+                      </div>
+                    </a>
+                  )}
                 </div>
               </MxCard>
             );

@@ -1,9 +1,17 @@
-import type { AppKitOptions } from '@reown/appkit';
-import { createAppKit } from '@reown/appkit/react';
+import {
+  bitcoin,
+  bitcoinTestnet,
+  solana,
+  solanaDevnet,
+  solanaTestnet
+} from '@reown/appkit/networks';
+import { createAppKit, type AppKitOptions } from '@reown/appkit/react';
+import { BitcoinAdapter } from '@reown/appkit-adapter-bitcoin';
+import { SolanaAdapter } from '@reown/appkit-adapter-solana/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
 import type { CreateConfigParameters } from '@wagmi/core';
-import * as networks from 'viem/chains';
+import * as viemNetworks from 'viem/chains';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { InMemoryStore } from '../../store/inMemoryStore';
 
@@ -19,7 +27,7 @@ export type InitOptions = {
   /**
    * Accepted chain IDs. The chains with ids [31, 44, 54] will be ignored as these are mapped to the mvx networks as [1, D, T]
    */
-  acceptedChainIDs: number[];
+  acceptedChainIDs: string[];
   /**
    * Accepted connectors IDs
    */
@@ -47,7 +55,7 @@ export type InitOptions = {
   mvxChainId: '31' | '44' | '54';
 };
 
-function init(options: InitOptions) {
+export function init(options: InitOptions) {
   const store = InMemoryStore.getInstance();
   store.setItem('apiURL', options.apiURL);
   store.setItem('bridgeURL', options.bridgeURL);
@@ -55,15 +63,31 @@ function init(options: InitOptions) {
   store.setItem('mvxExplorerAddress', options.mvxExplorerAddress);
   store.setItem('mvxChainId', options.mvxChainId);
 
+  const networks = {
+    solana,
+    solanaDevnet,
+    solanaTestnet,
+    bitcoin,
+    bitcoinTestnet,
+    ...viemNetworks
+  };
+
   const acceptedNetworks = Object.values(networks)
     .filter(
       (chain) =>
-        options.acceptedChainIDs.includes(Number(chain.id)) &&
-        !MVX_CHAIN_IDS.includes(Number(chain.id))
+        options.acceptedChainIDs.includes(chain.id.toString()) &&
+        !MVX_CHAIN_IDS.includes(chain.id.toString())
     )
     .map((network) => network) as AppKitNetwork[];
 
-  const supportedChains = [...acceptedNetworks] as AppKitNetwork[];
+  const supportedChains = [
+    ...acceptedNetworks,
+    bitcoin,
+    bitcoinTestnet,
+    solana,
+    solanaDevnet,
+    solanaTestnet
+  ];
 
   const wagmiAdapter = new WagmiAdapter({
     ...options.adapterConfig,
@@ -71,18 +95,21 @@ function init(options: InitOptions) {
     projectId: options.appKitOptions.projectId,
     networks: supportedChains
   });
+  const solanaAdapter = new SolanaAdapter();
+  const bitcoinAdapter = new BitcoinAdapter({
+    projectId: options.appKitOptions.projectId
+  });
 
   const appKit = createAppKit({
     ...options.appKitOptions,
-    adapters: [wagmiAdapter],
+    adapters: [wagmiAdapter, solanaAdapter, bitcoinAdapter],
     networks: [supportedChains[0], ...supportedChains.slice(1)]
   });
 
   return {
     config: wagmiAdapter.wagmiConfig,
     appKit,
-    options
+    options,
+    supportedChains
   };
 }
-
-export { init };

@@ -3,11 +3,19 @@ import { AxiosError } from 'axios';
 import { getTokens } from '../../api/getTokens';
 import { getApiURL } from '../../helpers/getApiURL';
 
-export const useGetAllTokensQuery = () => {
+export const useGetAllTokensQuery = ({
+  nativeAuthToken,
+  bridgeOnly = true
+}: {
+  nativeAuthToken?: string;
+  bridgeOnly?: boolean;
+}) => {
   const queryFn = async () => {
     try {
       const { data } = await getTokens({
-        url: getApiURL()
+        url: getApiURL(),
+        nativeAuthToken: nativeAuthToken ?? '',
+        bridgeOnly: Boolean(bridgeOnly)
       });
       return data;
     } catch (error) {
@@ -20,7 +28,7 @@ export const useGetAllTokensQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['all-tokens'],
+    queryKey: ['all-tokens', nativeAuthToken],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

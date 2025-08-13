@@ -1,4 +1,6 @@
-import { AppKit } from '@reown/appkit';
+import { ITransaction } from '@multiversx/sdk-core/out/interface';
+import { AppKit } from '@reown/appkit/react';
+import { AppKitNetwork } from '@reown/appkit-common';
 import { QueryClientProvider } from '@tanstack/react-query';
 import type { ResolvedRegister } from '@wagmi/core';
 import { PropsWithChildren, useMemo } from 'react';
@@ -11,6 +13,15 @@ export type Web3AppContextProps = {
   config: ResolvedRegister['config'];
   appKit: AppKit;
   options: InitOptions;
+  supportedChains: AppKitNetwork[];
+  nativeAuthToken: string;
+  bridgeOnly?: boolean;
+  signMvxTransactions: (transactions: ITransaction[]) => Promise<{
+    error?: string;
+    batchId?: string;
+  }>;
+  latestMvxTransactionHash?: string;
+  resetMvxTransactionHash?: () => void;
 };
 
 const queryClient = getQueryClient();
@@ -23,15 +34,27 @@ export function Web3AppProvider({
   children,
   config,
   appKit,
-  options
+  options,
+  supportedChains,
+  nativeAuthToken,
+  bridgeOnly = true,
+  signMvxTransactions,
+  latestMvxTransactionHash,
+  resetMvxTransactionHash
 }: PropsWithChildren<Web3AppContextProps>) {
   const value = useMemo<Web3AppContextProps>(() => {
     return {
       config,
       appKit,
-      options
+      options,
+      supportedChains,
+      nativeAuthToken,
+      bridgeOnly,
+      signMvxTransactions,
+      latestMvxTransactionHash,
+      resetMvxTransactionHash
     };
-  }, [config, appKit, options]);
+  }, [config, appKit, options, nativeAuthToken, signMvxTransactions]);
 
   return (
     <Web3AppContext.Provider value={value}>

@@ -11,12 +11,14 @@ export const SelectContent = ({
   onSelect,
   tokens = [],
   chains = [],
+  isMvxSelector = false,
   areChainsLoading,
   selectedToken
 }: {
   onSelect: (token: TokenType) => void;
   tokens: TokenType[];
   chains: ChainDTO[];
+  isMvxSelector?: boolean;
   areChainsLoading?: boolean;
   selectedToken?: TokenType;
 }) => {
@@ -26,7 +28,9 @@ export const SelectContent = ({
   const activeChainId = useGetChainId();
 
   const [selectedChainId, setSelectedChainId] = useState(
-    activeChainId?.toString() ?? ALL_NETWORK_ID
+    isMvxSelector
+      ? chains[0]?.chainId.toString() ?? ALL_NETWORK_ID
+      : activeChainId?.toString() ?? ALL_NETWORK_ID
   );
 
   const filteredTokensText = useMemo(() => {
@@ -85,6 +89,7 @@ export const SelectContent = ({
           />
           <ChainSelect
             chains={chains}
+            ignoreAllChains={isMvxSelector}
             selectedChainId={selectedChainId}
             onChange={(chainId) => {
               setSelectedChainId(chainId);

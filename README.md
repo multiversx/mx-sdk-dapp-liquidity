@@ -1,4 +1,4 @@
-# @multiversx/mx-sdk-dapp-liquidity
+# @multiversx/sdk-dapp-liquidity
 
 ## Overview
 
@@ -63,7 +63,7 @@ yarn publish-package-next
 ## Usage
 
 ```css
-@import 'node_modules/@multiversx/mx-sdk-dapp-liquidity/style.css';
+@import 'node_modules/@multiversx/sdk-dapp-liquidity/style.css';
 ```
 
 ```tsx
@@ -161,12 +161,11 @@ const App = () => {
   
   return (
     // Wrap your app with Web3AppProvider to enable multi-chain connections
-    <Web3AppProvider appKit={provider.appKit} config={provider.config} options={provider.options}>
+    <Web3AppProvider appKit={provider.appKit} config={provider.config} options={provider.options} nativeAuthToken={nativeAuthToken}>
       <BridgeForm
         mvxChainId={"44"}
         mvxAddress={mvxAccount?.address}
         username={mvxAccount?.username}
-        nativeAuthToken={nativeAuthToken}
         callbackRoute={"/deposit"}
         showHistory={showHistory}
         onSuccessfullySentTransaction={(txHashes) => {
@@ -184,3 +183,8 @@ const App = () => {
   )
 }
 ```
+
+## Disclaimer
+
+1. This package is in active development and is subject to change. We recommend to check the latest version and update your code accordingly.
+2. This package is not fully supported on the Next.js framework. We are working on a solution to make it compatible with Next.js.

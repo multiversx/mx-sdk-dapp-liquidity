@@ -6,5 +6,6 @@ export type PartialChainOptionType = {
     name: string;
     networkName: string;
     svgUrl: string;
+    pngUrl: string;
   };
 };

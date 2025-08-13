@@ -115,3 +115,8 @@
         }
     }
 }
+
+.payment-iframe {
+    height: 475px !important;
+    width: 100% !important;
+}

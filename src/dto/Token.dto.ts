@@ -1,5 +1,5 @@
 export interface TokenDTO {
-  chainId: number;
+  chainId: string;
   address: string;
   name: string;
   symbol: string;
@@ -11,4 +11,10 @@ export interface TokenDTO {
     minBridgeAmount: string;
     maxBridgeAmount: string;
   };
+  availableTokens?: {
+    address: string;
+    chainId: string;
+    symbol: string;
+  }[];
+  isNative?: boolean;
 }

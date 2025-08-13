@@ -10,11 +10,13 @@ import { ALL_NETWORK_ID } from '../../../../constants';
 export const ChainSelect = ({
   isLoading,
   selectedChainId,
+  ignoreAllChains = false,
   onChange,
   chains
 }: {
   isLoading?: boolean;
   selectedChainId?: string;
+  ignoreAllChains?: boolean;
   onChange?: (chainId: string) => void;
   chains: ChainDTO[];
 }) => {
@@ -26,9 +28,14 @@ export const ChainSelect = ({
         id: chain.chainId.toString(),
         name: chain.chainName,
         networkName: chain.networkName,
-        svgUrl: chain.svgUrl
+        svgUrl: chain.svgUrl,
+        pngUrl: chain.pngUrl
       }
     }));
+
+    if (ignoreAllChains) {
+      return options;
+    }
 
     options.unshift({
       label: 'All',
@@ -37,7 +44,8 @@ export const ChainSelect = ({
         id: ALL_NETWORK_ID,
         name: 'all',
         networkName: 'All',
-        svgUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg'
+        svgUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg',
+        pngUrl: 'https://cdn.multiversx.com/liquidity-sdk/all-networks.svg'
       }
     });
 

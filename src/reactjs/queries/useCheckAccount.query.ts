@@ -1,17 +1,23 @@
+import { useAppKitAccount } from '@reown/appkit/react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { getTokens } from '../../api/getTokens';
+import { checkAccount } from '../../api/checkAccount';
 import { getApiURL } from '../../helpers/getApiURL';
-import { useGetChainId } from '../hooks/useGetChainId';
+import { useWeb3App } from '../context/useWeb3App';
+import { useGetChainId } from '../hooks';
 
-export const useGetTokensQuery = () => {
+export const useCheckAccountQuery = () => {
+  const { address } = useAppKitAccount();
   const chainId = useGetChainId();
+  const { nativeAuthToken } = useWeb3App();
 
   const queryFn = async () => {
     try {
-      const { data } = await getTokens({
+      const { data } = await checkAccount({
         url: getApiURL(),
-        chainId: Number(chainId)
+        walletAddress: address ?? '',
+        chainId: chainId ? chainId.toString() : '',
+        nativeAuthToken
       });
       return data;
     } catch (error) {
@@ -24,7 +30,7 @@ export const useGetTokensQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['tokens', chainId],
+    queryKey: ['check-account', address, chainId, nativeAuthToken],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

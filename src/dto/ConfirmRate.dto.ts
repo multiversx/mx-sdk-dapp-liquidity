@@ -8,4 +8,5 @@ export interface ConfirmRateDto extends RateRequestResponse {
   toChainId: string;
   sender: string;
   receiver: string;
+  backUrl?: string;
 }

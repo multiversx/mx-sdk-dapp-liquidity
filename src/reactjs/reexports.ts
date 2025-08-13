@@ -8,13 +8,16 @@ import {
   useDisconnect,
   useWalletInfo,
   useAppKitNetworkCore,
-  useAppKitProvider
+  useAppKitProvider,
+  type AppKit
 } from '@reown/appkit/react';
+import type { AppKitNetwork } from '@reown/appkit-common';
 import { useWaitForTransactionReceipt } from 'wagmi';
 
 export type { Config, CreateConnectorFn } from 'wagmi';
-export type { AppKit } from '@reown/appkit';
 export {
+  AppKit,
+  AppKitNetwork,
   useAppKit,
   useAppKitAccount,
   useAppKitEvents,

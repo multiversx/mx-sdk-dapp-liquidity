@@ -1,12 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { ProviderType } from 'types/providerType';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
 import { getQueryClient } from '../context/queryClient';
-import { useAccount } from '../hooks/useAccount';
+import { useWeb3App } from '../context/useWeb3App';
 
-export const useGetHistoryQuery = () => {
-  const { address } = useAccount();
+export const useGetHistoryQuery = ({
+  address,
+  sender,
+  provider,
+  status,
+  tokenIn,
+  tokenOut
+}: {
+  address?: string;
+  sender?: string;
+  provider?: ProviderType;
+  status?: string;
+  tokenIn?: string;
+  tokenOut?: string;
+}) => {
+  const { nativeAuthToken } = useWeb3App();
 
   const queryFn = async () => {
     if (!address) {
@@ -16,7 +31,13 @@ export const useGetHistoryQuery = () => {
     try {
       const { data } = await getTransactions({
         url: getApiURL(),
-        userWalletAddress: address
+        address,
+        sender,
+        provider,
+        status,
+        tokenIn,
+        tokenOut,
+        nativeAuthToken
       });
       return data;
     } catch (error) {
@@ -29,7 +50,16 @@ export const useGetHistoryQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['user-history', address],
+    queryKey: [
+      'user-history',
+      address,
+      sender,
+      provider,
+      status,
+      tokenIn,
+      tokenOut,
+      nativeAuthToken
+    ],
     queryFn,
     retry,
     enabled: Boolean(address),

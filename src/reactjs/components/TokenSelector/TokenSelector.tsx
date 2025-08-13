@@ -20,6 +20,7 @@ export const TokenSelector = ({
   areOptionsLoading = false,
   className = '',
   disabled = false,
+  isMvxSelector = false,
   omitDisableClass = false,
   color = 'neutral-750',
   onBlur,
@@ -32,11 +33,12 @@ export const TokenSelector = ({
   selectedOption?: TokenType;
   areOptionsLoading?: boolean;
   disabled?: boolean;
+  isMvxSelector?: boolean;
   omitDisableClass?: boolean;
   className?: string;
   color?: 'neutral-750' | 'neutral-850';
   onChange: (option?: TokenType) => void;
-  onBlur: (e: React.FocusEvent<any, HTMLButtonElement>) => void;
+  onBlur?: (e: React.FocusEvent<any, HTMLButtonElement>) => void;
   onMaxBtnClick?: () => void;
   onTokenSelectorDisplay?: (visible: boolean) => void;
 }) => {
@@ -48,12 +50,22 @@ export const TokenSelector = ({
   });
 
   const chains = useMemo(() => {
+    if (isMvxSelector) {
+      return (
+        data?.filter((chain) =>
+          MVX_CHAIN_IDS.includes(chain.chainId.toString())
+        ) ?? []
+      );
+    }
+
     return (
       data?.filter(
-        (chain) => !MVX_CHAIN_IDS.includes(Number(chain.chainId.toString()))
+        (chain) => !MVX_CHAIN_IDS.includes(chain.chainId.toString())
       ) ?? []
     );
   }, [data]);
+
+  const isVisuallyDisabled = disabled || chains.length < 2;
 
   const handleOnClick = () => setShow(true);
 
@@ -93,6 +105,7 @@ export const TokenSelector = ({
             }}
             tokens={options}
             chains={chains}
+            isMvxSelector={isMvxSelector}
             areChainsLoading={areChainsLoading}
             selectedToken={selectedOption}
           />
@@ -118,21 +131,22 @@ export const TokenSelector = ({
                   color === 'neutral-850'
               },
               {
-                'disabled:!liq-opacity-70': disabled && !omitDisableClass
+                'disabled:!liq-opacity-70':
+                  isVisuallyDisabled && !omitDisableClass
               },
               {
                 '!liq-cursor-not-allowed !liq-bg-transparent !liq-outline-transparent':
-                  disabled
+                  isVisuallyDisabled
               },
               className
             )}
             onBlur={onBlur}
             onClick={handleOnClick}
-            disabled={disabled}
+            disabled={isVisuallyDisabled}
           >
             <SelectedOption value={selectedOption} />
 
-            {!disabled && (
+            {!isVisuallyDisabled && (
               <FontAwesomeIcon
                 icon={faChevronDown}
                 className="liq-text-neutral-200 group-hover:liq-text-neutral-50"

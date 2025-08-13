@@ -1,8 +1,6 @@
 import { useFormik } from 'formik';
-import { useEffect, useRef, useState } from 'react';
-import { useSwitchChain } from 'wagmi';
+import { useEffect, useRef } from 'react';
 import { object, string } from 'yup';
-import { useAccount } from './useAccount';
 import { useAmountSchema } from './validation/useAmountSchema';
 import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
@@ -11,6 +9,7 @@ import { RateRequestResponse } from '../../types';
 import { ProviderType } from '../../types/providerType';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
+import { useWeb3App } from '../context/useWeb3App';
 
 export enum BridgeFormikValuesEnum {
   firstToken = 'firstToken',
@@ -31,25 +30,27 @@ export interface TradeFormikValuesType {
 }
 
 export const useBridgeFormik = ({
-  nativeAuthToken,
-  mvxAccountAddress,
+  sender,
+  receiver,
   firstToken,
   firstAmount,
   secondToken,
   secondAmount,
   fromChainId,
   toChainId,
+  setForceRefetchRate,
   rate,
   onSubmit
 }: {
-  mvxAccountAddress?: string;
-  nativeAuthToken?: string;
+  sender: string;
+  receiver: string;
   firstAmount?: string;
   secondAmount?: string;
   fromChainId?: string;
   toChainId?: string;
   firstToken?: TokenType;
   secondToken?: TokenType;
+  setForceRefetchRate?: (value: (previous: number) => number) => void;
   rate?: RateRequestResponse;
   onSubmit: ({
     transactions,
@@ -59,14 +60,8 @@ export const useBridgeFormik = ({
     provider: ProviderType;
   }) => void;
 }) => {
-  const [lastChangedField, setLastChangedField] = useState<
-    | BridgeFormikValuesEnum.firstAmount
-    | BridgeFormikValuesEnum.secondAmount
-    | null
-  >(null);
   const pendingSigningRef = useRef<boolean>();
-  const account = useAccount();
-  const { switchChainAsync } = useSwitchChain();
+  const { nativeAuthToken } = useWeb3App();
 
   const initialValues: TradeFormikValuesType = {
     firstAmount: '',
@@ -83,48 +78,48 @@ export const useBridgeFormik = ({
   };
 
   const onSubmitFormik = async (values: TradeFormikValuesType) => {
-    if (values.fromChainId) {
-      await switchChainAsync({
-        chainId: Number(values.fromChainId)
-      });
-    }
-
     if (pendingSigningRef.current) {
       return;
     }
     pendingSigningRef.current = true;
 
-    const { data } = await confirmRate({
-      url: getApiURL(),
-      nativeAuthToken: nativeAuthToken ?? '',
-      body: {
-        tokenIn: values.firstToken?.address ?? '',
-        amountIn: firstAmount?.toString() ?? '',
-        fromChainId: values.fromChainId ?? '',
-        tokenOut: values.secondToken?.address ?? '',
-        toChainId: values.toChainId ?? '',
-        amountOut: secondAmount?.toString() ?? '',
-        sender: account.address ?? '',
-        receiver: mvxAccountAddress ?? '',
-        fee: rate?.fee ?? '0',
-        provider: rate?.provider ?? ProviderType.None,
-        orderId: rate?.orderId ?? ''
+    try {
+      const { data } = await confirmRate({
+        url: getApiURL(),
+        nativeAuthToken: nativeAuthToken ?? '',
+        body: {
+          tokenIn: values.firstToken?.address ?? '',
+          amountIn: firstAmount?.toString() ?? '',
+          fromChainId: values.fromChainId ?? '',
+          tokenOut: values.secondToken?.address ?? '',
+          toChainId: values.toChainId ?? '',
+          amountOut: secondAmount?.toString() ?? '',
+          sender: sender ?? '',
+          receiver: receiver ?? '',
+          fee: rate?.fee ?? '0',
+          provider: rate?.provider ?? ProviderType.None,
+          orderId: rate?.orderId ?? ''
+        }
+      });
+
+      const transactions = data;
+
+      if (!transactions || transactions.length === 0) {
+        pendingSigningRef.current = false;
+        return;
       }
-    });
 
-    const transactions = data;
-
-    if (!transactions || transactions.length === 0) {
+      resetSwapForm();
+      onSubmit({
+        transactions,
+        provider: rate?.provider ?? ProviderType.None
+      });
+    } catch (error) {
+      console.error('Error confirming rate:', error);
+      setForceRefetchRate?.((prevState) => prevState + 1);
+    } finally {
       pendingSigningRef.current = false;
-      return;
     }
-
-    resetSwapForm();
-    onSubmit({
-      transactions,
-      provider: rate?.provider ?? ProviderType.None
-    });
-    pendingSigningRef.current = false;
   };
 
   const formik = useFormik({
@@ -141,7 +136,6 @@ export const useBridgeFormik = ({
   });
 
   const {
-    values,
     errors,
     touched,
     handleBlur,
@@ -150,47 +144,6 @@ export const useBridgeFormik = ({
     setFieldValue,
     setFieldTouched
   } = formik;
-
-  useEffect(() => {
-    if (!values.firstAmount && touched.firstAmount) {
-      setFieldValue(BridgeFormikValuesEnum.secondAmount, 0, true);
-      return;
-    }
-
-    if (
-      lastChangedField === 'firstAmount' &&
-      values.firstAmount &&
-      values.firstAmount !== '' &&
-      rate?.fee &&
-      rate.fee !== '0'
-    ) {
-      const calculatedSecondAmount =
-        parseFloat(values.firstAmount) - Number(rate.fee);
-      setFieldValue(
-        BridgeFormikValuesEnum.secondAmount,
-        calculatedSecondAmount > 0 ? calculatedSecondAmount : '0'
-      );
-    }
-  }, [values.firstAmount, rate?.fee, lastChangedField, touched.firstAmount]);
-
-  useEffect(() => {
-    if (!values.secondAmount && touched.secondAmount) {
-      setFieldValue(BridgeFormikValuesEnum.firstAmount, 0, true);
-      return;
-    }
-
-    if (
-      lastChangedField === 'secondAmount' &&
-      values.secondAmount &&
-      values.secondAmount !== '' &&
-      rate?.fee &&
-      rate.fee !== '0'
-    ) {
-      const calculatedFirstAmount =
-        parseFloat(values.secondAmount) + Number(rate.fee);
-      setFieldValue(BridgeFormikValuesEnum.firstAmount, calculatedFirstAmount);
-    }
-  }, [values.secondAmount, rate?.fee, lastChangedField, touched.secondAmount]);
 
   useEffect(() => {
     setFieldValue(BridgeFormikValuesEnum.firstToken, firstToken, true);
@@ -240,7 +193,6 @@ export const useBridgeFormik = ({
     handleSubmit,
     setFieldValue,
     resetSwapForm,
-    setFieldTouched,
-    setLastChangedField
+    setFieldTouched
   };
 };

@@ -25,7 +25,7 @@ describe('sendTransactions', () => {
   ];
 
   it('POST sendTransactions successfully', async () => {
-    const response = { data: { transactions } };
+    const response = { data: { transactions, provider: ProviderType.None } };
     mockedAxios.post.mockResolvedValue(response);
 
     const result = await sendTransactions({
@@ -37,9 +37,12 @@ describe('sendTransactions', () => {
 
     expect(mockedAxios.post).toHaveBeenCalledWith(
       '/transactions',
-      transactions.map((transaction) =>
-        JSON.parse(serializeTransaction(transaction))
-      ),
+      {
+        transactions: transactions.map((transaction) =>
+          JSON.parse(serializeTransaction(transaction))
+        ),
+        provider: ProviderType.None
+      },
       {
         baseURL: url,
         headers: {
@@ -54,7 +57,7 @@ describe('sendTransactions', () => {
 
   it('POST sendTransactions with additional axiosConfig', async () => {
     const axiosConfig = { timeout: 1000 };
-    const response = { data: { transactions } };
+    const response = { data: { transactions, provider: ProviderType.None } };
     mockedAxios.post.mockResolvedValue(response);
 
     const result = await sendTransactions({
@@ -67,9 +70,12 @@ describe('sendTransactions', () => {
 
     expect(mockedAxios.post).toHaveBeenCalledWith(
       '/transactions',
-      transactions.map((transaction) =>
-        JSON.parse(serializeTransaction(transaction))
-      ),
+      {
+        transactions: transactions.map((transaction) =>
+          JSON.parse(serializeTransaction(transaction))
+        ),
+        provider: ProviderType.None
+      },
       {
         baseURL: url,
         headers: {
