@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/multiversx/mx-sdk-dapp-liquidity#readme",
   "license": "MIT",
-  "version": "1.1.1-alpha.6",
+  "version": "1.1.2-alpha.34",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
@@ -39,6 +39,7 @@
     "publish-package": "yarn build && cd dist && npm publish",
     "publish-package-next": "yarn build && cd dist && npm publish --tag next",
     "publish-yalc": "yarn build && cd dist && yalc publish --push",
+    "publish-verdaccio": "yarn run build && cd dist && npm publish --registry http://localhost:4873/",
     "start": "vite",
     "test": "jest",
     "lint": "eslint src --ext .ts,.js"
@@ -74,13 +75,13 @@
     "yup": "1.4.0"
   },
   "peerDependencies": {
-    "@multiversx/sdk-core": ">= 13",
+    "@multiversx/sdk-core": ">= 15.x",
     "react": ">= 18",
     "react-dom": ">= 18",
     "tailwindcss": ">= 3"
   },
   "devDependencies": {
-    "@multiversx/sdk-core": "13.17.1",
+    "@multiversx/sdk-core": "15.3.0",
     "@rollup/plugin-node-resolve": "15.2.3",
     "@swc-node/jest": "1.6.6",
     "@swc/core": "1.5.24",

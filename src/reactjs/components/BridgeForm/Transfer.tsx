@@ -1,4 +1,4 @@
-import { ITransaction } from '@multiversx/sdk-core/out/interface';
+import { IPlainTransactionObject } from '@multiversx/sdk-core/out';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { getConnections } from '@wagmi/core';
@@ -6,11 +6,11 @@ import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useBridgeTokenSelection } from './hooks/useBridgeTokenSelection';
+import { MVX_CHAIN_IDS } from '../../../constants';
 import { getApiURL } from '../../../helpers';
 import { ProviderType } from '../../../types/providerType.ts';
-import { TokenType } from '../../../types/token';
 import { ServerTransaction } from '../../../types/transaction';
-import { safeWindow } from '../../constants';
 import { useWeb3App } from '../../context/useWeb3App';
 import { useSendTransactions } from '../../hooks';
 import { useAccount } from '../../hooks/useAccount';
@@ -22,11 +22,6 @@ import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetChainId } from '../../hooks/useGetChainId';
 import { invalidateHistoryQuery } from '../../queries/useGetHistory.query';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
-import { getCompletePathname } from '../../utils/getCompletePathname';
-import {
-  getInitialTokens,
-  InitialTokensType
-} from '../../utils/getInitialTokens';
 import { mxClsx } from '../../utils/mxClsx';
 import { AmountCard } from '../AmountCard';
 import { AmountInput } from '../AmountInput';
@@ -63,7 +58,7 @@ interface BridgeFormProps {
   onChangeDirection: () => void;
 }
 
-let fetchRateInterval: NodeJS.Timeout;
+let fetchRateInterval: ReturnType<typeof setInterval>;
 
 export const Transfer = ({
   mvxChainId,
@@ -86,7 +81,6 @@ export const Transfer = ({
   onChangeDirection
 }: BridgeFormProps) => {
   const ref = useRef(null);
-  const initializedInitialTokensRef = useRef(false);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [forceRefetchRate, setForceRefetchRate] = useState(1);
   const [siginingTransactionsCount, setSigningTransactionsCount] =
@@ -155,94 +149,78 @@ export const Transfer = ({
       ? (rateError as AxiosError<{ message: string }>)?.response?.data.message
       : undefined;
 
-  const [firstToken, setFirstToken] = useState<TokenType | undefined>();
+  const handleSwitchNetwork = useCallback(
+    (chain: { id: string | number }) => {
+      const sdkChain = sdkChains.find(
+        (c) => c.id.toString() === chain.id.toString()
+      );
+      if (sdkChain) {
+        switchNetwork(sdkChain);
+      }
+    },
+    [sdkChains, switchNetwork]
+  );
+
+  const {
+    firstToken,
+    secondToken,
+    fromOptions,
+    toOptions,
+    selectedChainOption,
+    onChangeFirstSelect,
+    onChangeSecondSelect,
+    handleChangeDirection: handleTokenChangeDirection
+  } = useBridgeTokenSelection({
+    chains,
+    activeChain,
+    sdkChains,
+    switchNetwork: handleSwitchNetwork,
+    fromTokens: mvxTokensWithBalances,
+    toTokens: evmTokensWithBalances,
+    firstTokenIdentifier,
+    secondTokenIdentifier,
+    forcedDestinationTokenSymbol,
+    isTokensLoading,
+    mvxChainId,
+    callbackRoute,
+    onNavigate
+  });
+
+  const handleChangeDirection = () => {
+    handleTokenChangeDirection();
+    onChangeDirection();
+  };
+
   const [firstAmount, setFirstAmount] = useState(firstTokenAmount ?? '');
-  const [secondToken, setSecondToken] = useState<TokenType | undefined>();
   const [secondAmount, setSecondAmount] = useState(secondTokenAmount ?? '');
+
+  // Dynamically determine if selectors show MVX tokens based on current token chain
+  const isFirstTokenMvx = useMemo(() => {
+    return firstToken
+      ? MVX_CHAIN_IDS.includes(firstToken.chainId.toString())
+      : false;
+  }, [firstToken?.chainId]);
+
+  const isSecondTokenMvx = useMemo(() => {
+    return secondToken
+      ? MVX_CHAIN_IDS.includes(secondToken.chainId.toString())
+      : false;
+  }, [secondToken?.chainId]);
+
+  // Get the chain for the selected second token (TO section shows EVM chain)
+  const secondTokenChain = useMemo(() => {
+    if (!secondToken) {
+      return selectedChainOption;
+    }
+    return (
+      chains.find(
+        (chain) => chain.chainId.toString() === secondToken.chainId.toString()
+      ) ?? selectedChainOption
+    );
+  }, [secondToken?.chainId, chains, selectedChainOption]);
 
   const bridgeAddress = account.address;
   const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
-
-  const fromOptions = useMemo(
-    () =>
-      (mvxTokensWithBalances &&
-        mvxTokensWithBalances.map((token) => {
-          return {
-            ...token,
-            identifier: token.address,
-            ticker: token.symbol
-          };
-        })) ??
-      [],
-    [mvxTokensWithBalances]
-  );
-
-  const getAvailableTokens = useCallback(
-    (option: TokenType) => {
-      if (forcedDestinationTokenSymbol) {
-        const forcedToken = evmTokensWithBalances?.find(
-          (evmToken) =>
-            evmToken.symbol.toLowerCase() ===
-            forcedDestinationTokenSymbol.toLowerCase()
-        );
-
-        if (forcedToken) {
-          return [forcedToken];
-        }
-        return [];
-      }
-
-      if (!option?.availableTokens) {
-        return [];
-      }
-
-      const foundTokens: TokenType[] = [];
-
-      for (const availableToken of option.availableTokens) {
-        const foundToken = evmTokensWithBalances?.find(
-          (evmToken) => evmToken.address === availableToken.address
-        );
-
-        if (foundToken) {
-          foundTokens.push(foundToken);
-        }
-      }
-
-      return foundTokens;
-    },
-    [evmTokensWithBalances]
-  );
-
-  const toOptions = useMemo(
-    () =>
-      (firstToken?.availableTokens &&
-        getAvailableTokens(firstToken).map((token) => {
-          return {
-            ...token,
-            identifier: token.address,
-            ticker: token.symbol
-          };
-        })) ??
-      [],
-    [firstToken?.availableTokens]
-  );
-
-  const selectedChainOption = useMemo(
-    () =>
-      chains?.find(
-        (option) => option.chainId.toString() === activeChain?.id.toString()
-      ) ?? chains?.[0],
-    [activeChain?.id, chains]
-  );
-
-  const getDefaultReceivingToken = useCallback(
-    (values: TokenType[]) =>
-      values.find((x) => x.symbol.toLowerCase().includes('usdc')) ??
-      mvxTokensWithBalances?.find((x) =>
-        x.symbol.toLowerCase().includes('usdc')
-      ),
-    [mvxTokensWithBalances]
-  );
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
@@ -308,7 +286,6 @@ export const Transfer = ({
       handleOnChangeFirstAmount('');
       handleOnChangeSecondAmount('');
 
-      // Hack: this is needed to be called twice to invalidate the history query, otherwise the history won't update
       invalidateHistoryQuery();
       invalidateHistoryQuery();
       onSuccessfullySentTransaction?.(txHashes);
@@ -320,191 +297,12 @@ export const Transfer = ({
     ]
   );
 
-  const updateUrlParams = useCallback(
-    ({ firstTokenId, secondTokenId }: InitialTokensType) => {
-      if (isTokensLoading) {
-        return;
-      }
-
-      const currentUrl = getCompletePathname();
-      const searchParams = new URLSearchParams(safeWindow.location.search);
-
-      if (firstTokenId) {
-        searchParams.set('firstToken', firstTokenId);
-      }
-
-      if (secondTokenId) {
-        searchParams.set('secondToken', secondTokenId);
-      }
-
-      const newUrl = `${callbackRoute}?${searchParams.toString()}`;
-
-      if (currentUrl === newUrl) {
-        return;
-      }
-      onNavigate?.(newUrl, { replace: true });
-    },
-    [callbackRoute, isTokensLoading, onNavigate]
-  );
-
-  const onChangeFirstSelect = useCallback(
-    (option?: TokenType) => {
-      if (!option) {
-        return;
-      }
-
-      setFirstToken(() => option);
-      updateUrlParams({ firstTokenId: option?.address });
-
-      const availableTokens = getAvailableTokens(option);
-      const secondOption =
-        availableTokens.find(
-          (x) =>
-            x.symbol.toLowerCase() ===
-            availableTokens?.[0]?.symbol.toLowerCase()
-        ) ?? getDefaultReceivingToken(availableTokens);
-
-      if (!secondOption) {
-        return;
-      }
-
-      setSecondToken(() => secondOption);
-      updateUrlParams({ secondTokenId: secondOption?.address });
-    },
-    [toOptions, updateUrlParams]
-  );
-
-  const onChangeSecondSelect = useCallback(
-    (option?: TokenType) => {
-      if (!option) {
-        return;
-      }
-
-      setSecondToken(() => option);
-      updateUrlParams({ secondTokenId: option?.address });
-
-      const firstOption = fromOptions.find(
-        (x) => x.symbol.toLowerCase() === option?.symbol.toLowerCase()
-      );
-
-      if (!firstOption) {
-        return;
-      }
-
-      setFirstToken(() => firstOption);
-      updateUrlParams({ firstTokenId: firstOption?.address });
-    },
-    [fromOptions, updateUrlParams]
-  );
-
-  const handleChangeDirection = () => {
-    if (!firstToken || !secondToken) {
-      return;
-    }
-
-    updateUrlParams({
-      firstTokenId: secondToken?.address,
-      secondTokenId: firstToken?.address
-    });
-
-    onChangeDirection();
-  };
-
-  useEffect(() => {
-    if (selectedChainOption?.chainId !== firstToken?.chainId) {
-      const selectedOption = fromOptions?.find(
-        (option) => option.chainId.toString() === selectedChainOption?.chainId
-      );
-
-      if (!selectedOption) {
-        return;
-      }
-
-      onChangeFirstSelect(selectedOption);
-    }
-  }, [selectedChainOption?.chainId]);
-
-  const setInitialSelectedTokens = () => {
-    if (isTokensLoading || initializedInitialTokensRef.current) {
-      return;
-    }
-
-    const initialTokens = getInitialTokens({
-      firstTokenId: firstTokenIdentifier,
-      secondTokenId: secondTokenIdentifier
-    });
-
-    const firstOption =
-      fromOptions?.find(
-        ({ identifier }) => initialTokens?.firstTokenId === identifier
-      ) ??
-      fromOptions.find(
-        (option) => option.chainId.toString() === activeChain?.id?.toString()
-      ) ??
-      fromOptions?.[0];
-
-    const availableTokens = getAvailableTokens(firstOption);
-    const secondOption =
-      availableTokens?.find(
-        ({ address }) =>
-          address.toLowerCase() ===
-          (firstOption?.symbol ?? initialTokens?.secondTokenId)?.toLowerCase()
-      ) ??
-      availableTokens.find(
-        (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()
-      ) ??
-      getDefaultReceivingToken(availableTokens);
-
-    const hasOptionsSelected =
-      Boolean(firstToken) &&
-      Boolean(secondToken) &&
-      firstToken?.address?.toLowerCase() ===
-        firstOption?.address?.toLowerCase() &&
-      secondToken?.address?.toLowerCase() ===
-        secondOption?.address?.toLowerCase();
-
-    if (hasOptionsSelected) {
-      return;
-    }
-
-    let initializedFirstToken = false;
-    if (firstOption) {
-      setFirstToken(firstOption);
-      updateUrlParams({
-        firstTokenId: firstOption?.address
-      });
-
-      const selectedOptionChain =
-        sdkChains?.find(
-          (chain) => chain.id.toString() === firstOption?.chainId.toString()
-        ) ?? activeChain;
-
-      if (selectedOptionChain) {
-        switchNetwork(selectedOptionChain);
-      }
-
-      initializedFirstToken = true;
-    }
-
-    let initializedSecondToken = false;
-    if (secondOption) {
-      setSecondToken(secondOption);
-      updateUrlParams({
-        secondTokenId: secondOption?.address
-      });
-      initializedSecondToken = true;
-    }
-
-    initializedInitialTokensRef.current =
-      initializedFirstToken && initializedSecondToken;
-  };
-
   const onSubmit = useCallback(
     async ({ transactions }: { transactions: ServerTransaction[] }) => {
       setSigningTransactionsCount(() => transactions.length);
 
       try {
-        await signMvxTransactions(transactions as ITransaction[]);
+        await signMvxTransactions(transactions as IPlainTransactionObject[]);
         setLatestTransactions(transactions);
       } catch (e) {
         console.error(e);
@@ -602,50 +400,6 @@ export const Transfer = ({
       setSecondAmount('0');
     }
   }, [rateValidationError]);
-
-  useEffect(setInitialSelectedTokens, [isTokensLoading, fromOptions]);
-
-  useEffect(() => {
-    const selectedTokenOption = evmTokensWithBalances?.find(
-      (x) => x.address === firstToken?.address
-    );
-
-    if (!selectedTokenOption) {
-      return;
-    }
-
-    setFirstToken((prevState) => {
-      if (!prevState) {
-        return prevState;
-      }
-
-      return {
-        ...prevState,
-        balance: selectedTokenOption?.balance
-      };
-    });
-  }, [evmTokensWithBalances, firstToken?.address]);
-
-  useEffect(() => {
-    const selectedTokenOption = mvxTokensWithBalances?.find(
-      (x) => x.address === secondToken?.address
-    );
-
-    if (!selectedTokenOption) {
-      return;
-    }
-
-    setSecondToken((prevState) => {
-      if (!prevState) {
-        return prevState;
-      }
-
-      return {
-        ...prevState,
-        balance: selectedTokenOption?.balance
-      };
-    });
-  }, [mvxTokensWithBalances, secondToken?.address]);
 
   useEffect(() => {
     if (firstTokenAmount) {
@@ -749,7 +503,7 @@ export const Transfer = ({
               disabled={isPendingRate}
               options={fromOptions}
               areOptionsLoading={isTokensLoading}
-              isMvxSelector={false}
+              isMvxSelector={isFirstTokenMvx}
               color="neutral-850"
               onChange={onChangeFirstSelect}
               onBlur={handleBlur}
@@ -776,7 +530,7 @@ export const Transfer = ({
             <span>To</span>
             <BridgeAccountDisplay
               disabled={isPendingRate}
-              activeChain={selectedChainOption}
+              activeChain={secondTokenChain}
             />
           </div>
           <div className="liq-flex liq-justify-between liq-gap-1">
@@ -795,7 +549,7 @@ export const Transfer = ({
               omitDisableClass={true}
               options={toOptions}
               areOptionsLoading={isTokensLoading}
-              isMvxSelector={true}
+              isMvxSelector={isSecondTokenMvx}
               color="neutral-850"
               onChange={onChangeSecondSelect}
               onBlur={handleBlur}
@@ -835,11 +589,11 @@ export const Transfer = ({
                 <div className="liq-flex liq-justify-center liq-gap-2">
                   <div>Transfer to </div>
                   <img
-                    src={selectedChainOption?.pngUrl ?? ''}
+                    src={secondTokenChain?.pngUrl ?? ''}
                     alt=""
                     className="liq-h-[1.5rem] liq-w-[1.5rem]"
                   />
-                  <div>{activeChain?.name}</div>
+                  <div>{secondTokenChain?.networkName}</div>
                 </div>
               )}
               {!hasAmounts && (

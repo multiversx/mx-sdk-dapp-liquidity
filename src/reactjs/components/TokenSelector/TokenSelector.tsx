@@ -69,11 +69,14 @@ export const TokenSelector = ({
 
   const handleOnClick = () => setShow(true);
 
+  const showLoadingSkeleton =
+    (areOptionsLoading || areChainsLoading) && !selectedOption;
+
   useEffect(() => {
     onTokenSelectorDisplay?.(show);
   }, [show]);
 
-  if (areOptionsLoading || areChainsLoading) {
+  if (showLoadingSkeleton) {
     return (
       <div
         className={mxClsx(
