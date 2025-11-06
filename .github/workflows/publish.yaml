@@ -38,11 +38,23 @@ jobs:
         id: package
         uses: andreigiura/action-nodejs-package-info@v1.0.2
 
+      - name: Publish to npmjs alpha version
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ contains(steps.package.outputs.version, 'alpha') }}
+        run: echo "Publishing alpha version" && npm publish --tag alpha
+
+      - name: Publish to npmjs beta version
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ contains(steps.package.outputs.version, 'beta') }}
+        run: echo "Publishing beta version" && npm publish --tag beta
+
       - name: Publish to npmjs next version
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        if: ${{ steps.package.outputs.is-prerelease == 'true'}}
-        run: echo ${{ steps.package.outputs.is-prerelease}} && npm publish --tag next
+        if: ${{ steps.package.outputs.is-release-candidate == 'true'}}
+        run: echo "Publishing release candidate" && npm publish --tag next
 
       - name: Publish to npmjs
         env:
