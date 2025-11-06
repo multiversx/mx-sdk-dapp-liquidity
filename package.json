@@ -81,9 +81,11 @@
     "react": ">= 18",
     "react-dom": ">= 18",
     "tailwindcss": ">= 3",
-    "bignumber.js": ">= 9.x"
+    "bignumber.js": ">= 9.x",
+    "clsx": ">= 2.x"
   },
   "devDependencies": {
+    "clsx": "2.0.0",
     "bignumber.js": "9.0.1",
     "@multiversx/sdk-core": "15.3.0",
     "@rollup/plugin-node-resolve": "15.2.3",
