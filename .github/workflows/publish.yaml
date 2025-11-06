@@ -1,0 +1,51 @@
+name: Publish sdk-dapp-liquidity
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          clean: true
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+      - name: Setup pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Get package info
+        id: package
+        uses: andreigiura/action-nodejs-package-info@v1.0.2
+
+      - name: Publish to npmjs next version
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ steps.package.outputs.is-prerelease == 'true'}}
+        run: echo ${{ steps.package.outputs.is-prerelease}} && npm publish --tag next
+
+      - name: Publish to npmjs
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ steps.package.outputs.is-prerelease == 'false' }}
+        run: npm publish

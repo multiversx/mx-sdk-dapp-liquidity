@@ -95,7 +95,8 @@ export const Deposit = ({
     config,
     options,
     supportedChains: sdkChains,
-    nativeAuthToken
+    nativeAuthToken,
+    bridgeOnly
   } = useWeb3App();
   const chainId = useGetChainId();
 
@@ -146,7 +147,6 @@ export const Deposit = ({
       ? (rateError as AxiosError<{ message: string }>)?.response?.data.message
       : undefined;
 
-  // Wrapper to handle type compatibility
   const handleSwitchNetwork = useCallback(
     (chain: { id: string | number }) => {
       const sdkChain = sdkChains.find(
@@ -600,7 +600,9 @@ export const Deposit = ({
           </div>
         </AmountCard>
         <div className="liq-absolute liq-left-[6%] liq-top-[40%] -liq-mt-1 liq-z-10">
-          <ToggleDirection onChangeDirection={handleChangeDirection} />
+          {bridgeOnly && (
+            <ToggleDirection onChangeDirection={handleChangeDirection} />
+          )}
         </div>
         <AmountCard
           className={mxClsx(

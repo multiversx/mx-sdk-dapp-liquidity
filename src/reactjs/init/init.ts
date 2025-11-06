@@ -10,7 +10,7 @@ import { BitcoinAdapter } from '@reown/appkit-adapter-bitcoin';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
-import type { CreateConfigParameters } from '@wagmi/core';
+import type { Config, CreateConfigParameters } from '@wagmi/core';
 import * as viemNetworks from 'viem/chains';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { InMemoryStore } from '../../store/inMemoryStore';
@@ -55,7 +55,12 @@ export type InitOptions = {
   mvxChainId: '31' | '44' | '54';
 };
 
-export function init(options: InitOptions) {
+export function init(options: InitOptions): {
+  config: Config;
+  appKit: any;
+  options: InitOptions;
+  supportedChains: AppKitNetwork[];
+} {
   const store = InMemoryStore.getInstance();
   store.setItem('apiURL', options.apiURL);
   store.setItem('bridgeURL', options.bridgeURL);
