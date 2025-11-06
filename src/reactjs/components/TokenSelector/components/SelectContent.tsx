@@ -5,7 +5,6 @@ import { MVX_CHAIN_IDS } from '../../../../constants';
 import { ChainDTO } from '../../../../dto/Chain.dto';
 import { TokenType } from '../../../../types/token';
 import { ALL_NETWORK_ID } from '../../../constants';
-import { useGetChainId } from '../../../hooks/useGetChainId';
 import { MxSearch } from '../../base/MxSearch';
 
 export const SelectContent = ({
@@ -26,7 +25,6 @@ export const SelectContent = ({
   const [filteredTokens, setFilteredTokens] = useState(tokens);
   const [selected, setSelected] = useState(selectedToken);
   const searchPatternRef = useRef<string>('');
-  const activeChainId = useGetChainId();
 
   // Filter chains based on isMvxSelector
   const availableChains = useMemo(() => {
@@ -55,12 +53,11 @@ export const SelectContent = ({
         ALL_NETWORK_ID
       );
     }
-    return activeChainId?.toString() ?? ALL_NETWORK_ID;
-  }, [availableChains, tokens, isMvxSelector, activeChainId]);
+    return ALL_NETWORK_ID;
+  }, [availableChains, tokens, isMvxSelector]);
 
   const [selectedChainId, setSelectedChainId] = useState(defaultChainId);
 
-  // Update selectedChainId only when defaultChainId changes and current selection is invalid
   useEffect(() => {
     const isCurrentSelectionValid = availableChains.some(
       (chain) => chain.chainId.toString() === selectedChainId

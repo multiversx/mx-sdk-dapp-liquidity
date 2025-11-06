@@ -303,6 +303,10 @@ export const Transfer = ({
       setSigningTransactionsCount(() => transactions.length);
 
       try {
+        if (!signMvxTransactions) {
+          throw new Error('signMvxTransactions function is not provided');
+        }
+
         await signMvxTransactions(transactions as IPlainTransactionObject[]);
         setLatestTransactions(transactions);
       } catch (e) {

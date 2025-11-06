@@ -16,7 +16,7 @@ export type Web3AppContextProps = {
   supportedChains: AppKitNetwork[];
   nativeAuthToken: string;
   bridgeOnly?: boolean;
-  signMvxTransactions: (transactions: IPlainTransactionObject[]) => Promise<{
+  signMvxTransactions?: (transactions: IPlainTransactionObject[]) => Promise<{
     error?: string;
     batchId?: string;
   }>;
@@ -30,6 +30,10 @@ export const Web3AppContext = createContext<Web3AppContextProps | undefined>(
   undefined
 );
 
+type Web3AppProviderType = Web3AppContextProps & {
+  supportedChains?: AppKitNetwork[];
+};
+
 export function Web3AppProvider({
   children,
   config,
@@ -41,7 +45,7 @@ export function Web3AppProvider({
   signMvxTransactions,
   latestMvxTransactionHash,
   resetMvxTransactionHash
-}: PropsWithChildren<Web3AppContextProps>) {
+}: PropsWithChildren<Web3AppProviderType>) {
   const value = useMemo<Web3AppContextProps>(() => {
     return {
       config,
