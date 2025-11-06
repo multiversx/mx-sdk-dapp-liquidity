@@ -6,6 +6,15 @@ import { getApiURL } from '../../helpers/getApiURL';
 import { getQueryClient } from '../context/queryClient';
 import { useWeb3App } from '../context/useWeb3App';
 
+type HistoryQueryType = {
+  address?: string;
+  sender?: string;
+  provider?: ProviderType;
+  status?: string;
+  tokenIn?: string;
+  tokenOut?: string;
+};
+
 export const useGetHistoryQuery = ({
   address,
   sender,
@@ -13,14 +22,7 @@ export const useGetHistoryQuery = ({
   status,
   tokenIn,
   tokenOut
-}: {
-  address?: string;
-  sender?: string;
-  provider?: ProviderType;
-  status?: string;
-  tokenIn?: string;
-  tokenOut?: string;
-}) => {
+}: HistoryQueryType = {}) => {
   const { nativeAuthToken } = useWeb3App();
 
   const queryFn = async () => {

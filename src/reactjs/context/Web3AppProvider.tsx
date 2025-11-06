@@ -35,7 +35,7 @@ export function Web3AppProvider({
   config,
   appKit,
   options,
-  supportedChains,
+  supportedChains = [],
   nativeAuthToken,
   bridgeOnly = true,
   signMvxTransactions,

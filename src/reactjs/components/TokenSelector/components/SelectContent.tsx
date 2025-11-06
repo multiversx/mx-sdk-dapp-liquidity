@@ -70,7 +70,6 @@ export const SelectContent = ({
     }
   }, [defaultChainId, availableChains, selectedChainId]);
 
-  console.log({ isMvxSelector, selectedChainId, chains, activeChainId });
   const filteredTokensText = useMemo(() => {
     const selectedChain = availableChains.find(
       (chain) => chain.chainId.toString() === selectedChainId
@@ -92,31 +91,42 @@ export const SelectContent = ({
     searchPatternRef.current = pattern;
 
     if (selectedChainId === ALL_NETWORK_ID) {
-      const filtered = tokens.filter((token) =>
-        token.symbol.toLowerCase().includes(pattern.toLowerCase())
-      );
-      setFilteredTokens(filtered);
+      if (pattern.trim() === '') {
+        setFilteredTokens(tokens);
+      } else {
+        const filtered = tokens.filter((token) =>
+          token.symbol.toLowerCase().includes(pattern.toLowerCase())
+        );
+        setFilteredTokens(filtered);
+      }
       return;
     }
 
-    const filtered = tokens.filter(
-      (token) =>
-        token.symbol.toLowerCase().includes(pattern.toLowerCase()) &&
-        token.chainId.toString() === selectedChainId.toString()
-    );
-    setFilteredTokens(filtered);
+    if (pattern.trim() === '') {
+      const filtered = tokens.filter(
+        (token) => token.chainId.toString() === selectedChainId.toString()
+      );
+      setFilteredTokens(filtered);
+    } else {
+      const filtered = tokens.filter(
+        (token) =>
+          token.symbol.toLowerCase().includes(pattern.toLowerCase()) &&
+          token.chainId.toString() === selectedChainId.toString()
+      );
+      setFilteredTokens(filtered);
+    }
   };
 
   useEffect(() => {
     setFilteredTokens(tokens);
     setSelected(selectedToken);
+    searchPatternRef.current = '';
   }, [selectedToken, tokens]);
 
   useEffect(() => {
     handleSearch(searchPatternRef.current);
-  }, [selectedChainId]);
+  }, [selectedChainId, tokens]);
 
-  console.log({ filteredTokens });
   return (
     <div className="liq-relative liq-flex liq-max-w-full liq-flex-col liq-rounded-none liq-p-0 !liq-max-h-[22rem]">
       <div className="liq-flex liq-flex-col liq-gap-3 liq-rounded-t-2xl liq-p-2">
