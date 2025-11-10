@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDisconnect } from '@reown/appkit/react';
 import { useCallback, useEffect } from 'react';
 import { checkAccount } from 'api/checkAccount';
+import { getDisplayName } from 'helpers/getDisplayName';
 import { SwitchChainButton } from './SwitchChainButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { getApiURL } from '../../../helpers';
@@ -123,7 +124,7 @@ export const BridgeAccountDisplay = ({
               <div> {account.isConnecting ? 'Connecting...' : 'Connect'} </div>
               <img src={activeChain?.pngUrl} alt="" className="liq-w-4" />
               <div className="liq-truncate md:liq-text-clip">
-                {activeChain?.networkName}
+                {getDisplayName(activeChain)}
               </div>
             </div>
           </div>

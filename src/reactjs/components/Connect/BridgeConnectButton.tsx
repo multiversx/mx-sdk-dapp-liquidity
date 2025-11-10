@@ -1,17 +1,7 @@
 import { CustomConnectButton } from './CustomConnectButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
-import { ChainName } from '../../constants/chains';
+import { getDisplayName } from '../../../helpers/getDisplayName';
 import { useAccount } from '../../hooks/useAccount';
-
-const getDisplayName = (chain?: ChainDTO) => {
-  if (!chain?.chainName) {
-    return chain?.networkName || '';
-  }
-
-  return (
-    ChainName[chain.chainName as keyof typeof ChainName] || chain.networkName
-  );
-};
 
 export const BridgeConnectButton = ({
   activeChain,

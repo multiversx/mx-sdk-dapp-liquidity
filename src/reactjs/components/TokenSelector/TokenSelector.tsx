@@ -68,10 +68,31 @@ export const TokenSelector = ({
   }, [data, isMvxSelector]);
 
   const isDestinationMvx = useMemo(() => {
-    return isMvxSelector && isDestination;
-  }, [isMvxSelector, isDestination]);
+    const shouldDisable = isMvxSelector && isDestination;
+
+    if (isMvxSelector) {
+      console.log(`🔍 TokenSelector [${name}]:`, {
+        isMvxSelector,
+        isDestination,
+        shouldDisable,
+        disabled,
+        chainsLength: chains.length
+      });
+    }
+
+    return shouldDisable;
+  }, [isMvxSelector, isDestination, name, disabled, chains.length]);
 
   const isVisuallyDisabled = disabled || chains.length < 2 || isDestinationMvx;
+
+  if (isMvxSelector) {
+    console.log(`🎛️ Final disable state [${name}]:`, {
+      disabled,
+      'chains.length < 2': chains.length < 2,
+      isDestinationMvx,
+      isVisuallyDisabled
+    });
+  }
 
   const handleOnClick = () => setShow(true);
 
