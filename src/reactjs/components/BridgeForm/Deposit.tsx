@@ -149,11 +149,6 @@ export const Deposit = ({
 
   const handleSwitchNetwork = useCallback(
     (chain: { id: string | number }) => {
-      console.log('DEPOSIT', { account, chain });
-      if (account.chainId?.toString() === chain.id.toString()) {
-        return;
-      }
-
       const sdkChain = sdkChains.find(
         (c) => c.id.toString() === chain.id.toString()
       );
@@ -161,7 +156,7 @@ export const Deposit = ({
         switchNetwork(sdkChain);
       }
     },
-    [sdkChains, switchNetwork, account.chainId]
+    [sdkChains, switchNetwork]
   );
 
   const {
@@ -647,7 +642,6 @@ export const Deposit = ({
               options={toOptions}
               areOptionsLoading={isTokensLoading}
               isMvxSelector={isSecondTokenMvx}
-              isDestination={true}
               color="neutral-850"
               onChange={onChangeSecondSelect}
               onBlur={handleBlur}
