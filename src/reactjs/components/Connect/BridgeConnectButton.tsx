@@ -43,7 +43,7 @@ export const BridgeConnectButton = ({
             />
           )}
           {activeChain?.networkName && (
-            <span className="liq-inline sm:liq-hidden liq-truncate">
+            <span className="liq-inline liq-truncate">
               {getDisplayName(activeChain)}
             </span>
           )}

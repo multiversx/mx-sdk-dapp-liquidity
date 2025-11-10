@@ -22,6 +22,7 @@ export const TokenSelector = ({
   disabled = false,
   isMvxSelector = false,
   omitDisableClass = false,
+  isDestination = false,
   color = 'neutral-750',
   onBlur,
   onChange,
@@ -35,6 +36,7 @@ export const TokenSelector = ({
   disabled?: boolean;
   isMvxSelector?: boolean;
   omitDisableClass?: boolean;
+  isDestination?: boolean;
   className?: string;
   color?: 'neutral-750' | 'neutral-850';
   onChange: (option?: TokenType) => void;
@@ -65,7 +67,10 @@ export const TokenSelector = ({
     );
   }, [data, isMvxSelector]);
 
-  const isDestinationMvx = name === 'secondToken' && isMvxSelector;
+  const isDestinationMvx = useMemo(() => {
+    return isMvxSelector && isDestination;
+  }, [isMvxSelector, isDestination]);
+
   const isVisuallyDisabled = disabled || chains.length < 2 || isDestinationMvx;
 
   const handleOnClick = () => setShow(true);
