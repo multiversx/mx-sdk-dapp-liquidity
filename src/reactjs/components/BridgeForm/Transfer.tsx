@@ -152,6 +152,11 @@ export const Transfer = ({
 
   const handleSwitchNetwork = useCallback(
     (chain: { id: string | number }) => {
+      console.log('TRANSFER', { account, chain });
+      if (account.chainId?.toString() === chain.id.toString()) {
+        return;
+      }
+
       const sdkChain = sdkChains.find(
         (c) => c.id.toString() === chain.id.toString()
       );
@@ -159,7 +164,7 @@ export const Transfer = ({
         switchNetwork(sdkChain);
       }
     },
-    [sdkChains, switchNetwork]
+    [sdkChains, switchNetwork, account.chainId]
   );
 
   const {
