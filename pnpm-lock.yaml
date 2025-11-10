@@ -53,9 +53,6 @@ importers:
       '@tanstack/react-query':
         specifier: 5.71.3
         version: 5.71.3(react@18.3.1)
-      '@wagmi/core':
-        specifier: 2.22.1
-        version: 2.22.1(@tanstack/query-core@5.71.3)(@types/react@18.3.12)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.38.6(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@4.1.12))
       animated-number-react:
         specifier: 0.1.2
         version: 0.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -150,6 +147,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: 7.13.0
         version: 7.13.0(eslint@8.50.0)(typescript@5.7.3)
+      '@wagmi/core':
+        specifier: 2.22.1
+        version: 2.22.1(@tanstack/query-core@5.71.3)(@types/react@18.3.12)(react@18.3.1)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@18.3.1))(viem@2.38.6(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@4.1.12))
       autoprefixer:
         specifier: 10.4.20
         version: 10.4.20(postcss@8.4.49)
