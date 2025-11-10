@@ -3,6 +3,7 @@ import { ChainSelect } from './ChainSelect/ChainSelect';
 import { TokenList } from './TokenList';
 import { MVX_CHAIN_IDS } from '../../../../constants';
 import { ChainDTO } from '../../../../dto/Chain.dto';
+import { getDisplayName } from '../../../../helpers/getDisplayName';
 import { TokenType } from '../../../../types/token';
 import { ALL_NETWORK_ID } from '../../../constants';
 import { MxSearch } from '../../base/MxSearch';
@@ -76,7 +77,7 @@ export const SelectContent = ({
       return `Tokens on all networks (${tokens.length})`;
     }
 
-    return `Tokens on ${selectedChain.networkName} (${filteredTokens.length})`;
+    return `Tokens on ${getDisplayName(selectedChain)} (${filteredTokens.length})`;
   }, [availableChains, filteredTokens.length, selectedChainId, tokens.length]);
 
   const handleSelect = (token: TokenType) => {

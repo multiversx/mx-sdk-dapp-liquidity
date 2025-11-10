@@ -86,7 +86,7 @@ export const BridgeAccountDisplay = ({
         <>
           <img src={activeChain?.pngUrl} alt="" className="liq-w-6" />
           <span className="liq-truncate liq-text-gray-400">
-            {activeChain?.networkName}
+            {getDisplayName(activeChain)}
           </span>
           <span className="liq-ml-[-5px]">:</span>
           <div className="liq-flex liq-items-center liq-justify-between">
