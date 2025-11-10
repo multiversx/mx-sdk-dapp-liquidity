@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/multiversx/mx-sdk-dapp-liquidity#readme",
   "license": "MIT",
-  "version": "1.1.2-alpha.4",
+  "version": "1.1.2-alpha.5",
   "main": "index.js",
   "module": "index.mjs",
   "types": "index.d.ts",
@@ -54,7 +54,6 @@
     "@multiversx/sdk-dapp-utils": "3.0.2",
     "@popperjs/core": "2.11.8",
     "@reown/appkit": "1.8.13",
-    "@wagmi/core": "2.22.1",
     "@reown/appkit-common": "1.8.13",
     "@reown/appkit-adapter-bitcoin": "1.8.13",
     "@reown/appkit-adapter-solana": "1.8.13",
@@ -82,9 +81,11 @@
     "react-dom": ">= 18",
     "tailwindcss": ">= 3",
     "bignumber.js": ">= 9.x",
-    "clsx": ">= 2.x"
+    "clsx": ">= 2.x",
+    "@wagmi/core": ">= 2.x"
   },
   "devDependencies": {
+    "@wagmi/core": "2.22.1",
     "clsx": "2.0.0",
     "bignumber.js": "9.0.1",
     "@multiversx/sdk-core": "15.3.0",

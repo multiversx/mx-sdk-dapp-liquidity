@@ -30,7 +30,7 @@ export const Web3AppContext = createContext<Web3AppContextProps | undefined>(
   undefined
 );
 
-type Web3AppProviderType = Web3AppContextProps & {
+type Web3AppProviderType = Omit<Web3AppContextProps, 'supportedChains'> & {
   supportedChains?: AppKitNetwork[];
 };
 
@@ -41,7 +41,7 @@ export function Web3AppProvider({
   options,
   supportedChains = [],
   nativeAuthToken,
-  bridgeOnly = true,
+  bridgeOnly = false,
   signMvxTransactions,
   latestMvxTransactionHash,
   resetMvxTransactionHash

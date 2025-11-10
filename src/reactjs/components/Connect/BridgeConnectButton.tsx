@@ -1,6 +1,17 @@
 import { CustomConnectButton } from './CustomConnectButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
+import { ChainName } from '../../constants/chains';
 import { useAccount } from '../../hooks/useAccount';
+
+const getDisplayName = (chain?: ChainDTO) => {
+  if (!chain?.chainName) {
+    return chain?.networkName || '';
+  }
+
+  return (
+    ChainName[chain.chainName as keyof typeof ChainName] || chain.networkName
+  );
+};
 
 export const BridgeConnectButton = ({
   activeChain,
@@ -31,7 +42,11 @@ export const BridgeConnectButton = ({
               className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
             />
           )}
-          {activeChain?.networkName}
+          {activeChain?.networkName && (
+            <span className="liq-inline sm:liq-hidden liq-truncate">
+              {getDisplayName(activeChain)}
+            </span>
+          )}
         </div>
       )}
     </CustomConnectButton>

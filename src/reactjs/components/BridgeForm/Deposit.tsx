@@ -660,7 +660,7 @@ export const Deposit = ({
             <BridgeConnectButton
               className="liq-w-full liq-rounded-xl liq-bg-neutral-850/50 liq-px-8 liq-py-3 liq-font-semibold liq-text-primary-200 liq-transition-colors liq-duration-200 hover:enabled:liq-bg-primary-700/80 disabled:liq-opacity-50"
               disabled={isPendingRate}
-              activeChain={selectedChainOption}
+              activeChain={firstTokenChain}
             />
           )}
           {mvxAddress && isAuthenticated && (

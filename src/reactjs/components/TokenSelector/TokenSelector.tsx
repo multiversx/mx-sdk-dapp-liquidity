@@ -63,9 +63,10 @@ export const TokenSelector = ({
         (chain) => !MVX_CHAIN_IDS.includes(chain.chainId.toString())
       ) ?? []
     );
-  }, [data]);
+  }, [data, isMvxSelector]);
 
-  const isVisuallyDisabled = disabled || chains.length < 2;
+  const isDestinationMvx = name === 'secondToken' && isMvxSelector;
+  const isVisuallyDisabled = disabled || chains.length < 2 || isDestinationMvx;
 
   const handleOnClick = () => setShow(true);
 
