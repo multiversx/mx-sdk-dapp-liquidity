@@ -1,17 +1,10 @@
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDisconnect } from '@reown/appkit/react';
-import { useCallback, useEffect } from 'react';
-import { checkAccount } from 'api/checkAccount';
 import { getDisplayName } from 'helpers/getDisplayName';
 import { SwitchChainButton } from './SwitchChainButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
-import { getApiURL } from '../../../helpers';
-import { useWeb3App } from '../../context/useWeb3App';
-import { useGetChainId } from '../../hooks';
 import { useAccount } from '../../hooks/useAccount';
-import { useGenericSignMessage } from '../../hooks/useGenericSignMessage';
-import { useLinkAccountMutation } from '../../queries/useLinkAccount.mutation';
 import { MxLink } from '../base';
 import { CopyButton } from '../CopyButton';
 import { TrimAddress } from '../TrimAddress';
@@ -25,11 +18,6 @@ export const BridgeAccountDisplay = ({
 }) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
-  const chainId = useGetChainId();
-  const { signMessage } = useGenericSignMessage();
-  const { nativeAuthToken } = useWeb3App();
-
-  const { mutateAsync: linkAccount } = useLinkAccountMutation();
 
   const handleDisconnect = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
@@ -39,46 +27,6 @@ export const BridgeAccountDisplay = ({
       console.error('Failed to disconnect:', error);
     }
   };
-
-  const validateOwnership = useCallback(async () => {
-    if (account.address && chainId) {
-      try {
-        const { data: ownership } = await checkAccount({
-          url: getApiURL(),
-          walletAddress: account.address,
-          chainId: chainId ? chainId.toString() : '',
-          nativeAuthToken
-        });
-
-        if (!ownership?.isLinked) {
-          try {
-            const signature = await signMessage(
-              ownership?.signMessage ?? 'Missing message'
-            );
-
-            await linkAccount({
-              nativeAuthToken: nativeAuthToken ?? '',
-              body: {
-                chainId: chainId ? chainId.toString() : '',
-                address: account.address,
-                signature,
-                message: ownership?.signMessage ?? ''
-              }
-            });
-          } catch (error) {
-            console.error('Failed to link account:', error);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to check account:', error);
-        return;
-      }
-    }
-  }, [account.address, chainId, nativeAuthToken]);
-
-  useEffect(() => {
-    validateOwnership();
-  }, [account.address]);
 
   return (
     <>
