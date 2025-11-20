@@ -5,6 +5,14 @@ import Ethereum from '../assets/ethereum.svg';
 import MultiversX from '../assets/msx.svg';
 import Polygon from '../assets/polygon.svg';
 
+export enum ChainName {
+  ethereum = 'Ethereum',
+  bsc = 'Binance BSC',
+  polygon = 'Polygon',
+  msx = 'MultiversX',
+  sui = 'Sui'
+}
+
 const msx = {
   msx: MultiversX,
   MultiversX

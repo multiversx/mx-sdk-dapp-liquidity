@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Deposit } from './Deposit';
 import { Transfer } from './Transfer';
+import { useWeb3App } from '../../context/useWeb3App';
 
 interface BridgeFormProps {
   mvxChainId: string;
@@ -45,12 +46,20 @@ export const BridgeForm = ({
   onHistoryClose,
   onNavigate
 }: BridgeFormProps) => {
-  const [direction, setDirection] = useState<'deposit' | 'withdraw'>('deposit');
+  const { bridgeOnly } = useWeb3App();
+  const [direction, setDirection] = useState<'deposit' | 'withdraw'>(
+    bridgeOnly === false ? 'deposit' : 'deposit'
+  );
 
   const handleChangeDirection = () => {
-    setDirection((prevState) =>
-      prevState === 'deposit' ? 'withdraw' : 'deposit'
-    );
+    // Prevent direction change when bridgeOnly is false
+    if (bridgeOnly === false) {
+      return;
+    }
+
+    setDirection((prevState) => {
+      return prevState === 'deposit' ? 'withdraw' : 'deposit';
+    });
   };
 
   return direction === 'deposit' ? (
