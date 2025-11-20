@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  id-token: write
   contents: write
 
 jobs:
@@ -22,6 +23,10 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Setup pnpm
         run: npm install -g pnpm
 
