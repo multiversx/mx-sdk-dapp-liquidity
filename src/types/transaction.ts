@@ -1,4 +1,4 @@
-import { ITransaction } from '@multiversx/sdk-core/out/interface';
+import { IPlainTransactionObject as MvxTransactions } from '@multiversx/sdk-core/out';
 import { TransactionInstructionCtorFields } from '@solana/web3.js';
 import {
   TransactionBase,
@@ -27,7 +27,7 @@ export type BaseTransaction = {
   };
 };
 
-export type ServerTransaction = BaseTransaction & Partial<ITransaction>;
+export type ServerTransaction = BaseTransaction & Partial<MvxTransactions>;
 
 export type TransactionType = TransactionBase & {
   account: `0x${string}`;

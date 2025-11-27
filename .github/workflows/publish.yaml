@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  id-token: write
   contents: write
 
 jobs:
@@ -22,6 +23,10 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Setup pnpm
         run: npm install -g pnpm
 
@@ -38,14 +43,26 @@ jobs:
         id: package
         uses: andreigiura/action-nodejs-package-info@v1.0.2
 
+      - name: Publish to npmjs alpha version
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ contains(steps.package.outputs.version, 'alpha') }}
+        run: cd dist && npm publish --tag alpha
+
+      - name: Publish to npmjs beta version
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ contains(steps.package.outputs.version, 'beta') }}
+        run: cd dist && npm publish --tag beta
+
       - name: Publish to npmjs next version
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        if: ${{ steps.package.outputs.is-prerelease == 'true'}}
-        run: echo ${{ steps.package.outputs.is-prerelease}} && npm publish --tag next
+        if: ${{ steps.package.outputs.is-release-candidate == 'true'}}
+        run: pnpm run publish-package-next
 
       - name: Publish to npmjs
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ steps.package.outputs.is-prerelease == 'false' }}
-        run: npm publish
+        run: pnpm run publish-package
