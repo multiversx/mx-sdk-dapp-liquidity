@@ -1,7 +1,6 @@
 import { IPlainTransactionObject } from '@multiversx/sdk-core/out';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { getConnections } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -91,7 +90,6 @@ export const Transfer = ({
   const account = useAccount();
   const { switchNetwork } = useAppKitNetwork();
   const {
-    config,
     options,
     supportedChains: sdkChains,
     nativeAuthToken,
@@ -615,14 +613,8 @@ export const Transfer = ({
             <div>
               You will be asked to sign {siginingTransactionsCount}{' '}
               {siginingTransactionsCount > 1 ? 'transactions' : 'transaction'}{' '}
-              on{' '}
+              on your wallet
             </div>
-            <img
-              src={getConnections(config)[0]?.connector?.icon}
-              alt=""
-              className="liq-mx-1 liq-h-[1rem] liq-w-[1rem]"
-            />
-            <div>{getConnections(config)[0]?.connector?.name}</div>
           </div>
         )}
       </form>

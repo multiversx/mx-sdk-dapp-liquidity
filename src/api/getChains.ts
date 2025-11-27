@@ -17,5 +17,5 @@ export async function getChains({
     }
   };
 
-  return await axios.get<ChainDTO[]>(`/chains?isBridge=${bridgeOnly}`, config);
+  return axios.get<ChainDTO[]>(`/chains?isBridge=${bridgeOnly}`, config);
 }

@@ -2,7 +2,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
+import { waitForTransactionReceipt } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -437,6 +437,7 @@ export const Deposit = ({
       }
     },
     [
+      selectedChainOption,
       bridgeAddress,
       handleOnChangeFirstAmount,
       handleOnChangeSecondAmount,
@@ -717,14 +718,8 @@ export const Deposit = ({
             <div>
               You will be asked to sign {siginingTransactionsCount}{' '}
               {siginingTransactionsCount > 1 ? 'transactions' : 'transaction'}{' '}
-              on{' '}
+              on your wallet
             </div>
-            <img
-              src={getConnections(config)[0]?.connector?.icon}
-              alt=""
-              className="liq-mx-1 liq-h-[1rem] liq-w-[1rem]"
-            />
-            <div>{getConnections(config)[0]?.connector?.name}</div>
           </div>
         )}
       </form>
