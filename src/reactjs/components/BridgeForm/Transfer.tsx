@@ -338,6 +338,7 @@ export const Transfer = ({
     handleSubmit,
     resetSwapForm
   } = useBridgeFormik({
+    isMvxConnected: Boolean(mvxAddress),
     rate,
     sender: mvxAddress ?? '',
     receiver: account.address ?? '',
@@ -580,6 +581,7 @@ export const Transfer = ({
           )}
           {mvxAddress && isAuthenticated && (
             <MxButton
+              data-testid="submit-button"
               type="submit"
               variant="neutral-850"
               className="liq-w-full disabled:liq-bg-neutral-850/50 liq-py-3 hover:enabled:liq-bg-primary !liq-text-primary-200"

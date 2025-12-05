@@ -15,7 +15,11 @@ export const BridgeConnectButton = ({
   const account = useAccount();
 
   return (
-    <CustomConnectButton className={className} disabled={disabled}>
+    <CustomConnectButton
+      className={className}
+      disabled={disabled}
+      data-testid="evm-network-connect-button"
+    >
       {account.isConnected ? null : (
         <div className="liq-flex liq-items-center liq-justify-center liq-gap-1">
           {!account.isConnected && (

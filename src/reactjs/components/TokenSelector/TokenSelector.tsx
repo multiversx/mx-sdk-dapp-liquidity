@@ -180,6 +180,7 @@ export const TokenSelector = ({
                   className="liq-text-neutral-300"
                 />
                 <DisplayAmount
+                  data-testid={`${name}-balance`}
                   decimals={selectedOption?.decimals}
                   amount={selectedOption?.balance ?? '0'}
                   className="liq-font-medium liq-text-neutral-100"

@@ -5,11 +5,13 @@ import { useAccount, useDisconnect } from 'wagmi';
 export const CustomConnectButton = ({
   disabled,
   className,
-  children
+  children,
+  'data-testid': dataTestId
 }: {
   disabled?: boolean;
   className?: string;
   children?: ReactNode;
+  'data-testid'?: string;
 }) => {
   const { open } = useAppKit();
   const { isConnected, isConnecting } = useAccount();
@@ -30,6 +32,7 @@ export const CustomConnectButton = ({
   }
   return (
     <button
+      data-testid={dataTestId}
       onClick={() =>
         open({
           view: 'Connect'

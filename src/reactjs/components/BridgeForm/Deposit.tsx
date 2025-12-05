@@ -458,6 +458,7 @@ export const Deposit = ({
     handleSubmit,
     resetSwapForm
   } = useBridgeFormik({
+    isMvxConnected: Boolean(mvxAddress),
     rate,
     sender: account.address ?? '',
     receiver: mvxAddress ?? '',

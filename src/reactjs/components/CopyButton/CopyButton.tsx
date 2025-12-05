@@ -8,9 +8,14 @@ import { MxButton } from '../base/MxButton';
 interface CopyButtonType {
   text: string;
   className?: string;
+  'data-testid'?: string;
 }
 
-export const CopyButton = ({ text, className = '' }: CopyButtonType) => {
+export const CopyButton = ({
+  text,
+  className = '',
+  'data-testid': dataTestId
+}: CopyButtonType) => {
   const [copyResult, setCopyResut] = React.useState({
     default: true,
     success: false
@@ -40,6 +45,7 @@ export const CopyButton = ({ text, className = '' }: CopyButtonType) => {
       className={className}
       variant="link-neutral-500"
       onClick={handleOnClick}
+      data-testid={dataTestId}
     >
       {copyResult.default || !copyResult.success ? (
         <FontAwesomeIcon icon={faCopy} />

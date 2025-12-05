@@ -49,13 +49,18 @@ export const BridgeAccountDisplay = ({
                   <TrimAddress address={account.address} />
                 </div>
               </MxLink>
-              <CopyButton text={account.address} className="liq-text-sm" />
+              <CopyButton
+                text={account.address}
+                className="liq-text-sm"
+                data-testid="evm-copy-button"
+              />
             </div>
           </div>
           <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
             <button
               className="focus-primary liq-flex liq-items-center liq-gap-1 liq-rounded-xl liq-px-0 liq-py-2 liq-text-sm liq-font-semibold liq-text-neutral-400 liq-transition-colors liq-duration-200 hover:enabled:liq-text-white disabled:liq-opacity-50"
               onClick={handleDisconnect}
+              data-testid="evm-disconnect-button"
             >
               <FontAwesomeIcon icon={faPowerOff} />
             </button>
