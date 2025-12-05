@@ -27,6 +27,7 @@ export const SwitchChainButton = ({
       }}
       className={`${baseStyle} ${className}`}
       disabled={disabled}
+      data-tesid="evm-connect-button"
     >
       {children}
     </button>

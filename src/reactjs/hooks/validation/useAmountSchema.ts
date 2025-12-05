@@ -2,9 +2,13 @@ import * as yup from 'yup';
 import { useTestHasEnoughFunds } from './useTestHasEnoughFunds';
 import { useTestIsConnected } from './useTestIsConnected';
 
-export const useAmountSchema = () => {
+export const useAmountSchema = ({
+  isMvxConnected
+}: {
+  isMvxConnected: boolean;
+}) => {
   const testHasEnoughFunds = useTestHasEnoughFunds();
-  const testIsConnected = useTestIsConnected();
+  const testIsConnected = useTestIsConnected({ isMvxConnected });
 
   const testStartDot = (value?: string) => !value?.startsWith('.');
   const testEndDot = (value?: string) => !value?.endsWith('.');

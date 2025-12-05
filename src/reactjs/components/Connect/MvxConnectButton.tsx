@@ -22,6 +22,7 @@ export const MvxConnectButton = ({
 
   return (
     <MxButton
+      data-testid="mx-network-connect-button"
       type="button"
       variant="neutral-850"
       className={mxClsx(
