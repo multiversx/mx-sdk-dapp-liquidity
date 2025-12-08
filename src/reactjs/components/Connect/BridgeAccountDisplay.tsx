@@ -46,7 +46,10 @@ export const BridgeAccountDisplay = ({
                 className="!liq-relative"
               >
                 <div className="liq-flex liq-min-w-0 liq-flex-grow liq-overflow-hidden liq-leading-none liq-max-w-[10rem]">
-                  <TrimAddress address={account.address} />
+                  <TrimAddress
+                    address={account.address}
+                    data-testid="evm-address"
+                  />
                 </div>
               </MxLink>
               <CopyButton

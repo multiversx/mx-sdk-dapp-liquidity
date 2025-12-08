@@ -22,11 +22,14 @@ export const AccountAddress = ({
       )}
     >
       {heroTag && showTag ? (
-        <div className="liq-truncate liq-text-left liq-text-neutral-100 uppercase">
+        <div
+          className="liq-truncate liq-text-left liq-text-neutral-100 uppercase"
+          data-testid="mx-address"
+        >
           {heroTag}
         </div>
       ) : (
-        <TrimAddress address={address} />
+        <TrimAddress address={address} data-testid="mx-address" />
       )}
     </div>
   );
