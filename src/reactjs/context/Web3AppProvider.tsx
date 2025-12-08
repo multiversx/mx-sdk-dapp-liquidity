@@ -1,4 +1,4 @@
-import { ITransaction } from '@multiversx/sdk-core/out/interface';
+import { IPlainTransactionObject } from '@multiversx/sdk-core/out';
 import { AppKit } from '@reown/appkit/react';
 import { AppKitNetwork } from '@reown/appkit-common';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -16,7 +16,7 @@ export type Web3AppContextProps = {
   supportedChains: AppKitNetwork[];
   nativeAuthToken: string;
   bridgeOnly?: boolean;
-  signMvxTransactions: (transactions: ITransaction[]) => Promise<{
+  signMvxTransactions?: (transactions: IPlainTransactionObject[]) => Promise<{
     error?: string;
     batchId?: string;
   }>;
@@ -30,18 +30,22 @@ export const Web3AppContext = createContext<Web3AppContextProps | undefined>(
   undefined
 );
 
+type Web3AppProviderType = Omit<Web3AppContextProps, 'supportedChains'> & {
+  supportedChains?: AppKitNetwork[];
+};
+
 export function Web3AppProvider({
   children,
   config,
   appKit,
   options,
-  supportedChains,
+  supportedChains = [],
   nativeAuthToken,
-  bridgeOnly = true,
+  bridgeOnly = false,
   signMvxTransactions,
   latestMvxTransactionHash,
   resetMvxTransactionHash
-}: PropsWithChildren<Web3AppContextProps>) {
+}: PropsWithChildren<Web3AppProviderType>) {
   const value = useMemo<Web3AppContextProps>(() => {
     return {
       config,

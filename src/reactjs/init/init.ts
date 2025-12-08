@@ -1,16 +1,8 @@
-import {
-  bitcoin,
-  bitcoinTestnet,
-  solana,
-  solanaDevnet,
-  solanaTestnet
-} from '@reown/appkit/networks';
+import { mainnet, bsc, bscTestnet } from '@reown/appkit/networks';
 import { createAppKit, type AppKitOptions } from '@reown/appkit/react';
-import { BitcoinAdapter } from '@reown/appkit-adapter-bitcoin';
-import { SolanaAdapter } from '@reown/appkit-adapter-solana/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { AppKitNetwork } from '@reown/appkit-common';
-import type { CreateConfigParameters } from '@wagmi/core';
+import type { Config, CreateConfigParameters } from '@wagmi/core';
 import * as viemNetworks from 'viem/chains';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { InMemoryStore } from '../../store/inMemoryStore';
@@ -55,7 +47,12 @@ export type InitOptions = {
   mvxChainId: '31' | '44' | '54';
 };
 
-export function init(options: InitOptions) {
+export function init(options: InitOptions): {
+  config: Config;
+  appKit: any;
+  options: InitOptions;
+  supportedChains: AppKitNetwork[];
+} {
   const store = InMemoryStore.getInstance();
   store.setItem('apiURL', options.apiURL);
   store.setItem('bridgeURL', options.bridgeURL);
@@ -64,11 +61,6 @@ export function init(options: InitOptions) {
   store.setItem('mvxChainId', options.mvxChainId);
 
   const networks = {
-    solana,
-    solanaDevnet,
-    solanaTestnet,
-    bitcoin,
-    bitcoinTestnet,
     ...viemNetworks
   };
 
@@ -80,14 +72,7 @@ export function init(options: InitOptions) {
     )
     .map((network) => network) as AppKitNetwork[];
 
-  const supportedChains = [
-    ...acceptedNetworks,
-    bitcoin,
-    bitcoinTestnet,
-    solana,
-    solanaDevnet,
-    solanaTestnet
-  ];
+  const supportedChains = [mainnet, bsc, bscTestnet, ...acceptedNetworks];
 
   const wagmiAdapter = new WagmiAdapter({
     ...options.adapterConfig,
@@ -95,14 +80,10 @@ export function init(options: InitOptions) {
     projectId: options.appKitOptions.projectId,
     networks: supportedChains
   });
-  const solanaAdapter = new SolanaAdapter();
-  const bitcoinAdapter = new BitcoinAdapter({
-    projectId: options.appKitOptions.projectId
-  });
 
   const appKit = createAppKit({
     ...options.appKitOptions,
-    adapters: [wagmiAdapter, solanaAdapter, bitcoinAdapter],
+    adapters: [wagmiAdapter],
     networks: [supportedChains[0], ...supportedChains.slice(1)]
   });
 

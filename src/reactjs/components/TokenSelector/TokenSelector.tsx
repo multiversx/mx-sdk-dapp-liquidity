@@ -22,6 +22,7 @@ export const TokenSelector = ({
   disabled = false,
   isMvxSelector = false,
   omitDisableClass = false,
+  isDestination = false,
   color = 'neutral-750',
   onBlur,
   onChange,
@@ -35,6 +36,7 @@ export const TokenSelector = ({
   disabled?: boolean;
   isMvxSelector?: boolean;
   omitDisableClass?: boolean;
+  isDestination?: boolean;
   className?: string;
   color?: 'neutral-750' | 'neutral-850';
   onChange: (option?: TokenType) => void;
@@ -63,17 +65,26 @@ export const TokenSelector = ({
         (chain) => !MVX_CHAIN_IDS.includes(chain.chainId.toString())
       ) ?? []
     );
-  }, [data]);
+  }, [data, isMvxSelector]);
 
-  const isVisuallyDisabled = disabled || chains.length < 2;
+  const isDestinationMvx = useMemo(() => {
+    const shouldDisable = isMvxSelector && isDestination;
+
+    return shouldDisable;
+  }, [isMvxSelector, isDestination]);
+
+  const isVisuallyDisabled = disabled || isDestinationMvx;
 
   const handleOnClick = () => setShow(true);
+
+  const showLoadingSkeleton =
+    (areOptionsLoading || areChainsLoading) && !selectedOption;
 
   useEffect(() => {
     onTokenSelectorDisplay?.(show);
   }, [show]);
 
-  if (areOptionsLoading || areChainsLoading) {
+  if (showLoadingSkeleton) {
     return (
       <div
         className={mxClsx(
@@ -169,6 +180,7 @@ export const TokenSelector = ({
                   className="liq-text-neutral-300"
                 />
                 <DisplayAmount
+                  data-testid={`${name}-balance`}
                   decimals={selectedOption?.decimals}
                   amount={selectedOption?.balance ?? '0'}
                   className="liq-font-medium liq-text-neutral-100"

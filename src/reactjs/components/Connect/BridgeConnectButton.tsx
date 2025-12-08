@@ -1,5 +1,6 @@
 import { CustomConnectButton } from './CustomConnectButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
+import { getDisplayName } from '../../../helpers/getDisplayName';
 import { useAccount } from '../../hooks/useAccount';
 
 export const BridgeConnectButton = ({
@@ -14,7 +15,11 @@ export const BridgeConnectButton = ({
   const account = useAccount();
 
   return (
-    <CustomConnectButton className={className} disabled={disabled}>
+    <CustomConnectButton
+      className={className}
+      disabled={disabled}
+      data-testid="evm-network-connect-button"
+    >
       {account.isConnected ? null : (
         <div className="liq-flex liq-items-center liq-justify-center liq-gap-1">
           {!account.isConnected && (
@@ -31,7 +36,11 @@ export const BridgeConnectButton = ({
               className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
             />
           )}
-          {activeChain?.networkName}
+          {activeChain?.networkName && (
+            <span className="liq-inline liq-truncate">
+              {getDisplayName(activeChain)}
+            </span>
+          )}
         </div>
       )}
     </CustomConnectButton>

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChainSelect } from './ChainSelect/ChainSelect';
 import { TokenList } from './TokenList';
+import { MVX_CHAIN_IDS } from '../../../../constants';
 import { ChainDTO } from '../../../../dto/Chain.dto';
+import { getDisplayName } from '../../../../helpers/getDisplayName';
 import { TokenType } from '../../../../types/token';
 import { ALL_NETWORK_ID } from '../../../constants';
-import { useGetChainId } from '../../../hooks/useGetChainId';
 import { MxSearch } from '../../base/MxSearch';
 
 export const SelectContent = ({
@@ -25,16 +26,50 @@ export const SelectContent = ({
   const [filteredTokens, setFilteredTokens] = useState(tokens);
   const [selected, setSelected] = useState(selectedToken);
   const searchPatternRef = useRef<string>('');
-  const activeChainId = useGetChainId();
 
-  const [selectedChainId, setSelectedChainId] = useState(
-    isMvxSelector
-      ? chains[0]?.chainId.toString() ?? ALL_NETWORK_ID
-      : activeChainId?.toString() ?? ALL_NETWORK_ID
-  );
+  // Filter chains based on isMvxSelector
+  const availableChains = useMemo(() => {
+    if (isMvxSelector) {
+      return chains.filter((chain) =>
+        MVX_CHAIN_IDS.includes(chain.chainId.toString())
+      );
+    }
+    return chains.filter(
+      (chain) => !MVX_CHAIN_IDS.includes(chain.chainId.toString())
+    );
+  }, [chains, isMvxSelector]);
+
+  // Get the default chain ID based on available chains and tokens
+  const defaultChainId = useMemo(() => {
+    if (isMvxSelector) {
+      // For MVX selector, find the first MVX chain that has tokens
+      const mvxChainWithTokens = availableChains.find((chain) =>
+        tokens.some(
+          (token) => token.chainId.toString() === chain.chainId.toString()
+        )
+      );
+      return (
+        mvxChainWithTokens?.chainId.toString() ??
+        availableChains[0]?.chainId.toString() ??
+        ALL_NETWORK_ID
+      );
+    }
+    return ALL_NETWORK_ID;
+  }, [availableChains, tokens, isMvxSelector]);
+
+  const [selectedChainId, setSelectedChainId] = useState(defaultChainId);
+
+  useEffect(() => {
+    const isCurrentSelectionValid = availableChains.some(
+      (chain) => chain.chainId.toString() === selectedChainId
+    );
+    if (!isCurrentSelectionValid) {
+      setSelectedChainId(defaultChainId);
+    }
+  }, [defaultChainId, availableChains, selectedChainId]);
 
   const filteredTokensText = useMemo(() => {
-    const selectedChain = chains.find(
+    const selectedChain = availableChains.find(
       (chain) => chain.chainId.toString() === selectedChainId
     );
 
@@ -42,8 +77,8 @@ export const SelectContent = ({
       return `Tokens on all networks (${tokens.length})`;
     }
 
-    return `Tokens on ${selectedChain.networkName} (${filteredTokens.length})`;
-  }, [chains, filteredTokens.length, selectedChainId, tokens.length]);
+    return `Tokens on ${getDisplayName(selectedChain)} (${filteredTokens.length})`;
+  }, [availableChains, filteredTokens.length, selectedChainId, tokens.length]);
 
   const handleSelect = (token: TokenType) => {
     setSelected(token);
@@ -54,29 +89,41 @@ export const SelectContent = ({
     searchPatternRef.current = pattern;
 
     if (selectedChainId === ALL_NETWORK_ID) {
-      const filtered = tokens.filter((token) =>
-        token.symbol.toLowerCase().includes(pattern.toLowerCase())
-      );
-      setFilteredTokens(filtered);
+      if (pattern.trim() === '') {
+        setFilteredTokens(tokens);
+      } else {
+        const filtered = tokens.filter((token) =>
+          token.symbol.toLowerCase().includes(pattern.toLowerCase())
+        );
+        setFilteredTokens(filtered);
+      }
       return;
     }
 
-    const filtered = tokens.filter(
-      (token) =>
-        token.symbol.toLowerCase().includes(pattern.toLowerCase()) &&
-        token.chainId.toString() === selectedChainId.toString()
-    );
-    setFilteredTokens(filtered);
+    if (pattern.trim() === '') {
+      const filtered = tokens.filter(
+        (token) => token.chainId.toString() === selectedChainId.toString()
+      );
+      setFilteredTokens(filtered);
+    } else {
+      const filtered = tokens.filter(
+        (token) =>
+          token.symbol.toLowerCase().includes(pattern.toLowerCase()) &&
+          token.chainId.toString() === selectedChainId.toString()
+      );
+      setFilteredTokens(filtered);
+    }
   };
 
   useEffect(() => {
     setFilteredTokens(tokens);
     setSelected(selectedToken);
+    searchPatternRef.current = '';
   }, [selectedToken, tokens]);
 
   useEffect(() => {
     handleSearch(searchPatternRef.current);
-  }, [selectedChainId]);
+  }, [selectedChainId, tokens]);
 
   return (
     <div className="liq-relative liq-flex liq-max-w-full liq-flex-col liq-rounded-none liq-p-0 !liq-max-h-[22rem]">
@@ -87,15 +134,17 @@ export const SelectContent = ({
             placeholder="Search token"
             onChange={handleSearch}
           />
-          <ChainSelect
-            chains={chains}
-            ignoreAllChains={isMvxSelector}
-            selectedChainId={selectedChainId}
-            onChange={(chainId) => {
-              setSelectedChainId(chainId);
-            }}
-            isLoading={areChainsLoading}
-          />
+          {!isMvxSelector && (
+            <ChainSelect
+              chains={availableChains}
+              ignoreAllChains={isMvxSelector}
+              selectedChainId={selectedChainId}
+              onChange={(chainId) => {
+                setSelectedChainId(chainId);
+              }}
+              isLoading={areChainsLoading}
+            />
+          )}
         </div>
       </div>
 

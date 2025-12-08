@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import Select from 'react-select';
+import { getDisplayName } from 'helpers/getDisplayName';
 import { FormatChainOptionLabel } from './components/FormatChainOptionLabel';
 import { IndicatorSeparator } from './components/IndicatorSeparator';
 import { SelectedChainOption } from './components/SelectedChainOption';
@@ -26,7 +27,7 @@ export const ChainSelect = ({
       value: chain.chainId.toString(),
       chain: {
         id: chain.chainId.toString(),
-        name: chain.chainName,
+        name: getDisplayName(chain),
         networkName: chain.networkName,
         svgUrl: chain.svgUrl,
         pngUrl: chain.pngUrl

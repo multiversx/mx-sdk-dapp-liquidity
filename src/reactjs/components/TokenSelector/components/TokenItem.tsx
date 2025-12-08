@@ -45,6 +45,7 @@ export const TokenItem = ({
 
   return (
     <div
+      data-testid={`token-item-${token.symbol?.toLowerCase?.()}`}
       className={`token-item ${
         selected ? 'liq-selected' : ''
       } liq-flex liq-cursor-pointer liq-items-center liq-justify-between liq-rounded-lg liq-p-2 hover:liq-bg-neutral-700 liq-bg-neutral-850`}

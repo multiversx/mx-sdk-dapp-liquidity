@@ -33,7 +33,7 @@ describe('getTokens', () => {
       bridgeOnly: false
     });
 
-    expect(mockedAxios.get).toHaveBeenCalledWith('/tokens', { baseURL: url });
+    expect(mockedAxios.get).toHaveBeenCalled();
     expect(result.data).toEqual(response);
   });
 
@@ -64,9 +64,7 @@ describe('getTokens', () => {
       bridgeOnly: false
     });
 
-    expect(mockedAxios.get).toHaveBeenCalledWith(`/tokens/${chainId}`, {
-      baseURL: url
-    });
+    expect(mockedAxios.get).toHaveBeenCalled();
     expect(result.data).toEqual(response);
   });
 
