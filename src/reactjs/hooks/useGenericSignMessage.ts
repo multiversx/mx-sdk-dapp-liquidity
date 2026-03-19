@@ -13,6 +13,9 @@ export const useGenericSignMessage = () => {
     useAppKitProvider<Provider>('solana');
   const { walletProvider: btcWalletProvider } =
     useAppKitProvider<BitcoinConnector>('bip122');
+  // TODO: type properly when @reown exports Sui provider type
+  const { walletProvider: suiWalletProvider } =
+    useAppKitProvider<any>('sui');
 
   const signMessage = async (message: string) => {
     if (!isConnected || !caipNetwork?.chainNamespace) {
@@ -33,6 +36,19 @@ export const useGenericSignMessage = () => {
           address: address ?? '',
           message
         });
+      }
+      case 'sui': {
+        if (!suiWalletProvider) {
+          throw new Error('Sui wallet not connected');
+        }
+        const encodedMessage = new TextEncoder().encode(message);
+        const result = await suiWalletProvider.request({
+          method: 'sui_signPersonalMessage',
+          params: {
+            message: Buffer.from(encodedMessage).toString('base64')
+          }
+        });
+        return result.signature;
       }
       default:
         throw new Error(

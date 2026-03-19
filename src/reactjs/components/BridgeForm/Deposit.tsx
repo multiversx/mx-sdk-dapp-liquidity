@@ -132,7 +132,7 @@ export const Deposit = ({
     );
   }, [chainId, chains]);
 
-  const { evm, solana, bitcoin } = useSignTransaction();
+  const { evm, solana, bitcoin, sui } = useSignTransaction();
   const sendTransactions = useSendTransactions();
 
   const {
@@ -394,6 +394,22 @@ export const Deposit = ({
                 signedTransactions.push({
                   ...transaction,
                   txHash: psbt
+                });
+                break;
+
+              case ChainType.sui:
+                if (!transaction.suiParams) {
+                  console.error('No Sui params');
+                  break;
+                }
+
+                const digest = await sui.signTransaction(
+                  transaction.suiParams
+                );
+
+                signedTransactions.push({
+                  ...transaction,
+                  txHash: digest
                 });
                 break;
               default:

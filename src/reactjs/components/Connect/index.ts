@@ -4,3 +4,5 @@ export * from './MvxConnectButton';
 export * from './SwitchChainButton';
 export * from './BridgeAccountDisplay';
 export * from './MvxAccountDisplay';
+export * from './ChainSelectConnect';
+export * from './SuiConnectModal';

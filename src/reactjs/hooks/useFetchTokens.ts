@@ -1,7 +1,8 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { useEffect, useMemo } from 'react';
 import { useAccount } from './useAccount';
-import { MVX_CHAIN_IDS } from '../../constants';
+import { MVX_CHAIN_IDS, SUI_CHAIN_IDS } from '../../constants';
+import { mockSuiTokens, SUI_MOCK_CHAIN_ID } from '../constants/mockSuiData';
 import { useWeb3App } from '../context/useWeb3App.ts';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import {
@@ -12,6 +13,10 @@ import {
   invalidateEvmTokensBalances,
   useGetNonMvxTokensBalancesQuery
 } from '../queries/useGetNonMvxTokensBalances.query';
+import {
+  invalidateSuiTokensBalancesQuery,
+  useGetSuiTokensBalancesQuery
+} from '../queries/useGetSuiTokensBalances.query';
 
 export const useFetchTokens = ({
   mvxAddress,
@@ -24,10 +29,12 @@ export const useFetchTokens = ({
 }) => {
   const { chainId } = useAppKitNetwork();
   const account = useAccount();
-  const { nativeAuthToken, bridgeOnly } = useWeb3App();
+  const { nativeAuthToken, bridgeOnly, externalChains } = useWeb3App();
+
+  const hasSuiExternal = externalChains?.some((c) => c.chainType === 'sui');
 
   const {
-    data: tokens,
+    data: backendTokens,
     isLoading: isTokensLoading,
     isError: isTokensError
   } = useGetAllTokensQuery({
@@ -35,11 +42,26 @@ export const useFetchTokens = ({
     bridgeOnly
   });
 
+  // Inject mock Sui tokens when Sui external chain is configured
+  const tokens = useMemo(() => {
+    if (!backendTokens) return backendTokens;
+    if (!hasSuiExternal) return backendTokens;
+
+    // Only add if backend doesn't already have Sui tokens
+    const hasSuiFromBackend = backendTokens.some(
+      (t) => t.chainId === SUI_MOCK_CHAIN_ID
+    );
+    if (hasSuiFromBackend) return backendTokens;
+
+    return [...backendTokens, ...mockSuiTokens];
+  }, [backendTokens, hasSuiExternal]);
+
   const evmTokens = useMemo(
     () =>
       tokens?.filter(
         (token) =>
           !MVX_CHAIN_IDS.includes(token.chainId.toString()) &&
+          !SUI_CHAIN_IDS.includes(token.chainId.toString()) &&
           token.chainId.toLowerCase() !== 'fiat'
       ),
     [tokens]
@@ -53,6 +75,14 @@ export const useFetchTokens = ({
     [tokens]
   );
 
+  const suiTokens = useMemo(
+    () =>
+      tokens?.filter((token) =>
+        SUI_CHAIN_IDS.includes(token.chainId.toString())
+      ),
+    [tokens]
+  );
+
   const {
     data: evmTokensBalances,
     isLoading: isLoadingEvmTokensBalances,
@@ -60,6 +90,14 @@ export const useFetchTokens = ({
   } = useGetNonMvxTokensBalancesQuery({
     tokens: evmTokens ?? [],
     chainId: chainId?.toString()
+  });
+
+  const {
+    data: suiTokensBalances,
+    isLoading: isLoadingSuiTokensBalances,
+    isError: isErrorSuiTokensBalances
+  } = useGetSuiTokensBalancesQuery({
+    tokens: suiTokens ?? []
   });
 
   const {
@@ -114,6 +152,35 @@ export const useFetchTokens = ({
     });
   }, [evmTokens, evmTokensBalances]);
 
+  const suiTokensWithBalances = useMemo(() => {
+    return suiTokens?.map((token) => {
+      const foundToken = suiTokensBalances?.find(
+        (suiToken) => suiToken.address === token.address
+      );
+
+      if (!foundToken) {
+        return {
+          ...token,
+          balance: '0'
+        };
+      }
+
+      return {
+        ...foundToken,
+        balance: foundToken.balance.toString()
+      };
+    });
+  }, [suiTokens, suiTokensBalances]);
+
+  // Merge EVM + Sui tokens under evmTokensWithBalances key to avoid downstream interface changes
+  // TODO: rename to nonMvxTokensWithBalances when cleaning up
+  const allNonMvxTokensWithBalances = useMemo(() => {
+    return [
+      ...(evmTokensWithBalances ?? []),
+      ...(suiTokensWithBalances ?? [])
+    ];
+  }, [evmTokensWithBalances, suiTokensWithBalances]);
+
   useEffect(() => {
     if (mvxAddress) {
       invalidateMvxTokensBalancesQuery();
@@ -126,14 +193,15 @@ export const useFetchTokens = ({
     }
 
     invalidateEvmTokensBalances();
+    invalidateSuiTokensBalancesQuery();
   }, [refetchTrigger, chainId, account.address]);
 
   return {
     isTokensLoading,
     isTokensError,
-    isLoadingEvmTokensBalances,
-    isErrorEvmTokensBalances,
-    evmTokensWithBalances,
+    isLoadingEvmTokensBalances: isLoadingEvmTokensBalances || isLoadingSuiTokensBalances,
+    isErrorEvmTokensBalances: isErrorEvmTokensBalances || isErrorSuiTokensBalances,
+    evmTokensWithBalances: allNonMvxTokensWithBalances,
     isLoadingMvxTokensBalances,
     isErrorMvxTokensBalances,
     mvxTokensWithBalances,

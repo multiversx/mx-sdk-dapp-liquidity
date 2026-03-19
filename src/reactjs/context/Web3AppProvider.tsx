@@ -7,7 +7,17 @@ import { PropsWithChildren, useMemo } from 'react';
 import { createContext } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { getQueryClient } from './queryClient';
-import { InitOptions } from '../init/init';
+import { InitOptions, SuiConnector } from '../init/init';
+
+export type ExternalChainConnector = {
+  chainType: string;
+  chainName: string;
+  chainIcon?: string;
+  address: string | null;
+  connector: SuiConnector;
+  onConnect: (address: string) => void;
+  onDisconnect: () => void;
+};
 
 export type Web3AppContextProps = {
   config: ResolvedRegister['config'];
@@ -22,6 +32,7 @@ export type Web3AppContextProps = {
   }>;
   latestMvxTransactionHash?: string;
   resetMvxTransactionHash?: () => void;
+  externalChains?: ExternalChainConnector[];
 };
 
 const queryClient = getQueryClient();
@@ -44,7 +55,8 @@ export function Web3AppProvider({
   bridgeOnly = false,
   signMvxTransactions,
   latestMvxTransactionHash,
-  resetMvxTransactionHash
+  resetMvxTransactionHash,
+  externalChains
 }: PropsWithChildren<Web3AppProviderType>) {
   const value = useMemo<Web3AppContextProps>(() => {
     return {
@@ -56,9 +68,10 @@ export function Web3AppProvider({
       bridgeOnly,
       signMvxTransactions,
       latestMvxTransactionHash,
-      resetMvxTransactionHash
+      resetMvxTransactionHash,
+      externalChains
     };
-  }, [config, appKit, options, nativeAuthToken, signMvxTransactions]);
+  }, [config, appKit, options, nativeAuthToken, signMvxTransactions, externalChains]);
 
   return (
     <Web3AppContext.Provider value={value}>
