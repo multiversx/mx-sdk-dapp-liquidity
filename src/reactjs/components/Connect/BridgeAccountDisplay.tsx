@@ -41,7 +41,11 @@ export const BridgeAccountDisplay = ({
   if (displayAddress) {
     return (
       <>
-        <img src={activeChain?.pngUrl} alt="" className="liq-w-6" />
+        <img
+          src={activeChain?.pngUrl}
+          alt=""
+          className="liq-w-6 liq-h-6 liq-rounded-lg"
+        />
         <span className="liq-truncate liq-text-gray-400">
           {getDisplayName(activeChain)}
         </span>
@@ -90,12 +94,12 @@ export const BridgeAccountDisplay = ({
           className="liq-rounded-lg liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 !liq-text-primary-200 hover:enabled:liq-bg-primary liq-px-2"
         >
           <div className="liq-flex liq-items-center">
-            <div className="liq-flex liq-justify-center liq-gap-2">
+            <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
               <div>{suiConnect.isConnecting ? 'Connecting...' : 'Connect'}</div>
               <img
                 src={activeChain?.pngUrl}
                 alt=""
-                className="liq-w-4 liq-rounded-full"
+                className="liq-w-4 liq-h-4 liq-rounded-sm"
               />
               <div className="liq-truncate md:liq-text-clip">
                 {getDisplayName(activeChain)}
@@ -122,9 +126,13 @@ export const BridgeAccountDisplay = ({
       className="liq-rounded-lg liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 !liq-text-primary-200 hover:enabled:liq-bg-primary liq-px-2"
     >
       <div className="liq-flex liq-items-center">
-        <div className="liq-flex liq-justify-center liq-gap-2">
+        <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
           <div>{account.isConnecting ? 'Connecting...' : 'Connect'}</div>
-          <img src={activeChain?.pngUrl} alt="" className="liq-w-4" />
+          <img
+            src={activeChain?.pngUrl}
+            alt=""
+            className="liq-w-4 liq-h-4 liq-rounded-sm"
+          />
           <div className="liq-truncate md:liq-text-clip">
             {getDisplayName(activeChain)}
           </div>

@@ -739,12 +739,12 @@ export const Deposit = ({
               }
             >
               {hasAmounts && !pendingSigning && (
-                <div className="liq-flex liq-justify-center liq-gap-2">
+                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
                   <div>Deposit on </div>
                   <img
                     src={mvxChain?.pngUrl ?? ''}
                     alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
                   <div>MultiversX</div>
                 </div>
@@ -764,7 +764,7 @@ export const Deposit = ({
                   <img
                     src={mvxChain?.pngUrl ?? ''}
                     alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
                   <div>MultiversX</div>
                 </div>

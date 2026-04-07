@@ -604,12 +604,12 @@ export const Transfer = ({
               }
             >
               {hasAmounts && (
-                <div className="liq-flex liq-justify-center liq-gap-2">
+                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
                   <div>Transfer to </div>
                   <img
                     src={secondTokenChain?.pngUrl ?? ''}
                     alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
                   <div>{secondTokenChain?.networkName}</div>
                 </div>

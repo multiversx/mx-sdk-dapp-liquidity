@@ -233,7 +233,7 @@ export const BridgeHistory = ({
                         <img
                           src={tokensMap[transaction.tokenDestination]?.pngUrl}
                           alt=""
-                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                          className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                         />
                         <span className="liq-whitespace-nowrap">from</span>
                         <span className="liq-text-wrap">
@@ -293,7 +293,7 @@ export const BridgeHistory = ({
                         <img
                           src={tokensMap[transaction.tokenSource]?.pngUrl}
                           alt=""
-                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                          className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                         />
                         <span className="liq-whitespace-nowrap">to</span>
                         <span className="liq-text-wrap">

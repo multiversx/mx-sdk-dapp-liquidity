@@ -33,7 +33,7 @@ export const BridgeConnectButton = ({
             <img
               src={activeChain.pngUrl}
               alt=""
-              className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-p-1"
+              className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
             />
           )}
           {activeChain?.networkName && (
