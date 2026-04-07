@@ -1,8 +1,7 @@
-import { useAppKitNetwork } from '@reown/appkit/react';
 import { useEffect, useMemo } from 'react';
 import { useAccount } from './useAccount';
-import { MVX_CHAIN_IDS, SUI_CHAIN_IDS } from '../../constants';
-import { mockSuiTokens, SUI_MOCK_CHAIN_ID } from '../constants/mockSuiData';
+import { useBridgeApiChainId } from './useBridgeApiChainId';
+import { MVX_CHAIN_IDS } from '../../constants';
 import { useWeb3App } from '../context/useWeb3App.ts';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import {
@@ -13,10 +12,6 @@ import {
   invalidateEvmTokensBalances,
   useGetNonMvxTokensBalancesQuery
 } from '../queries/useGetNonMvxTokensBalances.query';
-import {
-  invalidateSuiTokensBalancesQuery,
-  useGetSuiTokensBalancesQuery
-} from '../queries/useGetSuiTokensBalances.query';
 
 export const useFetchTokens = ({
   mvxAddress,
@@ -27,14 +22,12 @@ export const useFetchTokens = ({
   mvxApiURL: string;
   refetchTrigger?: number;
 }) => {
-  const { chainId } = useAppKitNetwork();
+  const bridgeApiChainId = useBridgeApiChainId();
   const account = useAccount();
-  const { nativeAuthToken, bridgeOnly, externalChains } = useWeb3App();
-
-  const hasSuiExternal = externalChains?.some((c) => c.chainType === 'sui');
+  const { nativeAuthToken, bridgeOnly } = useWeb3App();
 
   const {
-    data: backendTokens,
+    data: tokens,
     isLoading: isTokensLoading,
     isError: isTokensError
   } = useGetAllTokensQuery({
@@ -42,26 +35,11 @@ export const useFetchTokens = ({
     bridgeOnly
   });
 
-  // Inject mock Sui tokens when Sui external chain is configured
-  const tokens = useMemo(() => {
-    if (!backendTokens) return backendTokens;
-    if (!hasSuiExternal) return backendTokens;
-
-    // Only add if backend doesn't already have Sui tokens
-    const hasSuiFromBackend = backendTokens.some(
-      (t) => t.chainId === SUI_MOCK_CHAIN_ID
-    );
-    if (hasSuiFromBackend) return backendTokens;
-
-    return [...backendTokens, ...mockSuiTokens];
-  }, [backendTokens, hasSuiExternal]);
-
-  const evmTokens = useMemo(
+  const nonMvxTokens = useMemo(
     () =>
       tokens?.filter(
         (token) =>
           !MVX_CHAIN_IDS.includes(token.chainId.toString()) &&
-          !SUI_CHAIN_IDS.includes(token.chainId.toString()) &&
           token.chainId.toLowerCase() !== 'fiat'
       ),
     [tokens]
@@ -75,29 +53,13 @@ export const useFetchTokens = ({
     [tokens]
   );
 
-  const suiTokens = useMemo(
-    () =>
-      tokens?.filter((token) =>
-        SUI_CHAIN_IDS.includes(token.chainId.toString())
-      ),
-    [tokens]
-  );
-
   const {
-    data: evmTokensBalances,
-    isLoading: isLoadingEvmTokensBalances,
-    isError: isErrorEvmTokensBalances
+    data: nonMvxTokensBalances,
+    isLoading: isLoadingNonMvxTokensBalances,
+    isError: isErrorNonMvxTokensBalances
   } = useGetNonMvxTokensBalancesQuery({
-    tokens: evmTokens ?? [],
-    chainId: chainId?.toString()
-  });
-
-  const {
-    data: suiTokensBalances,
-    isLoading: isLoadingSuiTokensBalances,
-    isError: isErrorSuiTokensBalances
-  } = useGetSuiTokensBalancesQuery({
-    tokens: suiTokens ?? []
+    tokens: nonMvxTokens ?? [],
+    chainId: bridgeApiChainId
   });
 
   const {
@@ -130,12 +92,12 @@ export const useFetchTokens = ({
     });
   }, [mvxTokens, mvxTokensBalances]);
 
-  const evmTokensWithBalances = useMemo(() => {
-    return evmTokens?.map((token) => {
-      const foundToken = evmTokensBalances?.find(
-        (evmToken) =>
-          evmToken.address === token.address &&
-          evmToken.chainId === token.chainId
+  const nonMvxTokensWithBalances = useMemo(() => {
+    return nonMvxTokens?.map((token) => {
+      const foundToken = nonMvxTokensBalances?.find(
+        (nonMvxToken) =>
+          nonMvxToken.address === token.address &&
+          nonMvxToken.chainId === token.chainId
       );
 
       if (!foundToken) {
@@ -150,36 +112,7 @@ export const useFetchTokens = ({
         balance: foundToken.balance.toString()
       };
     });
-  }, [evmTokens, evmTokensBalances]);
-
-  const suiTokensWithBalances = useMemo(() => {
-    return suiTokens?.map((token) => {
-      const foundToken = suiTokensBalances?.find(
-        (suiToken) => suiToken.address === token.address
-      );
-
-      if (!foundToken) {
-        return {
-          ...token,
-          balance: '0'
-        };
-      }
-
-      return {
-        ...foundToken,
-        balance: foundToken.balance.toString()
-      };
-    });
-  }, [suiTokens, suiTokensBalances]);
-
-  // Merge EVM + Sui tokens under evmTokensWithBalances key to avoid downstream interface changes
-  // TODO: rename to nonMvxTokensWithBalances when cleaning up
-  const allNonMvxTokensWithBalances = useMemo(() => {
-    return [
-      ...(evmTokensWithBalances ?? []),
-      ...(suiTokensWithBalances ?? [])
-    ];
-  }, [evmTokensWithBalances, suiTokensWithBalances]);
+  }, [nonMvxTokens, nonMvxTokensBalances]);
 
   useEffect(() => {
     if (mvxAddress) {
@@ -193,15 +126,14 @@ export const useFetchTokens = ({
     }
 
     invalidateEvmTokensBalances();
-    invalidateSuiTokensBalancesQuery();
-  }, [refetchTrigger, chainId, account.address]);
+  }, [refetchTrigger, bridgeApiChainId, account.address]);
 
   return {
     isTokensLoading,
     isTokensError,
-    isLoadingEvmTokensBalances: isLoadingEvmTokensBalances || isLoadingSuiTokensBalances,
-    isErrorEvmTokensBalances: isErrorEvmTokensBalances || isErrorSuiTokensBalances,
-    evmTokensWithBalances: allNonMvxTokensWithBalances,
+    isLoadingEvmTokensBalances: isLoadingNonMvxTokensBalances,
+    isErrorEvmTokensBalances: isErrorNonMvxTokensBalances,
+    evmTokensWithBalances: nonMvxTokensWithBalances,
     isLoadingMvxTokensBalances,
     isErrorMvxTokensBalances,
     mvxTokensWithBalances,

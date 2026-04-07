@@ -11,8 +11,13 @@ import { getApiURL } from '../../../helpers';
 import { ProviderType } from '../../../types/providerType.ts';
 import { ServerTransaction } from '../../../types/transaction';
 import { useWeb3App } from '../../context/useWeb3App';
+import {
+  sameBridgeApiChainId,
+  toBridgeApiChainId
+} from '../../helpers/resolveBridgeApiChainId';
 import { useSendTransactions } from '../../hooks';
 import { useAccount } from '../../hooks/useAccount';
+import { useBridgeApiChainId } from '../../hooks/useBridgeApiChainId';
 import {
   BridgeFormikValuesEnum,
   useBridgeFormik
@@ -96,6 +101,7 @@ export const Transfer = ({
     bridgeOnly
   } = useWeb3App();
   const chainId = useGetChainId();
+  const bridgeApiChainId = useBridgeApiChainId();
   const sendTransactions = useSendTransactions();
 
   const {
@@ -125,9 +131,7 @@ export const Transfer = ({
     isChainsLoading;
 
   const activeChain = useMemo(() => {
-    return sdkChains.find(
-      (chain) => chain.id.toString() === chainId?.toString()
-    );
+    return sdkChains.find((chain) => sameBridgeApiChainId(chain.id, chainId));
   }, [chainId, sdkChains]);
 
   const mvxChain = useMemo(() => {
@@ -150,8 +154,8 @@ export const Transfer = ({
 
   const handleSwitchNetwork = useCallback(
     (chain: { id: string | number }) => {
-      const sdkChain = sdkChains.find(
-        (c) => c.id.toString() === chain.id.toString()
+      const sdkChain = sdkChains.find((c) =>
+        sameBridgeApiChainId(c.id, chain.id)
       );
       if (sdkChain) {
         switchNetwork(sdkChain);
@@ -206,17 +210,22 @@ export const Transfer = ({
       : false;
   }, [secondToken?.chainId]);
 
-  // Get the chain for the selected second token (TO section shows EVM chain)
+  // Withdraw is MVX → destination; chain metadata for the non-MVX leg is secondToken.
   const secondTokenChain = useMemo(() => {
     if (!secondToken) {
       return selectedChainOption;
     }
     return (
-      chains.find(
-        (chain) => chain.chainId.toString() === secondToken.chainId.toString()
+      chains.find((chain) =>
+        sameBridgeApiChainId(chain.chainId, secondToken.chainId)
       ) ?? selectedChainOption
     );
   }, [secondToken?.chainId, chains, selectedChainOption]);
+
+  const bridgeToChainId = useMemo(
+    () => toBridgeApiChainId(secondToken?.chainId) ?? bridgeApiChainId,
+    [secondToken?.chainId, bridgeApiChainId]
+  );
 
   const bridgeAddress = account.address;
   const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
@@ -232,7 +241,7 @@ export const Transfer = ({
         !firstToken?.address ||
         !secondToken?.address ||
         !selectedChainOption ||
-        !chainId
+        !bridgeToChainId
       ) {
         return;
       }
@@ -244,12 +253,13 @@ export const Transfer = ({
           amountIn: amount,
           fromChainId: mvxChainId,
           tokenOut: secondToken.address,
-          toChainId: chainId.toString()
+          toChainId: bridgeToChainId
         }
       });
     }, 500),
     [
       account.address,
+      bridgeToChainId,
       firstToken?.address,
       secondToken?.address,
       selectedChainOption
@@ -345,7 +355,7 @@ export const Transfer = ({
     firstToken,
     firstAmount,
     fromChainId: mvxChainId,
-    toChainId: chainId?.toString(),
+    toChainId: bridgeToChainId,
     secondToken,
     secondAmount,
     setForceRefetchRate,

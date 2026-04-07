@@ -14,8 +14,7 @@ export const useGenericSignMessage = () => {
   const { walletProvider: btcWalletProvider } =
     useAppKitProvider<BitcoinConnector>('bip122');
   // TODO: type properly when @reown exports Sui provider type
-  const { walletProvider: suiWalletProvider } =
-    useAppKitProvider<any>('sui');
+  const { walletProvider: suiWalletProvider } = useAppKitProvider<any>('sui');
 
   const signMessage = async (message: string) => {
     if (!isConnected || !caipNetwork?.chainNamespace) {

@@ -1,46 +1,72 @@
-import { mainnet, bsc, bscTestnet } from '@reown/appkit/networks';
+import { defineChain, mainnet, bsc, bscTestnet } from '@reown/appkit/networks';
 import { createAppKit, type AppKitOptions } from '@reown/appkit/react';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { AppKitNetwork, type CustomCaipNetwork } from '@reown/appkit-common';
+import {
+  AppKitNetwork,
+  type CaipNetwork,
+  type ChainNamespace
+} from '@reown/appkit-common';
 import type { Config, CreateConfigParameters } from '@wagmi/core';
-import { UniversalProvider } from '@walletconnect/universal-provider';
 import * as viemNetworks from 'viem/chains';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { InMemoryStore } from '../../store/inMemoryStore';
+import { SuiAdapter } from '../adapters/SuiAdapter';
 
-const SUI_DECIMALS = 9;
+const suiMainnet = defineChain({
+  id: 'mainnet',
+  name: 'SUI Mainnet',
+  nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: 9 },
+  rpcUrls: {
+    default: { http: ['https://fullnode.mainnet.sui.io:443'] }
+  },
+  blockExplorers: {
+    default: { name: 'SUI Explorer', url: 'https://explorer.sui.io/' }
+  },
+  chainNamespace: 'sui',
+  caipNetworkId: 'sui:mainnet'
+});
 
-const suiNetworkDefinitions: Record<string, CustomCaipNetwork<'sui'>> = {
-  mainnet: {
-    id: 784,
-    chainNamespace: 'sui' as const,
-    caipNetworkId: 'sui:mainnet',
-    name: 'Sui Mainnet',
-    nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: SUI_DECIMALS },
-    rpcUrls: {
-      default: { http: ['https://fullnode.mainnet.sui.io:443'] }
+const suiTestnet = defineChain({
+  id: 'testnet',
+  name: 'SUI Testnet',
+  nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: 9 },
+  rpcUrls: {
+    default: { http: ['https://fullnode.testnet.sui.io:443'] }
+  },
+  blockExplorers: {
+    default: {
+      name: 'SUI Explorer',
+      url: 'https://explorer.sui.io/?network=testnet'
     }
-  } as CustomCaipNetwork<'sui'>,
-  testnet: {
-    id: 784,
-    chainNamespace: 'sui' as const,
-    caipNetworkId: 'sui:testnet',
-    name: 'Sui Testnet',
-    nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: SUI_DECIMALS },
-    rpcUrls: {
-      default: { http: ['https://fullnode.testnet.sui.io:443'] }
+  },
+  chainNamespace: 'sui',
+  caipNetworkId: 'sui:testnet'
+});
+
+const suiDevnet = defineChain({
+  id: 'devnet',
+  name: 'SUI Devnet',
+  nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: 9 },
+  rpcUrls: {
+    default: { http: ['https://fullnode.devnet.sui.io:443'] }
+  },
+  blockExplorers: {
+    default: {
+      name: 'SUI Explorer',
+      url: 'https://explorer.sui.io/?network=devnet'
     }
-  } as CustomCaipNetwork<'sui'>,
-  devnet: {
-    id: 784,
-    chainNamespace: 'sui' as const,
-    caipNetworkId: 'sui:devnet',
-    name: 'Sui Devnet',
-    nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: SUI_DECIMALS },
-    rpcUrls: {
-      default: { http: ['https://fullnode.devnet.sui.io:443'] }
-    }
-  } as CustomCaipNetwork<'sui'>
+  },
+  chainNamespace: 'sui',
+  caipNetworkId: 'sui:devnet'
+});
+
+const suiNetworkDefinitions: Record<
+  NonNullable<InitOptions['suiEnvironment']>,
+  CaipNetwork
+> = {
+  mainnet: suiMainnet,
+  testnet: suiTestnet,
+  devnet: suiDevnet
 };
 
 export type InitOptions = {
@@ -57,12 +83,17 @@ export type InitOptions = {
   suiFeaturedWalletIds?: string[];
 };
 
+export enum SuiMethods {
+  SIGN_TRANSACTION = 'sui_signTransaction',
+  SIGN_AND_EXECUTE_TRANSACTION = 'sui_signAndExecuteTransaction',
+  SIGN_PERSONAL_MESSAGE = 'sui_signPersonalMessage'
+}
+
 export async function init(options: InitOptions): Promise<{
   config: Config;
   appKit: any;
   options: InitOptions;
   supportedChains: AppKitNetwork[];
-  suiConnector: SuiConnector | null;
 }> {
   const store = InMemoryStore.getInstance();
   store.setItem('apiURL', options.apiURL);
@@ -81,132 +112,69 @@ export async function init(options: InitOptions): Promise<{
     )
     .map((network) => network) as AppKitNetwork[];
 
-  const supportedChains = [mainnet, bsc, bscTestnet, ...acceptedNetworks];
+  const evmChains: AppKitNetwork[] = [
+    mainnet,
+    bsc,
+    bscTestnet,
+    ...acceptedNetworks
+  ];
 
-  // EVM AppKit — untouched, no manualWCControl, no universalProvider
+  const allNetworks: AppKitNetwork[] = [...evmChains];
+
+  if (options.suiEnvironment) {
+    const suiNetwork = suiNetworkDefinitions[options.suiEnvironment];
+    allNetworks.push(suiNetwork);
+  }
+
   const wagmiAdapter = new WagmiAdapter({
     ...options.adapterConfig,
     ssr: options.adapterConfig.ssr ?? true,
     projectId: options.appKitOptions.projectId,
-    networks: supportedChains
+    networks: evmChains
   });
 
-  const appKit = createAppKit({
-    ...options.appKitOptions,
-    adapters: [wagmiAdapter],
-    networks: [supportedChains[0], ...supportedChains.slice(1)]
-  });
-
-  // Sui connector — separate UniversalProvider + WalletConnect modal
-  let suiConnector: SuiConnector | null = null;
+  const adapters: any[] = [wagmiAdapter];
 
   if (options.suiEnvironment) {
     const suiNetwork = suiNetworkDefinitions[options.suiEnvironment];
-    const caipChain = suiNetwork.caipNetworkId;
-    const suiFeaturedIds = options.suiFeaturedWalletIds ?? [
-      '4119a5b3e5ebc809b6a3680a280ae517b92fead02e4c07b7cec0d3385c87aee2'
-    ];
+    const explicitSuiCaip = suiNetwork.caipNetworkId ?? `sui:${suiNetwork.id}`;
+    adapters.push(new SuiAdapter({ explicitCaipChains: [explicitSuiCaip] }));
+  }
 
-    const provider = await UniversalProvider.init({
-      projectId: options.appKitOptions.projectId,
-      metadata: options.appKitOptions.metadata,
-      name: 'sui-connector'
-    });
+  // Do not call UniversalProvider.init() here — AppKit creates the shared provider
+  // internally. A second init was racing MVx sdk-dapp WC + Reown session storage.
+  const appKit = createAppKit({
+    ...options.appKitOptions,
+    adapters,
+    networks: [allNetworks[0], ...allNetworks.slice(1)]
+  });
 
-    // Restore existing session
-    let restoredAddress: string | null = null;
-    if (provider.session) {
-      const accounts = provider.session.namespaces?.sui?.accounts ?? [];
-      if (accounts.length > 0) {
-        restoredAddress = accounts[0].split(':').pop() ?? null;
-        console.log('[Sui] Restored session, address:', restoredAddress);
-      }
-    }
+  // Await AppKit init (WC session + non-EVM namespaces); wagmi reconnects separately.
+  await appKit.ready();
 
-    const connect = async () => {
-      const { WalletConnectModal } = await import('@walletconnect/modal');
-
-      const modal = new WalletConnectModal({
-        projectId: options.appKitOptions.projectId,
-        themeMode: 'dark',
-        explorerRecommendedWalletIds: suiFeaturedIds,
-        explorerExcludedWalletIds: 'ALL'
-      });
-
-      provider.on('display_uri', (uri: string) => {
-        modal.openModal({ uri });
-      });
-
-      const session = await provider.connect({
-        optionalNamespaces: {
-          sui: {
-            methods: [
-              'sui_signPersonalMessage',
-              'sui_signTransaction',
-              'sui_signAndExecuteTransaction'
-            ],
-            chains: [caipChain],
-            events: []
-          }
+  // If WalletConnect already has a persisted `sui` namespace but AppKit did not attach the
+  // account (e.g. connector id missing in storage so sync took the wrong branch), re-run the
+  // same WC→ChainController sync AppKit uses internally — mirrors reading session first, like
+  // a direct UniversalProvider flow.
+  if (options.suiEnvironment) {
+    const wc = await appKit.getUniversalProvider();
+    const suiNs = wc?.session?.namespaces?.['sui'];
+    if (
+      suiNs?.accounts?.length &&
+      !appKit.getCaipAddress('sui' as ChainNamespace)
+    ) {
+      await (
+        appKit as unknown as {
+          syncWalletConnectAccount?: () => Promise<void>;
         }
-      });
-
-      modal.closeModal();
-
-      if (!session) {
-        throw new Error('No session established');
-      }
-
-      const accounts = session.namespaces?.sui?.accounts ?? [];
-      if (accounts.length === 0) {
-        throw new Error('No Sui accounts found in session');
-      }
-
-      const address = accounts[0].split(':').pop() ?? '';
-      return { address, session };
-    };
-
-    const disconnect = async () => {
-      await provider.disconnect();
-    };
-
-    const request = async (params: { method: string; params: any }) => {
-      return await provider.request(params, caipChain);
-    };
-
-    const onSessionDelete = (callback: () => void) => {
-      provider.on('session_delete', () => {
-        console.log('[Sui] Session deleted by wallet');
-        callback();
-      });
-    };
-
-    suiConnector = {
-      provider,
-      suiEnvironment: options.suiEnvironment,
-      connect,
-      disconnect,
-      request,
-      onSessionDelete,
-      restoredAddress
-    };
+      ).syncWalletConnectAccount?.();
+    }
   }
 
   return {
     config: wagmiAdapter.wagmiConfig,
     appKit,
     options,
-    supportedChains,
-    suiConnector
+    supportedChains: allNetworks
   };
 }
-
-export type SuiConnector = {
-  provider: any;
-  suiEnvironment: string;
-  connect: () => Promise<{ address: string; session: any }>;
-  disconnect: () => Promise<void>;
-  request: (params: { method: string; params: any }) => Promise<any>;
-  onSessionDelete: (callback: () => void) => void;
-  restoredAddress?: string | null;
-};

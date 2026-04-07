@@ -1,4 +1,6 @@
+import { ChainType } from '../../../../types/chainType';
 import { TokenType } from '../../../../types/token';
+import { ServerTransaction } from '../../../../types/transaction';
 import { safeWindow } from '../../../constants';
 import { getCompletePathname } from '../../../utils/getCompletePathname';
 import { InitialTokensType } from '../../../utils/getInitialTokens';
@@ -36,6 +38,29 @@ export const updateUrlParams = ({
   }
   onNavigate?.(newUrl, { replace: true });
 };
+
+/** Prefer server transaction shape so signing matches the API even if chain metadata is stale. */
+export function resolveSigningChainType(
+  transaction: ServerTransaction,
+  fallbackChain?: { chainType?: ChainType }
+): ChainType | undefined {
+  if (
+    transaction.suiParams?.transactionBytes &&
+    transaction.suiParams?.sender
+  ) {
+    return ChainType.sui;
+  }
+  if (transaction.instructions && transaction.feePayer) {
+    return ChainType.sol;
+  }
+  if (transaction.bitcoinParams) {
+    return ChainType.btc;
+  }
+  if (transaction.to && transaction.data !== undefined) {
+    return ChainType.evm;
+  }
+  return fallbackChain?.chainType;
+}
 
 /**
  * Gets available tokens based on the source token and forced destination

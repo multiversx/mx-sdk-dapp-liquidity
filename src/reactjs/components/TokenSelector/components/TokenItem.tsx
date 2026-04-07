@@ -1,6 +1,7 @@
 import { useAppKitNetwork } from '@reown/appkit/react';
 import { useCallback, useMemo } from 'react';
 import { TokenIcon } from './TokenIcon';
+import { ChainType } from '../../../../types/chainType';
 import { TokenType } from '../../../../types/token';
 import { useWeb3App } from '../../../context/useWeb3App';
 import { useGetChainId } from '../../../hooks/useGetChainId';
@@ -30,6 +31,13 @@ export const TokenItem = ({
   }, [chainId, sdkChains]);
 
   const handleSwitchChain = useCallback(() => {
+    // Only switch injected / wagmi chain when both sides are EVM. Calling AppKit
+    // switchNetwork for Sui (or other namespaces) on token pick leaves the Sui
+    // account stuck in `connecting` and blocks the Connect UI.
+    if (tokenChain?.chainType !== ChainType.evm) {
+      return;
+    }
+
     if (
       activeChain &&
       tokenChain?.chainId &&
@@ -41,7 +49,13 @@ export const TokenItem = ({
         ) ?? activeChain
       );
     }
-  }, [activeChain, sdkChains, tokenChain?.chainId, activeChain?.id]);
+  }, [
+    activeChain,
+    sdkChains,
+    switchNetwork,
+    tokenChain?.chainId,
+    tokenChain?.chainType
+  ]);
 
   return (
     <div

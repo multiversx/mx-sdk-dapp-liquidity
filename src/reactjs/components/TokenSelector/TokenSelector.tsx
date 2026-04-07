@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { SelectContainer } from './components/SelectContainer';
 import { SelectContent } from './components/SelectContent';
 import { SelectedOption } from './components/SelectedOption';
-import { MVX_CHAIN_IDS, SUI_CHAIN_IDS } from '../../../constants';
+import { MVX_CHAIN_IDS } from '../../../constants';
 import { TokenType } from '../../../types/token';
 import { useResolveTokenChain } from '../../hooks/useResolveTokenChain';
 import { useGetChainsQuery } from '../../queries/useGetChains.query';

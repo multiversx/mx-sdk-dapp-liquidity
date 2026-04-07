@@ -25,8 +25,7 @@ export const useSignTransaction = () => {
   const { walletProvider: btcWalletProvider } =
     useAppKitProvider<BitcoinConnector>('bip122');
   // TODO: type properly when @reown exports Sui provider type
-  const { walletProvider: suiWalletProvider } =
-    useAppKitProvider<any>('sui');
+  const { walletProvider: suiWalletProvider } = useAppKitProvider<any>('sui');
 
   const signTransactionSolanaTransaction = async ({
     feePayer,
@@ -76,11 +75,21 @@ export const useSignTransaction = () => {
   };
 
   const signSuiTransaction = async (suiParams?: {
-    transactionBlock: string;
+    /** Base64 BCS transaction bytes (Reown / WalletConnect `sui_signAndExecuteTransaction`). */
+    transaction?: string;
+    /** @deprecated use `transaction` — same bytes, older name */
+    transactionBlock?: string;
+    address: string;
     options?: Record<string, unknown>;
   }) => {
-    if (!suiParams?.transactionBlock) {
-      throw new Error('No Sui transaction block provided');
+    const transaction = suiParams?.transaction ?? suiParams?.transactionBlock;
+
+    if (!transaction) {
+      throw new Error('No Sui transaction bytes provided');
+    }
+
+    if (!suiParams?.address) {
+      throw new Error('No Sui sender address');
     }
 
     if (!suiWalletProvider) {
@@ -88,14 +97,18 @@ export const useSignTransaction = () => {
     }
 
     const result = await suiWalletProvider.request({
-      method: 'sui_signAndExecuteTransaction',
+      method: 'sui_signTransaction',
       params: {
-        transactionBlock: suiParams.transactionBlock,
-        options: suiParams.options ?? {}
+        transaction,
+        address: suiParams.address
       }
     });
 
-    return result.digest;
+    if (!result) {
+      throw new Error('Sui wallet did not return a signature');
+    }
+
+    return result.signature;
   };
 
   return {

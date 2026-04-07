@@ -58,11 +58,11 @@
     "@reown/appkit-adapter-solana": "1.8.14",
     "@reown/appkit-adapter-wagmi": "1.8.14",
     "@reown/appkit-common": "1.8.14",
-    "@reown/appkit-universal-connector": "^1.8.19",
+    "@reown/appkit-controllers": "1.8.19",
     "@solana/web3.js": "1.98.4",
     "@tanstack/react-query": "5.71.3",
     "@walletconnect/modal": "^2.7.0",
-    "@walletconnect/universal-provider": "^2.23.8",
+    "@walletconnect/universal-provider": "2.23.9",
     "animated-number-react": "0.1.2",
     "axios": "1.7.4",
     "formik": "2.4.6",
@@ -142,5 +142,23 @@
     "vite-plugin-node-polyfills": "0.22.0",
     "vite-plugin-svgr": "4.3.0",
     "vite-tsconfig-paths": "4.3.2"
+  },
+  "packageManager": "pnpm@10.30.0+sha512.2b5753de015d480eeb88f5b5b61e0051f05b4301808a82ec8b840c9d2adf7748eb352c83f5c1593ca703ff1017295bc3fdd3119abb9686efc96b9fcb18200937",
+  "pnpm": {
+    "overrides": {
+      "@reown/appkit": "1.8.14",
+      "@reown/appkit-common": "1.8.14",
+      "@reown/appkit-controllers": "1.8.14",
+      "@reown/appkit-utils": "1.8.14",
+      "@reown/appkit-ui": "1.8.14",
+      "@reown/appkit-pay": "1.8.14",
+      "@reown/appkit-scaffold-ui": "1.8.14",
+      "@walletconnect/core": "2.23.9",
+      "@walletconnect/sign-client": "2.23.9",
+      "@walletconnect/types": "2.23.9",
+      "@walletconnect/utils": "2.23.9",
+      "@walletconnect/universal-provider": "2.23.9",
+      "@walletconnect/ethereum-provider": "2.23.9"
+    }
   }
 }

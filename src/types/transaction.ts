@@ -26,8 +26,9 @@ export type BaseTransaction = {
     broadcast: boolean;
   };
   suiParams?: {
-    transactionBlock: string;
-    options?: Record<string, unknown>;
+    transactionBytes?: string;
+    sender?: string;
+    signature?: string;
   };
 };
 

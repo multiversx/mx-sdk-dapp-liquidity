@@ -2,21 +2,24 @@ import { useAppKit } from '@reown/appkit/react';
 import { useState } from 'react';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { getDisplayName } from '../../../helpers/getDisplayName';
-import { useAccount } from '../../hooks/useAccount';
 import { useWeb3App } from '../../context/useWeb3App';
-import { ExternalChainConnector } from '../../context/Web3AppProvider';
+import { useAccount } from '../../hooks/useAccount';
+import { useSuiConnect } from '../../hooks/useSuiConnect';
+
+const SUI_ICON =
+  'https://raw.githubusercontent.com/MystenLabs/sui/main/docs/site/static/img/logo.svg';
 
 const ChainSelectModal = ({
   activeChain,
-  externalChains,
+  hasSui,
   onEvmSelect,
-  onExternalSelect,
+  onSuiSelect,
   onClose
 }: {
   activeChain?: ChainDTO;
-  externalChains: ExternalChainConnector[];
+  hasSui: boolean;
   onEvmSelect: () => void;
-  onExternalSelect: (chain: ExternalChainConnector) => void;
+  onSuiSelect: () => void;
   onClose: () => void;
 }) => (
   <div
@@ -39,7 +42,6 @@ const ChainSelectModal = ({
         </button>
       </div>
       <div className="liq-flex liq-flex-col liq-gap-2 liq-p-4">
-        {/* EVM option */}
         <button
           onClick={onEvmSelect}
           className="liq-flex liq-items-center liq-gap-3 liq-w-full liq-rounded-xl liq-bg-neutral-800/60 liq-px-4 liq-py-3 liq-text-left liq-text-white liq-font-medium liq-border liq-border-transparent liq-transition-all liq-duration-200 hover:liq-bg-neutral-750 hover:liq-border-neutral-600/50 liq-cursor-pointer"
@@ -59,34 +61,24 @@ const ChainSelectModal = ({
           </div>
         </button>
 
-        {/* External chain options */}
-        {externalChains.map((chain) => (
+        {hasSui && (
           <button
-            key={chain.chainType}
-            onClick={() => onExternalSelect(chain)}
+            onClick={onSuiSelect}
             className="liq-flex liq-items-center liq-gap-3 liq-w-full liq-rounded-xl liq-bg-neutral-800/60 liq-px-4 liq-py-3 liq-text-left liq-text-white liq-font-medium liq-border liq-border-transparent liq-transition-all liq-duration-200 hover:liq-bg-neutral-750 hover:liq-border-neutral-600/50 liq-cursor-pointer"
           >
-            {chain.chainIcon ? (
-              <img
-                src={chain.chainIcon}
-                alt=""
-                className="liq-w-8 liq-h-8 liq-rounded-full"
-              />
-            ) : (
-              <div className="liq-w-8 liq-h-8 liq-rounded-full liq-bg-[#4DA2FF] liq-flex liq-items-center liq-justify-center liq-text-white liq-text-xs liq-font-bold">
-                {chain.chainName.charAt(0)}
-              </div>
-            )}
+            <img
+              src={SUI_ICON}
+              alt=""
+              className="liq-w-8 liq-h-8 liq-rounded-full"
+            />
             <div>
-              <div className="liq-text-sm liq-font-semibold">
-                {chain.chainName}
-              </div>
+              <div className="liq-text-sm liq-font-semibold">Sui</div>
               <div className="liq-text-xs liq-text-neutral-400">
-                via WalletConnect
+                Sui Network
               </div>
             </div>
           </button>
-        ))}
+        )}
       </div>
     </div>
   </div>
@@ -104,32 +96,49 @@ export const ChainSelectConnect = ({
   const [showModal, setShowModal] = useState(false);
   const { open } = useAppKit();
   const account = useAccount();
-  const { externalChains } = useWeb3App();
+  const { options } = useWeb3App();
+  const suiConnect = useSuiConnect();
 
-  const connectedExternal = externalChains?.find((c) => c.address);
+  const hasSui = Boolean(options.suiEnvironment);
 
-  if (account.isConnected || connectedExternal) {
+  if (account.isConnected || suiConnect.isConnected) {
     return null;
   }
 
   const handleEvmConnect = () => {
     setShowModal(false);
-    open({ view: 'Connect' });
+    open({ view: 'Connect', namespace: 'eip155' });
   };
 
-  const handleExternalConnect = (chain: ExternalChainConnector) => {
+  const handleSuiConnect = () => {
     setShowModal(false);
-    chain.onConnect();
+    suiConnect.connect();
   };
+
+  if (!hasSui) {
+    return (
+      <button
+        onClick={handleEvmConnect}
+        disabled={disabled}
+        className={`liq-font-bold liq-text-inherit liq-rounded-lg ${className ?? ''}`}
+      >
+        <div className="liq-flex liq-items-center liq-justify-center liq-gap-1">
+          <span className="liq-text-primary-200">
+            {account.isConnecting ? 'Connecting...' : 'Connect'}
+          </span>
+        </div>
+      </button>
+    );
+  }
 
   return (
     <>
-      {showModal && externalChains && (
+      {showModal && (
         <ChainSelectModal
           activeChain={activeChain}
-          externalChains={externalChains}
+          hasSui={hasSui}
           onEvmSelect={handleEvmConnect}
-          onExternalSelect={handleExternalConnect}
+          onSuiSelect={handleSuiConnect}
           onClose={() => setShowModal(false)}
         />
       )}
