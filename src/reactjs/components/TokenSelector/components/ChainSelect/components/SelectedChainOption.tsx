@@ -22,7 +22,7 @@ export const SelectedChainOption = ({
             src={chain.pngUrl ?? chainIdentifier[chain.name as ChainNameType]}
             alt={''}
             loading="lazy"
-            className="liq-h-full liq-w-full"
+            className="liq-h-full liq-w-full liq-rounded-lg"
           />
         ) : (
           <img src={AllNetworks} alt={''} className="liq-h-full liq-w-full" />

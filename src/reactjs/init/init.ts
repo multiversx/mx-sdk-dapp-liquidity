@@ -112,14 +112,14 @@ export async function init(options: InitOptions): Promise<{
     )
     .map((network) => network) as AppKitNetwork[];
 
-  const evmChains: AppKitNetwork[] = [
+  const supportedChains: AppKitNetwork[] = [
     mainnet,
     bsc,
     bscTestnet,
     ...acceptedNetworks
   ];
 
-  const allNetworks: AppKitNetwork[] = [...evmChains];
+  const allNetworks: AppKitNetwork[] = [...supportedChains];
 
   if (options.suiEnvironment) {
     const suiNetwork = suiNetworkDefinitions[options.suiEnvironment];
@@ -130,7 +130,7 @@ export async function init(options: InitOptions): Promise<{
     ...options.adapterConfig,
     ssr: options.adapterConfig.ssr ?? true,
     projectId: options.appKitOptions.projectId,
-    networks: evmChains
+    networks: supportedChains
   });
 
   const adapters: any[] = [wagmiAdapter];

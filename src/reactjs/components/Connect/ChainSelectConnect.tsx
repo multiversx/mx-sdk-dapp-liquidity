@@ -2,12 +2,10 @@ import { useAppKit } from '@reown/appkit/react';
 import { useState } from 'react';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { getDisplayName } from '../../../helpers/getDisplayName';
+import { chainIdentifier } from '../../constants';
 import { useWeb3App } from '../../context/useWeb3App';
 import { useAccount } from '../../hooks/useAccount';
 import { useSuiConnect } from '../../hooks/useSuiConnect';
-
-const SUI_ICON =
-  'https://raw.githubusercontent.com/MystenLabs/sui/main/docs/site/static/img/logo.svg';
 
 const ChainSelectModal = ({
   activeChain,
@@ -67,7 +65,7 @@ const ChainSelectModal = ({
             className="liq-flex liq-items-center liq-gap-3 liq-w-full liq-rounded-xl liq-bg-neutral-800/60 liq-px-4 liq-py-3 liq-text-left liq-text-white liq-font-medium liq-border liq-border-transparent liq-transition-all liq-duration-200 hover:liq-bg-neutral-750 hover:liq-border-neutral-600/50 liq-cursor-pointer"
           >
             <img
-              src={SUI_ICON}
+              src={chainIdentifier.sui}
               alt=""
               className="liq-w-8 liq-h-8 liq-rounded-full"
             />

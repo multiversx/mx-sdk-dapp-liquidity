@@ -33,7 +33,7 @@ export const ChainOptionLabel = ({
                 }
                 alt={''}
                 loading="lazy"
-                className="liq-h-full liq-w-full"
+                className="liq-h-full liq-w-full liq-rounded-lg"
               />
             ) : (
               <img
