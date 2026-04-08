@@ -268,7 +268,7 @@ export const BridgeHistory = ({
                         </span>
                         <div className="liq-flex liq-items-center liq-relative">
                           <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
-                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-6 liq-w-6 liq-flex liq-items-center liq-justify-center">
                               <img
                                 src={tokensMap[transaction.tokenSource]?.pngUrl}
                                 alt=""
@@ -328,7 +328,7 @@ export const BridgeHistory = ({
                         </span>
                         <div className="liq-flex liq-items-center liq-relative">
                           <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
-                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-6 liq-w-6 liq-flex liq-items-center liq-justify-center">
                               <img
                                 src={
                                   tokensMap[transaction.tokenDestination]
