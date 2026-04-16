@@ -75,7 +75,8 @@ export const useFetchTokens = ({
   const mvxTokensWithBalances = useMemo(() => {
     return mvxTokens?.map((token) => {
       const foundToken = mvxTokensBalances?.find(
-        (mvxToken) => mvxToken.address === token.address
+        (mvxToken) =>
+          mvxToken.address.toLowerCase() === token.address.toLowerCase()
       );
 
       if (!foundToken) {
@@ -96,8 +97,8 @@ export const useFetchTokens = ({
     return nonMvxTokens?.map((token) => {
       const foundToken = nonMvxTokensBalances?.find(
         (nonMvxToken) =>
-          nonMvxToken.address === token.address &&
-          nonMvxToken.chainId === token.chainId
+          nonMvxToken.address.toLowerCase() === token.address.toLowerCase() &&
+          nonMvxToken.chainId.toLowerCase() === token.chainId.toLowerCase()
       );
 
       if (!foundToken) {

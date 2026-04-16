@@ -91,7 +91,8 @@ export const getAvailableTokens = (
 
   for (const availableToken of option.availableTokens) {
     const foundToken = targetTokens?.find(
-      (token) => token.address === availableToken.address
+      (token) =>
+        token.address.toLowerCase() === availableToken.address.toLowerCase()
     );
 
     if (foundToken) {

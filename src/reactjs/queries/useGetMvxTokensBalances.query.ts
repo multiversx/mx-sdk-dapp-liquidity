@@ -33,7 +33,8 @@ export const useGetMvxTokensBalancesQuery = ({
 
     return data.map((asset) => {
       const foundToken = tokens.find(
-        (token) => token.address === asset.identifier
+        (token) =>
+          token.address.toLowerCase() === asset.identifier.toLowerCase()
       );
 
       if (!foundToken) {
