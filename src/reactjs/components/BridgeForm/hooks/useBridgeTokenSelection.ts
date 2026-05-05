@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChainDTO } from '../../../../dto/Chain.dto';
 import { TokenType } from '../../../../types/token';
+import { sameBridgeApiChainId } from '../../../helpers/resolveBridgeApiChainId';
 import { getInitialTokens } from '../../../utils/getInitialTokens';
 import * as BridgeFormHelpers from '../utils/bridgeFormHelpers';
 
@@ -91,13 +92,40 @@ export const useBridgeTokenSelection = ({
     );
   }, [firstToken?.symbol, toTokens]);
 
-  const selectedChainOption = useMemo(
-    () =>
-      chains?.find(
-        (option) => option.chainId.toString() === activeChain?.id.toString()
-      ) ?? chains?.[0],
-    [activeChain?.id, chains]
-  );
+  const selectedChainOption = useMemo(() => {
+    const anchorToken = mvxChainId ? secondToken : firstToken;
+    const byAnchorToken =
+      anchorToken &&
+      chains?.find((option) =>
+        sameBridgeApiChainId(option.chainId, anchorToken.chainId)
+      );
+    if (byAnchorToken) {
+      return byAnchorToken;
+    }
+    const byActiveChain = chains?.find((option) =>
+      sameBridgeApiChainId(option.chainId, activeChain?.id)
+    );
+    if (byActiveChain) {
+      return byActiveChain;
+    }
+    // AppKit active network often stays EVM when the user only connects Sui (non-EVM namespace).
+    const byOtherToken = mvxChainId
+      ? firstToken &&
+        chains?.find((option) =>
+          sameBridgeApiChainId(option.chainId, firstToken.chainId)
+        )
+      : secondToken &&
+        chains?.find((option) =>
+          sameBridgeApiChainId(option.chainId, secondToken.chainId)
+        );
+    return byOtherToken ?? chains?.[0];
+  }, [
+    activeChain?.id,
+    chains,
+    firstToken?.chainId,
+    mvxChainId,
+    secondToken?.chainId
+  ]);
 
   const getDefaultReceivingToken = useCallback(
     (values: TokenType[]) =>
@@ -191,8 +219,8 @@ export const useBridgeTokenSelection = ({
     });
 
     // Switch to the network of the new firstToken (which is current secondToken)
-    const selectedOptionChain = sdkChains?.find(
-      (chain) => chain.id.toString() === secondToken.chainId.toString()
+    const selectedOptionChain = sdkChains?.find((chain) =>
+      sameBridgeApiChainId(chain.id, secondToken.chainId)
     );
 
     if (selectedOptionChain && switchNetwork) {
@@ -225,8 +253,8 @@ export const useBridgeTokenSelection = ({
       fromOptions.find(
         ({ identifier }) => initialTokens?.firstTokenId === identifier
       ) ??
-      fromOptions.find(
-        (option) => option.chainId.toString() === activeChainId?.toString()
+      fromOptions.find((option) =>
+        sameBridgeApiChainId(option.chainId, activeChainId)
       ) ??
       fromOptions[0];
 
@@ -268,8 +296,8 @@ export const useBridgeTokenSelection = ({
       updateUrlParams({ firstTokenId: firstOption.address });
 
       const selectedOptionChain =
-        sdkChains?.find(
-          (chain) => chain.id.toString() === firstOption.chainId.toString()
+        sdkChains?.find((chain) =>
+          sameBridgeApiChainId(chain.id, firstOption.chainId)
         ) ?? activeChain;
 
       if (selectedOptionChain && switchNetwork) {

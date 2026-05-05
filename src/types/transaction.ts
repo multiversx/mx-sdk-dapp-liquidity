@@ -25,6 +25,11 @@ export type BaseTransaction = {
     }[];
     broadcast: boolean;
   };
+  suiParams?: {
+    transactionBytes?: string;
+    sender?: string;
+    signature?: string;
+  };
 };
 
 export type ServerTransaction = BaseTransaction & Partial<MvxTransactions>;

@@ -1,6 +1,11 @@
 import { components, type SingleValueProps } from 'react-select';
+import { mxClsx } from 'reactjs/utils';
 import AllNetworks from '../../../../../assets/all-networks.svg';
-import { chainIdentifier, ChainNameType } from '../../../../../constants';
+import {
+  ALL_NETWORK_ID,
+  chainIdentifier,
+  ChainNameType
+} from '../../../../../constants';
 import { PartialChainOptionType } from '../types/partialChainOption';
 
 export const SelectedChainOption = ({
@@ -22,7 +27,9 @@ export const SelectedChainOption = ({
             src={chain.pngUrl ?? chainIdentifier[chain.name as ChainNameType]}
             alt={''}
             loading="lazy"
-            className="liq-h-full liq-w-full"
+            className={mxClsx('liq-h-full liq-w-full', {
+              'liq-rounded-lg': chain?.id !== ALL_NETWORK_ID
+            })}
           />
         ) : (
           <img src={AllNetworks} alt={''} className="liq-h-full liq-w-full" />

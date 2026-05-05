@@ -6,6 +6,7 @@ import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
 import { faClose } from '@fortawesome/free-solid-svg-icons/faClose';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useMemo } from 'react';
+import { useAccount } from 'reactjs/hooks';
 import { MVX_CHAIN_IDS } from '../../../constants';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { TransactionDTO } from '../../../dto/Transaction.dto';
@@ -28,10 +29,27 @@ export const BridgeHistory = ({
   mvxAddress?: string;
   onClose: () => void;
 }) => {
-  const { options } = useWeb3App();
-  const { data, isLoading, isError } = useGetHistoryQuery({
+  const { options, bridgeOnly } = useWeb3App();
+  const bridgeAccount = useAccount();
+  const {
+    data: mvxTransactions,
+    isLoading,
+    isError
+  } = useGetHistoryQuery({
     address: mvxAddress
   });
+  const { data: bridgeTransactions } = useGetHistoryQuery({
+    address: bridgeAccount.address ?? ''
+  });
+
+  const mergedTransactions = useMemo(() => {
+    const mvxTxs = mvxTransactions ?? [];
+    const bridgeTxs =
+      bridgeOnly && bridgeTransactions ? bridgeTransactions : [];
+    return [...mvxTxs, ...bridgeTxs].sort(
+      (a, b) => b.depositTimestamp - a.depositTimestamp
+    );
+  }, [bridgeOnly, bridgeTransactions, mvxTransactions]);
 
   const resolveTransactionIcon = useCallback((transaction: TransactionDTO) => {
     switch (transaction.status) {
@@ -64,7 +82,7 @@ export const BridgeHistory = ({
 
   const transactions = useMemo(
     () =>
-      data?.map((transaction) => {
+      mergedTransactions?.map((transaction) => {
         return {
           ...transaction,
           tokenDestination: transaction.tokenOut.toLowerCase(),
@@ -73,7 +91,7 @@ export const BridgeHistory = ({
           statusIcon: resolveTransactionIcon(transaction)
         };
       }),
-    [data, resolveTransactionIcon]
+    [mergedTransactions, resolveTransactionIcon]
   );
 
   const {
@@ -233,7 +251,7 @@ export const BridgeHistory = ({
                         <img
                           src={tokensMap[transaction.tokenDestination]?.pngUrl}
                           alt=""
-                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                          className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                         />
                         <span className="liq-whitespace-nowrap">from</span>
                         <span className="liq-text-wrap">
@@ -250,7 +268,7 @@ export const BridgeHistory = ({
                         </span>
                         <div className="liq-flex liq-items-center liq-relative">
                           <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
-                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-6 liq-w-6 liq-flex liq-items-center liq-justify-center">
                               <img
                                 src={tokensMap[transaction.tokenSource]?.pngUrl}
                                 alt=""
@@ -293,7 +311,7 @@ export const BridgeHistory = ({
                         <img
                           src={tokensMap[transaction.tokenSource]?.pngUrl}
                           alt=""
-                          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                          className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                         />
                         <span className="liq-whitespace-nowrap">to</span>
                         <span className="liq-text-wrap">
@@ -310,7 +328,7 @@ export const BridgeHistory = ({
                         </span>
                         <div className="liq-flex liq-items-center liq-relative">
                           <div className="liq-flex-shrink-0 liq-overflow-hidden liq-rounded-full liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
-                            <div className="liq-h-8 liq-w-8 liq-flex liq-items-center liq-justify-center">
+                            <div className="liq-h-6 liq-w-6 liq-flex liq-items-center liq-justify-center">
                               <img
                                 src={
                                   tokensMap[transaction.tokenDestination]

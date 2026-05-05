@@ -8,13 +8,19 @@ import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useBridgeTokenSelection } from './hooks/useBridgeTokenSelection';
+import { resolveSigningChainType } from './utils/bridgeFormHelpers';
 import { MVX_CHAIN_IDS } from '../../../constants';
 import { getApiURL } from '../../../helpers/getApiURL';
 import { ChainType } from '../../../types/chainType';
 import { ProviderType } from '../../../types/providerType';
 import { BaseTransaction, ServerTransaction } from '../../../types/transaction';
 import { useWeb3App } from '../../context/useWeb3App';
+import {
+  sameBridgeApiChainId,
+  toBridgeApiChainId
+} from '../../helpers/resolveBridgeApiChainId';
 import { useAccount } from '../../hooks/useAccount';
+import { useBridgeApiChainId } from '../../hooks/useBridgeApiChainId';
 import {
   BridgeFormikValuesEnum,
   useBridgeFormik
@@ -99,6 +105,7 @@ export const Deposit = ({
     bridgeOnly
   } = useWeb3App();
   const chainId = useGetChainId();
+  const bridgeApiChainId = useBridgeApiChainId();
 
   const {
     evmTokensWithBalances,
@@ -121,9 +128,7 @@ export const Deposit = ({
     isChainsLoading;
 
   const activeChain = useMemo(() => {
-    return sdkChains.find(
-      (chain) => chain.id.toString() === chainId?.toString()
-    );
+    return sdkChains.find((chain) => sameBridgeApiChainId(chain.id, chainId));
   }, [chainId, sdkChains]);
 
   const mvxChain = useMemo(() => {
@@ -132,7 +137,7 @@ export const Deposit = ({
     );
   }, [chainId, chains]);
 
-  const { evm, solana, bitcoin } = useSignTransaction();
+  const { evm, solana, bitcoin, sui } = useSignTransaction();
   const sendTransactions = useSendTransactions();
 
   const {
@@ -149,8 +154,8 @@ export const Deposit = ({
 
   const handleSwitchNetwork = useCallback(
     (chain: { id: string | number }) => {
-      const sdkChain = sdkChains.find(
-        (c) => c.id.toString() === chain.id.toString()
+      const sdkChain = sdkChains.find((c) =>
+        sameBridgeApiChainId(c.id, chain.id)
       );
       if (sdkChain) {
         switchNetwork(sdkChain);
@@ -203,11 +208,16 @@ export const Deposit = ({
       return selectedChainOption;
     }
     return (
-      chains.find(
-        (chain) => chain.chainId.toString() === firstToken.chainId.toString()
+      chains.find((chain) =>
+        sameBridgeApiChainId(chain.chainId, firstToken.chainId)
       ) ?? selectedChainOption
     );
   }, [firstToken?.chainId, chains, selectedChainOption]);
+
+  const bridgeFromChainId = useMemo(
+    () => toBridgeApiChainId(firstToken?.chainId) ?? bridgeApiChainId,
+    [firstToken?.chainId, bridgeApiChainId]
+  );
 
   const bridgeAddress = account.address;
   const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
@@ -223,7 +233,7 @@ export const Deposit = ({
         !firstToken?.address ||
         !secondToken?.address ||
         !selectedChainOption ||
-        !chainId
+        !bridgeFromChainId
       ) {
         return;
       }
@@ -233,7 +243,7 @@ export const Deposit = ({
         body: {
           tokenIn: firstToken.address,
           amountIn: amount,
-          fromChainId: chainId.toString(),
+          fromChainId: bridgeFromChainId,
           tokenOut: secondToken.address,
           toChainId: mvxChainId
         }
@@ -241,6 +251,7 @@ export const Deposit = ({
     }, 500),
     [
       account.address,
+      bridgeFromChainId,
       firstToken?.address,
       secondToken?.address,
       selectedChainOption
@@ -318,14 +329,13 @@ export const Deposit = ({
       const signedTransactions: ServerTransaction[] = [];
       setPendingSigning(true);
       setSigningTransactionsCount(() => transactions.length);
-
       try {
         let txIndex = -1;
         for (const transaction of transactions) {
           ++txIndex;
           try {
-            switch (selectedChainOption?.chainType) {
-              case ChainType.evm:
+            switch (resolveSigningChainType(transaction, firstTokenChain)) {
+              case ChainType.evm: {
                 const hash = await evm.signTransaction({
                   ...(transaction as BaseTransaction),
                   value: BigInt(transaction.value),
@@ -360,6 +370,7 @@ export const Deposit = ({
                 });
 
                 break;
+              }
               case ChainType.sol:
                 if (!transaction.instructions || !transaction.feePayer) {
                   break;
@@ -396,6 +407,34 @@ export const Deposit = ({
                   txHash: psbt
                 });
                 break;
+
+              case ChainType.sui: {
+                const serializedTx = transaction.suiParams?.transactionBytes;
+                const sender = transaction.suiParams?.sender;
+
+                if (!serializedTx || !sender) {
+                  console.error('No Sui transaction bytes or sender address');
+                  break;
+                }
+
+                const signature = await sui.signTransaction({
+                  transaction: serializedTx,
+                  address: sender
+                });
+
+                if (!signature) {
+                  break;
+                }
+
+                signedTransactions.push({
+                  ...transaction,
+                  suiParams: {
+                    ...transaction.suiParams,
+                    signature
+                  }
+                });
+                break;
+              }
               default:
                 toast.error('Provider not supported');
                 setPendingSigning(false);
@@ -414,14 +453,29 @@ export const Deposit = ({
           }
         }
 
-        await sendTransactions({
+        const { data: batch } = await sendTransactions({
           transactions: signedTransactions,
           provider,
           url: getApiURL() ?? '',
           token: nativeAuthToken ?? ''
         });
 
-        const txHashes = signedTransactions.map((tx) => tx.txHash);
+        const apiHashes =
+          batch.transactions
+            ?.map((tx) => tx.txHash)
+            .filter((h): h is string => Boolean(h)) ?? [];
+        const localHashes = signedTransactions
+          .map((tx) => tx.txHash)
+          .filter((h): h is string => Boolean(h));
+        const txHashes =
+          apiHashes.length > 0
+            ? apiHashes
+            : localHashes.length > 0
+              ? localHashes
+              : batch.batchId
+                ? [batch.batchId]
+                : [];
+
         onSuccess(txHashes);
         setPendingSigning(false);
       } catch (e) {
@@ -437,14 +491,18 @@ export const Deposit = ({
       }
     },
     [
-      selectedChainOption,
+      firstTokenChain?.chainType,
       bridgeAddress,
+      config,
       handleOnChangeFirstAmount,
       handleOnChangeSecondAmount,
       nativeAuthToken,
       onSuccess,
       sendTransactions,
-      evm.signTransaction
+      bitcoin.signTransaction,
+      evm.signTransaction,
+      solana.signTransaction,
+      sui.signTransaction
     ]
   );
 
@@ -464,7 +522,7 @@ export const Deposit = ({
     receiver: mvxAddress ?? '',
     firstToken,
     firstAmount,
-    fromChainId: chainId?.toString(),
+    fromChainId: bridgeFromChainId,
     toChainId: mvxChainId,
     secondToken,
     secondAmount,
@@ -681,12 +739,12 @@ export const Deposit = ({
               }
             >
               {hasAmounts && !pendingSigning && (
-                <div className="liq-flex liq-justify-center liq-gap-2">
+                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
                   <div>Deposit on </div>
                   <img
                     src={mvxChain?.pngUrl ?? ''}
                     alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
                   <div>MultiversX</div>
                 </div>
@@ -706,7 +764,7 @@ export const Deposit = ({
                   <img
                     src={mvxChain?.pngUrl ?? ''}
                     alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
                   <div>MultiversX</div>
                 </div>

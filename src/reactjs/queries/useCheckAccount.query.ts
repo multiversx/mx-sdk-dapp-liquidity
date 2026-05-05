@@ -4,11 +4,11 @@ import { AxiosError } from 'axios';
 import { checkAccount } from '../../api/checkAccount';
 import { getApiURL } from '../../helpers/getApiURL';
 import { useWeb3App } from '../context/useWeb3App';
-import { useGetChainId } from '../hooks';
+import { useBridgeApiChainId } from '../hooks/useBridgeApiChainId';
 
 export const useCheckAccountQuery = () => {
   const { address } = useAppKitAccount();
-  const chainId = useGetChainId();
+  const bridgeApiChainId = useBridgeApiChainId();
   const { nativeAuthToken } = useWeb3App();
 
   const queryFn = async () => {
@@ -16,7 +16,7 @@ export const useCheckAccountQuery = () => {
       const { data } = await checkAccount({
         url: getApiURL(),
         walletAddress: address ?? '',
-        chainId: chainId ? chainId.toString() : '',
+        chainId: bridgeApiChainId ?? '',
         nativeAuthToken
       });
       return data;
@@ -30,7 +30,7 @@ export const useCheckAccountQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['check-account', address, chainId, nativeAuthToken],
+    queryKey: ['check-account', address, bridgeApiChainId, nativeAuthToken],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

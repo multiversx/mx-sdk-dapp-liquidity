@@ -20,7 +20,7 @@ export const TrimAddress = ({
   return (
     <div
       data-testid={dataTestId}
-      className={`liq-truncate liq-text-left liq-text-neutral-100 uppercase liq-flex liq-gap-1 ${className}`}
+      className={`liq-truncate liq-text-left liq-text-neutral-100 liq-flex liq-gap-1 ${className}`}
     >
       <span>{address.slice(0, startLength)}</span>
       <span>...</span>
