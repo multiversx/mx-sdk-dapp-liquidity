@@ -1,4 +1,5 @@
 import { mxClsx } from 'reactjs/utils';
+import { safeImageUrl } from '../../../../../../helpers/safeImageUrl';
 import AllNetworks from '../../../../../assets/all-networks.svg';
 import {
   ALL_NETWORK_ID,
@@ -33,9 +34,10 @@ export const ChainOptionLabel = ({
           <div className="liq-h-6 liq-w-6 liq-flex-shrink-0 liq-overflow-hidden">
             {chain.pngUrl ? (
               <img
-                src={
-                  chain.pngUrl ?? chainIdentifier[chain.name as ChainNameType]
-                }
+                src={safeImageUrl(
+                  chain.pngUrl,
+                  chainIdentifier[chain.name as ChainNameType]
+                )}
                 alt={''}
                 loading="lazy"
                 className={mxClsx('liq-h-full liq-w-full', {

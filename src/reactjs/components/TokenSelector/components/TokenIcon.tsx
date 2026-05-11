@@ -1,6 +1,7 @@
 import { faDiamond } from '@fortawesome/free-solid-svg-icons/faDiamond';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useMemo } from 'react';
+import { safeImageUrl } from '../../../../helpers/safeImageUrl';
 import { TokenType } from '../../../../types/token';
 import DefaultIcon from '../../../assets/default.svg';
 import { mxClsx } from '../../../utils/mxClsx';
@@ -34,7 +35,7 @@ export const TokenIcon = ({
       return token.pngUrl && token.pngUrl !== '' ? (
         <>
           <img
-            src={token.pngUrl}
+            src={safeImageUrl(token.pngUrl, DefaultIcon)}
             alt=""
             className="liq-asset-icon liq-sm liq-p-0"
           />

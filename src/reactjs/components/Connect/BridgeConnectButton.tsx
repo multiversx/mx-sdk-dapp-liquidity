@@ -1,6 +1,6 @@
 import { CustomConnectButton } from './CustomConnectButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
-import { getDisplayName } from '../../../helpers/getDisplayName';
+import { getDisplayName, safeImageUrl } from '../../../helpers';
 import { useAccount } from '../../hooks/useAccount';
 
 export const BridgeConnectButton = ({
@@ -31,7 +31,7 @@ export const BridgeConnectButton = ({
           )}
           {activeChain && (
             <img
-              src={activeChain.pngUrl}
+              src={safeImageUrl(activeChain.pngUrl)}
               alt=""
               className="liq-z-10 liq-flex liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
             />
