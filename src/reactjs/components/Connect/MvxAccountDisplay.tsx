@@ -35,7 +35,11 @@ export const MvxAccountDisplay = ({
     <>
       {accountAddress && (
         <>
-          <img src={chainIcon} alt="" className="liq-w-6" />
+          <img
+            src={chainIcon}
+            alt=""
+            className="liq-w-6 liq-h-6 liq-rounded-lg"
+          />
           <span className="liq-truncate liq-text-gray-400">MultiversX:</span>
           <div className="liq-flex liq-items-center liq-justify-between">
             <div className="liq-flex liq-max-w-[10rem] liq-items-center liq-gap-1">
@@ -52,13 +56,18 @@ export const MvxAccountDisplay = ({
                 />
               </MxLink>
 
-              <CopyButton text={accountAddress} className="liq-text-sm" />
+              <CopyButton
+                text={accountAddress}
+                className="liq-text-sm"
+                data-testid="mx-copy-button"
+              />
             </div>
           </div>
           <div className="liq-ml-auto liq-mr-0 liq-flex liq-items-center liq-gap-1">
             <button
               className="focus-primary liq-flex liq-items-center liq-gap-1 liq-rounded-xl liq-px-0 liq-py-2 liq-text-sm liq-font-semibold liq-text-neutral-400 liq-transition-colors liq-duration-200 hover:enabled:liq-text-white disabled:liq-opacity-50"
               onClick={handleDisconnect}
+              data-testid="mx-disconnect-button"
             >
               <FontAwesomeIcon icon={faPowerOff} />
             </button>
@@ -70,10 +79,15 @@ export const MvxAccountDisplay = ({
           type="button"
           className="liq-rounded-lg liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 liq-text-primary-200 hover:enabled:liq-bg-primary liq-px-2"
           onClick={handleConnect}
+          data-testid="mx-connect-button"
         >
-          <div className="liq-flex liq-justify-center liq-gap-2">
+          <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
             <div>Connect </div>
-            <img src={chainIcon} alt="" className="liq-w-4" />
+            <img
+              src={chainIcon}
+              alt=""
+              className="liq-w-4 liq-h-4 liq-rounded-sm"
+            />
             <div>MultiversX</div>
           </div>
         </button>

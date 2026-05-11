@@ -6,6 +6,8 @@ export * from './useDebounce';
 export * from './useFetchBridgeData';
 export * from './useFetchTokens';
 export * from './useGetChainId';
+export * from './useBridgeApiChainId';
 export * from './useResolveTokenChain';
 export * from './useSendTransactions';
 export * from './useSignTransaction';
+export * from './useSuiConnect';

@@ -4,6 +4,15 @@ import Default from '../assets/default.svg';
 import Ethereum from '../assets/ethereum.svg';
 import MultiversX from '../assets/msx.svg';
 import Polygon from '../assets/polygon.svg';
+import Sui from '../assets/sui.svg';
+
+export enum ChainName {
+  ethereum = 'Ethereum',
+  bsc = 'Binance BSC',
+  polygon = 'Polygon',
+  msx = 'MultiversX',
+  sui = 'Sui'
+}
 
 const msx = {
   msx: MultiversX,
@@ -30,12 +39,18 @@ const base = {
   BASE: Base
 };
 
+const sui = {
+  sui: Sui,
+  SUI: Sui
+};
+
 export type ChainNameType =
   | keyof typeof msx
   | keyof typeof ethereum
   | keyof typeof binance
   | keyof typeof polygon
   | keyof typeof base
+  | keyof typeof sui
   | 'default';
 
 export const chainIdentifier = {
@@ -44,6 +59,7 @@ export const chainIdentifier = {
   ...binance,
   ...polygon,
   ...base,
+  ...sui,
   default: Default
 };
 

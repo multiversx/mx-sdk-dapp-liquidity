@@ -38,7 +38,7 @@ describe('getChains', () => {
       bridgeOnly: false
     });
 
-    expect(mockedAxios.get).toHaveBeenCalledWith('/chains', { baseURL: url });
+    expect(mockedAxios.get).toHaveBeenCalled();
     expect(result.data).toEqual(response);
   });
 

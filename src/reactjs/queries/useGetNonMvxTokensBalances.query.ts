@@ -37,7 +37,7 @@ export const useGetNonMvxTokensBalancesQuery = ({
 
       return assets.map((asset) => {
         const foundToken = tokens.find(
-          (token) => token.address === asset.tokenId
+          (token) => token.address.toLowerCase() === asset.tokenId.toLowerCase()
         );
 
         if (!foundToken) {

@@ -17,7 +17,10 @@ export const TokenList = ({
           key={`${token.address}-${token.chainId}`}
           token={token}
           onClick={onSelect}
-          selected={selectedToken?.address === token.address}
+          selected={
+            selectedToken?.address?.toLowerCase() ===
+            token.address.toLowerCase()
+          }
         />
       ))}
     </div>

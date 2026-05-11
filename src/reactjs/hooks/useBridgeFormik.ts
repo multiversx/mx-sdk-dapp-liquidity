@@ -40,7 +40,8 @@ export const useBridgeFormik = ({
   toChainId,
   setForceRefetchRate,
   rate,
-  onSubmit
+  onSubmit,
+  isMvxConnected
 }: {
   sender: string;
   receiver: string;
@@ -50,6 +51,7 @@ export const useBridgeFormik = ({
   toChainId?: string;
   firstToken?: TokenType;
   secondToken?: TokenType;
+  isMvxConnected: boolean;
   setForceRefetchRate?: (value: (previous: number) => number) => void;
   rate?: RateRequestResponse;
   onSubmit: ({
@@ -125,7 +127,7 @@ export const useBridgeFormik = ({
   const formik = useFormik({
     initialValues,
     validationSchema: object<TradeFormikValuesType>().shape({
-      [BridgeFormikValuesEnum.firstAmount]: useAmountSchema(),
+      [BridgeFormikValuesEnum.firstAmount]: useAmountSchema({ isMvxConnected }),
       [BridgeFormikValuesEnum.firstToken]: object().required(),
       [BridgeFormikValuesEnum.secondAmount]: useSecondAmountSchema(),
       [BridgeFormikValuesEnum.secondToken]: object().required(),

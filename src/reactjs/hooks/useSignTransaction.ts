@@ -24,6 +24,8 @@ export const useSignTransaction = () => {
     useAppKitProvider<Provider>('solana');
   const { walletProvider: btcWalletProvider } =
     useAppKitProvider<BitcoinConnector>('bip122');
+  // TODO: type properly when @reown exports Sui provider type
+  const { walletProvider: suiWalletProvider } = useAppKitProvider<any>('sui');
 
   const signTransactionSolanaTransaction = async ({
     feePayer,
@@ -72,6 +74,43 @@ export const useSignTransaction = () => {
     return signature.psbt;
   };
 
+  const signSuiTransaction = async (suiParams?: {
+    /** Base64 BCS transaction bytes (Reown / WalletConnect `sui_signAndExecuteTransaction`). */
+    transaction?: string;
+    /** @deprecated use `transaction` — same bytes, older name */
+    transactionBlock?: string;
+    address: string;
+    options?: Record<string, unknown>;
+  }) => {
+    const transaction = suiParams?.transaction ?? suiParams?.transactionBlock;
+
+    if (!transaction) {
+      throw new Error('No Sui transaction bytes provided');
+    }
+
+    if (!suiParams?.address) {
+      throw new Error('No Sui sender address');
+    }
+
+    if (!suiWalletProvider) {
+      throw new Error('Sui wallet not connected');
+    }
+
+    const result = await suiWalletProvider.request({
+      method: 'sui_signTransaction',
+      params: {
+        transaction,
+        address: suiParams.address
+      }
+    });
+
+    if (!result) {
+      throw new Error('Sui wallet did not return a signature');
+    }
+
+    return result.signature;
+  };
+
   return {
     evm: {
       hash,
@@ -86,6 +125,10 @@ export const useSignTransaction = () => {
     bitcoin: {
       signTransaction: signPSBT,
       walletProvider: btcWalletProvider
+    },
+    sui: {
+      signTransaction: signSuiTransaction,
+      walletProvider: suiWalletProvider
     }
   };
 };

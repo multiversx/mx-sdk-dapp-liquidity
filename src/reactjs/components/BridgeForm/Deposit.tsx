@@ -2,19 +2,25 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatAmount } from '@multiversx/sdk-dapp-utils/out/helpers/formatAmount';
 import { useAppKitNetwork } from '@reown/appkit/react';
-import { getConnections, waitForTransactionReceipt } from '@wagmi/core';
+import { waitForTransactionReceipt } from '@wagmi/core';
 import { AxiosError } from 'axios';
 import debounce from 'lodash/debounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useBridgeTokenSelection } from './hooks/useBridgeTokenSelection';
+import { resolveSigningChainType } from './utils/bridgeFormHelpers';
+import { MVX_CHAIN_IDS } from '../../../constants';
 import { getApiURL } from '../../../helpers/getApiURL';
 import { ChainType } from '../../../types/chainType';
 import { ProviderType } from '../../../types/providerType';
-import { TokenType } from '../../../types/token';
 import { BaseTransaction, ServerTransaction } from '../../../types/transaction';
-import { safeWindow } from '../../constants';
 import { useWeb3App } from '../../context/useWeb3App';
+import {
+  sameBridgeApiChainId,
+  toBridgeApiChainId
+} from '../../helpers/resolveBridgeApiChainId';
 import { useAccount } from '../../hooks/useAccount';
+import { useBridgeApiChainId } from '../../hooks/useBridgeApiChainId';
 import {
   BridgeFormikValuesEnum,
   useBridgeFormik
@@ -25,11 +31,6 @@ import { useSendTransactions } from '../../hooks/useSendTransactions';
 import { useSignTransaction } from '../../hooks/useSignTransaction';
 import { invalidateHistoryQuery } from '../../queries/useGetHistory.query';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
-import { getCompletePathname } from '../../utils/getCompletePathname';
-import {
-  getInitialTokens,
-  InitialTokensType
-} from '../../utils/getInitialTokens';
 import { mxClsx } from '../../utils/mxClsx';
 import { AmountCard } from '../AmountCard';
 import { AmountInput } from '../AmountInput';
@@ -66,7 +67,7 @@ interface BridgeFormProps {
   onChangeDirection: () => void;
 }
 
-let fetchRateInterval: NodeJS.Timeout;
+let fetchRateInterval: ReturnType<typeof setInterval>;
 
 export const Deposit = ({
   mvxChainId,
@@ -89,7 +90,6 @@ export const Deposit = ({
   onChangeDirection
 }: BridgeFormProps) => {
   const ref = useRef(null);
-  const initializedInitialTokensRef = useRef(false);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
   const [forceRefetchRate, setForceRefetchRate] = useState(1);
@@ -101,9 +101,11 @@ export const Deposit = ({
     config,
     options,
     supportedChains: sdkChains,
-    nativeAuthToken
+    nativeAuthToken,
+    bridgeOnly
   } = useWeb3App();
   const chainId = useGetChainId();
+  const bridgeApiChainId = useBridgeApiChainId();
 
   const {
     evmTokensWithBalances,
@@ -126,9 +128,7 @@ export const Deposit = ({
     isChainsLoading;
 
   const activeChain = useMemo(() => {
-    return sdkChains.find(
-      (chain) => chain.id.toString() === chainId?.toString()
-    );
+    return sdkChains.find((chain) => sameBridgeApiChainId(chain.id, chainId));
   }, [chainId, sdkChains]);
 
   const mvxChain = useMemo(() => {
@@ -137,7 +137,7 @@ export const Deposit = ({
     );
   }, [chainId, chains]);
 
-  const { evm, solana, bitcoin } = useSignTransaction();
+  const { evm, solana, bitcoin, sui } = useSignTransaction();
   const sendTransactions = useSendTransactions();
 
   const {
@@ -152,94 +152,75 @@ export const Deposit = ({
       ? (rateError as AxiosError<{ message: string }>)?.response?.data.message
       : undefined;
 
-  const [firstToken, setFirstToken] = useState<TokenType | undefined>();
+  const handleSwitchNetwork = useCallback(
+    (chain: { id: string | number }) => {
+      const sdkChain = sdkChains.find((c) =>
+        sameBridgeApiChainId(c.id, chain.id)
+      );
+      if (sdkChain) {
+        switchNetwork(sdkChain);
+      }
+    },
+    [sdkChains, switchNetwork]
+  );
+
+  const {
+    firstToken,
+    secondToken,
+    fromOptions,
+    toOptions,
+    selectedChainOption,
+    onChangeFirstSelect,
+    onChangeSecondSelect,
+    handleChangeDirection: handleTokenChangeDirection
+  } = useBridgeTokenSelection({
+    chains,
+    activeChain,
+    sdkChains,
+    switchNetwork: handleSwitchNetwork,
+    fromTokens: evmTokensWithBalances,
+    toTokens: mvxTokensWithBalances,
+    firstTokenIdentifier,
+    secondTokenIdentifier,
+    forcedDestinationTokenSymbol,
+    isTokensLoading,
+    callbackRoute,
+    onNavigate
+  });
+
+  const isFirstTokenMvx = useMemo(() => {
+    return firstToken
+      ? MVX_CHAIN_IDS.includes(firstToken.chainId.toString())
+      : false;
+  }, [firstToken?.chainId]);
+
+  const isSecondTokenMvx = useMemo(() => {
+    return secondToken
+      ? MVX_CHAIN_IDS.includes(secondToken.chainId.toString())
+      : false;
+  }, [secondToken?.chainId]);
+
   const [firstAmount, setFirstAmount] = useState(firstTokenAmount ?? '');
-  const [secondToken, setSecondToken] = useState<TokenType | undefined>();
   const [secondAmount, setSecondAmount] = useState(secondTokenAmount ?? '');
+
+  const firstTokenChain = useMemo(() => {
+    if (!firstToken) {
+      return selectedChainOption;
+    }
+    return (
+      chains.find((chain) =>
+        sameBridgeApiChainId(chain.chainId, firstToken.chainId)
+      ) ?? selectedChainOption
+    );
+  }, [firstToken?.chainId, chains, selectedChainOption]);
+
+  const bridgeFromChainId = useMemo(
+    () => toBridgeApiChainId(firstToken?.chainId) ?? bridgeApiChainId,
+    [firstToken?.chainId, bridgeApiChainId]
+  );
 
   const bridgeAddress = account.address;
   const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
-
-  const fromOptions = useMemo(
-    () =>
-      (evmTokensWithBalances &&
-        evmTokensWithBalances.map((token) => {
-          return {
-            ...token,
-            identifier: token.address,
-            ticker: token.symbol
-          };
-        })) ??
-      [],
-    [evmTokensWithBalances]
-  );
-
-  const getAvailableTokens = useCallback(
-    (option: TokenType) => {
-      if (forcedDestinationTokenSymbol) {
-        const forcedToken = mvxTokensWithBalances?.find(
-          (mvxToken) =>
-            mvxToken.symbol.toLowerCase() ===
-            forcedDestinationTokenSymbol.toLowerCase()
-        );
-
-        if (forcedToken) {
-          return [forcedToken];
-        }
-        return [];
-      }
-
-      if (!option?.availableTokens) {
-        return [];
-      }
-
-      const foundTokens: TokenType[] = [];
-
-      for (const availableToken of option.availableTokens) {
-        const foundToken = mvxTokensWithBalances?.find(
-          (mvxToken) => mvxToken.address === availableToken.address
-        );
-
-        if (foundToken) {
-          foundTokens.push(foundToken);
-        }
-      }
-
-      return foundTokens;
-    },
-    [mvxTokensWithBalances]
-  );
-
-  const toOptions = useMemo(
-    () =>
-      (firstToken?.availableTokens &&
-        getAvailableTokens(firstToken).map((token) => {
-          return {
-            ...token,
-            identifier: token.address,
-            ticker: token.symbol
-          };
-        })) ??
-      [],
-    [firstToken?.availableTokens]
-  );
-
-  const selectedChainOption = useMemo(
-    () =>
-      chains?.find(
-        (option) => option.chainId.toString() === activeChain?.id.toString()
-      ) ?? chains?.[0],
-    [activeChain?.id, chains]
-  );
-
-  const getDefaultReceivingToken = useCallback(
-    (values: TokenType[]) =>
-      values.find((x) => x.symbol.toLowerCase().includes('usdc')) ??
-      mvxTokensWithBalances?.find((x) =>
-        x.symbol.toLowerCase().includes('usdc')
-      ),
-    [mvxTokensWithBalances]
-  );
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
@@ -252,7 +233,7 @@ export const Deposit = ({
         !firstToken?.address ||
         !secondToken?.address ||
         !selectedChainOption ||
-        !chainId
+        !bridgeFromChainId
       ) {
         return;
       }
@@ -262,7 +243,7 @@ export const Deposit = ({
         body: {
           tokenIn: firstToken.address,
           amountIn: amount,
-          fromChainId: chainId.toString(),
+          fromChainId: bridgeFromChainId,
           tokenOut: secondToken.address,
           toChainId: mvxChainId
         }
@@ -270,6 +251,7 @@ export const Deposit = ({
     }, 500),
     [
       account.address,
+      bridgeFromChainId,
       firstToken?.address,
       secondToken?.address,
       selectedChainOption
@@ -317,93 +299,8 @@ export const Deposit = ({
     ]
   );
 
-  const updateUrlParams = useCallback(
-    ({ firstTokenId, secondTokenId }: InitialTokensType) => {
-      if (isTokensLoading) {
-        return;
-      }
-
-      const currentUrl = getCompletePathname();
-      const searchParams = new URLSearchParams(safeWindow.location.search);
-
-      if (firstTokenId) {
-        searchParams.set('firstToken', firstTokenId);
-      }
-
-      if (secondTokenId) {
-        searchParams.set('secondToken', secondTokenId);
-      }
-
-      const newUrl = `${callbackRoute}?${searchParams.toString()}`;
-
-      if (currentUrl === newUrl) {
-        return;
-      }
-      onNavigate?.(newUrl, { replace: true });
-    },
-    [callbackRoute, isTokensLoading, onNavigate]
-  );
-
-  const onChangeFirstSelect = useCallback(
-    (option?: TokenType) => {
-      if (!option) {
-        return;
-      }
-
-      setFirstToken(() => option);
-      updateUrlParams({ firstTokenId: option?.address });
-
-      const availableTokens = getAvailableTokens(option);
-      const secondOption =
-        availableTokens.find(
-          (x) =>
-            x.symbol.toLowerCase() ===
-            availableTokens?.[0]?.symbol.toLowerCase()
-        ) ?? getDefaultReceivingToken(availableTokens);
-
-      if (!secondOption) {
-        return;
-      }
-
-      setSecondToken(() => secondOption);
-      updateUrlParams({ secondTokenId: secondOption?.address });
-    },
-    [toOptions, updateUrlParams]
-  );
-
-  const onChangeSecondSelect = useCallback(
-    (option?: TokenType) => {
-      if (!option) {
-        return;
-      }
-
-      setSecondToken(() => option);
-      updateUrlParams({ secondTokenId: option?.address });
-
-      const firstOption = fromOptions.find(
-        (x) => x.symbol.toLowerCase() === option?.symbol.toLowerCase()
-      );
-
-      if (!firstOption) {
-        return;
-      }
-
-      setFirstToken(() => firstOption);
-      updateUrlParams({ firstTokenId: firstOption?.address });
-    },
-    [fromOptions, updateUrlParams]
-  );
-
   const handleChangeDirection = () => {
-    if (!firstToken || !secondToken) {
-      return;
-    }
-
-    updateUrlParams({
-      firstTokenId: secondToken?.address,
-      secondTokenId: firstToken?.address
-    });
-
+    handleTokenChangeDirection();
     onChangeDirection();
   };
 
@@ -421,81 +318,6 @@ export const Deposit = ({
     }
   }, [selectedChainOption?.chainId]);
 
-  const setInitialSelectedTokens = () => {
-    if (isTokensLoading || initializedInitialTokensRef.current) {
-      return;
-    }
-
-    const initialTokens = getInitialTokens({
-      firstTokenId: firstTokenIdentifier,
-      secondTokenId: secondTokenIdentifier
-    });
-
-    const firstOption =
-      fromOptions?.find(
-        ({ identifier }) => initialTokens?.firstTokenId === identifier
-      ) ??
-      fromOptions.find(
-        (option) => option.chainId.toString() === activeChain?.id?.toString()
-      ) ??
-      fromOptions?.[0];
-
-    const availableTokens = getAvailableTokens(firstOption);
-    const secondOption =
-      availableTokens?.find(
-        ({ address }) =>
-          address.toLowerCase() ===
-          (firstOption?.symbol ?? initialTokens?.secondTokenId)?.toLowerCase()
-      ) ??
-      availableTokens.find(
-        (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()
-      ) ??
-      getDefaultReceivingToken(availableTokens);
-
-    const hasOptionsSelected =
-      Boolean(firstToken) &&
-      Boolean(secondToken) &&
-      firstToken?.address?.toLowerCase() ===
-        firstOption?.address?.toLowerCase() &&
-      secondToken?.address?.toLowerCase() ===
-        secondOption?.address?.toLowerCase();
-
-    if (hasOptionsSelected) {
-      return;
-    }
-
-    let initializedFirstToken = false;
-    if (firstOption) {
-      setFirstToken(firstOption);
-      updateUrlParams({
-        firstTokenId: firstOption?.address
-      });
-
-      const selectedOptionChain =
-        sdkChains?.find(
-          (chain) => chain.id.toString() === firstOption?.chainId.toString()
-        ) ?? activeChain;
-
-      if (selectedOptionChain) {
-        switchNetwork(selectedOptionChain);
-      }
-
-      initializedFirstToken = true;
-    }
-
-    let initializedSecondToken = false;
-    if (secondOption) {
-      setSecondToken(secondOption);
-      updateUrlParams({
-        secondTokenId: secondOption?.address
-      });
-      initializedSecondToken = true;
-    }
-
-    initializedInitialTokensRef.current =
-      initializedFirstToken && initializedSecondToken;
-  };
-
   const onSubmit = useCallback(
     async ({
       transactions,
@@ -507,14 +329,13 @@ export const Deposit = ({
       const signedTransactions: ServerTransaction[] = [];
       setPendingSigning(true);
       setSigningTransactionsCount(() => transactions.length);
-
       try {
         let txIndex = -1;
         for (const transaction of transactions) {
           ++txIndex;
           try {
-            switch (selectedChainOption?.chainType) {
-              case ChainType.evm:
+            switch (resolveSigningChainType(transaction, firstTokenChain)) {
+              case ChainType.evm: {
                 const hash = await evm.signTransaction({
                   ...(transaction as BaseTransaction),
                   value: BigInt(transaction.value),
@@ -549,6 +370,7 @@ export const Deposit = ({
                 });
 
                 break;
+              }
               case ChainType.sol:
                 if (!transaction.instructions || !transaction.feePayer) {
                   break;
@@ -585,6 +407,34 @@ export const Deposit = ({
                   txHash: psbt
                 });
                 break;
+
+              case ChainType.sui: {
+                const serializedTx = transaction.suiParams?.transactionBytes;
+                const sender = transaction.suiParams?.sender;
+
+                if (!serializedTx || !sender) {
+                  console.error('No Sui transaction bytes or sender address');
+                  break;
+                }
+
+                const signature = await sui.signTransaction({
+                  transaction: serializedTx,
+                  address: sender
+                });
+
+                if (!signature) {
+                  break;
+                }
+
+                signedTransactions.push({
+                  ...transaction,
+                  suiParams: {
+                    ...transaction.suiParams,
+                    signature
+                  }
+                });
+                break;
+              }
               default:
                 toast.error('Provider not supported');
                 setPendingSigning(false);
@@ -603,14 +453,29 @@ export const Deposit = ({
           }
         }
 
-        await sendTransactions({
+        const { data: batch } = await sendTransactions({
           transactions: signedTransactions,
           provider,
           url: getApiURL() ?? '',
           token: nativeAuthToken ?? ''
         });
 
-        const txHashes = signedTransactions.map((tx) => tx.txHash);
+        const apiHashes =
+          batch.transactions
+            ?.map((tx) => tx.txHash)
+            .filter((h): h is string => Boolean(h)) ?? [];
+        const localHashes = signedTransactions
+          .map((tx) => tx.txHash)
+          .filter((h): h is string => Boolean(h));
+        const txHashes =
+          apiHashes.length > 0
+            ? apiHashes
+            : localHashes.length > 0
+              ? localHashes
+              : batch.batchId
+                ? [batch.batchId]
+                : [];
+
         onSuccess(txHashes);
         setPendingSigning(false);
       } catch (e) {
@@ -626,13 +491,18 @@ export const Deposit = ({
       }
     },
     [
+      firstTokenChain?.chainType,
       bridgeAddress,
+      config,
       handleOnChangeFirstAmount,
       handleOnChangeSecondAmount,
       nativeAuthToken,
       onSuccess,
       sendTransactions,
-      evm.signTransaction
+      bitcoin.signTransaction,
+      evm.signTransaction,
+      solana.signTransaction,
+      sui.signTransaction
     ]
   );
 
@@ -646,12 +516,13 @@ export const Deposit = ({
     handleSubmit,
     resetSwapForm
   } = useBridgeFormik({
+    isMvxConnected: Boolean(mvxAddress),
     rate,
     sender: account.address ?? '',
     receiver: mvxAddress ?? '',
     firstToken,
     firstAmount,
-    fromChainId: chainId?.toString(),
+    fromChainId: bridgeFromChainId,
     toChainId: mvxChainId,
     secondToken,
     secondAmount,
@@ -712,50 +583,6 @@ export const Deposit = ({
     }
   }, [rateValidationError]);
 
-  useEffect(setInitialSelectedTokens, [isTokensLoading, fromOptions]);
-
-  useEffect(() => {
-    const selectedTokenOption = evmTokensWithBalances?.find(
-      (x) => x.address === firstToken?.address
-    );
-
-    if (!selectedTokenOption) {
-      return;
-    }
-
-    setFirstToken((prevState) => {
-      if (!prevState) {
-        return prevState;
-      }
-
-      return {
-        ...prevState,
-        balance: selectedTokenOption?.balance
-      };
-    });
-  }, [evmTokensWithBalances, firstToken?.address]);
-
-  useEffect(() => {
-    const selectedTokenOption = mvxTokensWithBalances?.find(
-      (x) => x.address === secondToken?.address
-    );
-
-    if (!selectedTokenOption) {
-      return;
-    }
-
-    setSecondToken((prevState) => {
-      if (!prevState) {
-        return prevState;
-      }
-
-      return {
-        ...prevState,
-        balance: selectedTokenOption?.balance
-      };
-    });
-  }, [mvxTokensWithBalances, secondToken?.address]);
-
   useEffect(() => {
     if (firstTokenAmount) {
       formik.setFieldValue(
@@ -802,7 +629,7 @@ export const Deposit = ({
             <span>From</span>
             <BridgeAccountDisplay
               disabled={isPendingRate}
-              activeChain={selectedChainOption}
+              activeChain={firstTokenChain}
             />
           </div>
           <div className="liq-flex liq-justify-between liq-gap-1">
@@ -820,7 +647,8 @@ export const Deposit = ({
               disabled={isPendingRate}
               options={fromOptions}
               areOptionsLoading={isTokensLoading}
-              isMvxSelector={false}
+              isMvxSelector={isFirstTokenMvx}
+              isDestination={false}
               color="neutral-850"
               onChange={onChangeFirstSelect}
               onBlur={handleBlur}
@@ -833,7 +661,9 @@ export const Deposit = ({
           </div>
         </AmountCard>
         <div className="liq-absolute liq-left-[6%] liq-top-[40%] -liq-mt-1 liq-z-10">
-          <ToggleDirection onChangeDirection={handleChangeDirection} />
+          {bridgeOnly && (
+            <ToggleDirection onChangeDirection={handleChangeDirection} />
+          )}
         </div>
         <AmountCard
           className={mxClsx(
@@ -871,7 +701,7 @@ export const Deposit = ({
               omitDisableClass={true}
               options={toOptions}
               areOptionsLoading={isTokensLoading}
-              isMvxSelector={true}
+              isMvxSelector={isSecondTokenMvx}
               color="neutral-850"
               onChange={onChangeSecondSelect}
               onBlur={handleBlur}
@@ -891,7 +721,7 @@ export const Deposit = ({
             <BridgeConnectButton
               className="liq-w-full liq-rounded-xl liq-bg-neutral-850/50 liq-px-8 liq-py-3 liq-font-semibold liq-text-primary-200 liq-transition-colors liq-duration-200 hover:enabled:liq-bg-primary-700/80 disabled:liq-opacity-50"
               disabled={isPendingRate}
-              activeChain={selectedChainOption}
+              activeChain={firstTokenChain}
             />
           )}
           {mvxAddress && isAuthenticated && (
@@ -909,12 +739,12 @@ export const Deposit = ({
               }
             >
               {hasAmounts && !pendingSigning && (
-                <div className="liq-flex liq-justify-center liq-gap-2">
+                <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
                   <div>Deposit on </div>
                   <img
                     src={mvxChain?.pngUrl ?? ''}
                     alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
                   <div>MultiversX</div>
                 </div>
@@ -934,7 +764,7 @@ export const Deposit = ({
                   <img
                     src={mvxChain?.pngUrl ?? ''}
                     alt=""
-                    className="liq-h-[1.5rem] liq-w-[1.5rem]"
+                    className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
                   <div>MultiversX</div>
                 </div>
@@ -947,14 +777,8 @@ export const Deposit = ({
             <div>
               You will be asked to sign {siginingTransactionsCount}{' '}
               {siginingTransactionsCount > 1 ? 'transactions' : 'transaction'}{' '}
-              on{' '}
+              on your wallet
             </div>
-            <img
-              src={getConnections(config)[0]?.connector?.icon}
-              alt=""
-              className="liq-mx-1 liq-h-[1rem] liq-w-[1rem]"
-            />
-            <div>{getConnections(config)[0]?.connector?.name}</div>
           </div>
         )}
       </form>

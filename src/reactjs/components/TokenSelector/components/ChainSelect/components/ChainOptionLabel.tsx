@@ -1,5 +1,10 @@
+import { mxClsx } from 'reactjs/utils';
 import AllNetworks from '../../../../../assets/all-networks.svg';
-import { chainIdentifier, ChainNameType } from '../../../../../constants';
+import {
+  ALL_NETWORK_ID,
+  chainIdentifier,
+  ChainNameType
+} from '../../../../../constants';
 
 export interface ChainOptionLabelType {
   isDisabled?: boolean;
@@ -33,7 +38,9 @@ export const ChainOptionLabel = ({
                 }
                 alt={''}
                 loading="lazy"
-                className="liq-h-full liq-w-full"
+                className={mxClsx('liq-h-full liq-w-full', {
+                  'liq-rounded-lg': chain.id !== ALL_NETWORK_ID
+                })}
               />
             ) : (
               <img

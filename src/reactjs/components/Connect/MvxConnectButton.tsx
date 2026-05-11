@@ -22,6 +22,7 @@ export const MvxConnectButton = ({
 
   return (
     <MxButton
+      data-testid="mx-network-connect-button"
       type="button"
       variant="neutral-850"
       className={mxClsx(
@@ -31,12 +32,12 @@ export const MvxConnectButton = ({
       disabled={disabled}
       onClick={onClick}
     >
-      <div className="liq-flex liq-justify-center liq-gap-2">
+      <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
         <div>Connect </div>
         <img
           src={icon ?? ''}
           alt=""
-          className="liq-h-[1.5rem] liq-w-[1.5rem]"
+          className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
         />
         <div>MultiversX</div>
       </div>

@@ -1,6 +1,6 @@
-import { useAppKitNetwork } from '@reown/appkit/react';
 import { useEffect, useMemo } from 'react';
 import { useAccount } from './useAccount';
+import { useBridgeApiChainId } from './useBridgeApiChainId';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { useWeb3App } from '../context/useWeb3App.ts';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
@@ -22,7 +22,7 @@ export const useFetchTokens = ({
   mvxApiURL: string;
   refetchTrigger?: number;
 }) => {
-  const { chainId } = useAppKitNetwork();
+  const bridgeApiChainId = useBridgeApiChainId();
   const account = useAccount();
   const { nativeAuthToken, bridgeOnly } = useWeb3App();
 
@@ -35,7 +35,7 @@ export const useFetchTokens = ({
     bridgeOnly
   });
 
-  const evmTokens = useMemo(
+  const nonMvxTokens = useMemo(
     () =>
       tokens?.filter(
         (token) =>
@@ -54,12 +54,12 @@ export const useFetchTokens = ({
   );
 
   const {
-    data: evmTokensBalances,
-    isLoading: isLoadingEvmTokensBalances,
-    isError: isErrorEvmTokensBalances
+    data: nonMvxTokensBalances,
+    isLoading: isLoadingNonMvxTokensBalances,
+    isError: isErrorNonMvxTokensBalances
   } = useGetNonMvxTokensBalancesQuery({
-    tokens: evmTokens ?? [],
-    chainId: chainId?.toString()
+    tokens: nonMvxTokens ?? [],
+    chainId: bridgeApiChainId
   });
 
   const {
@@ -75,7 +75,8 @@ export const useFetchTokens = ({
   const mvxTokensWithBalances = useMemo(() => {
     return mvxTokens?.map((token) => {
       const foundToken = mvxTokensBalances?.find(
-        (mvxToken) => mvxToken.address === token.address
+        (mvxToken) =>
+          mvxToken.address.toLowerCase() === token.address.toLowerCase()
       );
 
       if (!foundToken) {
@@ -92,12 +93,12 @@ export const useFetchTokens = ({
     });
   }, [mvxTokens, mvxTokensBalances]);
 
-  const evmTokensWithBalances = useMemo(() => {
-    return evmTokens?.map((token) => {
-      const foundToken = evmTokensBalances?.find(
-        (evmToken) =>
-          evmToken.address === token.address &&
-          evmToken.chainId === token.chainId
+  const nonMvxTokensWithBalances = useMemo(() => {
+    return nonMvxTokens?.map((token) => {
+      const foundToken = nonMvxTokensBalances?.find(
+        (nonMvxToken) =>
+          nonMvxToken.address.toLowerCase() === token.address.toLowerCase() &&
+          nonMvxToken.chainId.toLowerCase() === token.chainId.toLowerCase()
       );
 
       if (!foundToken) {
@@ -112,7 +113,7 @@ export const useFetchTokens = ({
         balance: foundToken.balance.toString()
       };
     });
-  }, [evmTokens, evmTokensBalances]);
+  }, [nonMvxTokens, nonMvxTokensBalances]);
 
   useEffect(() => {
     if (mvxAddress) {
@@ -126,14 +127,14 @@ export const useFetchTokens = ({
     }
 
     invalidateEvmTokensBalances();
-  }, [refetchTrigger, chainId, account.address]);
+  }, [refetchTrigger, bridgeApiChainId, account.address]);
 
   return {
     isTokensLoading,
     isTokensError,
-    isLoadingEvmTokensBalances,
-    isErrorEvmTokensBalances,
-    evmTokensWithBalances,
+    isLoadingEvmTokensBalances: isLoadingNonMvxTokensBalances,
+    isErrorEvmTokensBalances: isErrorNonMvxTokensBalances,
+    evmTokensWithBalances: nonMvxTokensWithBalances,
     isLoadingMvxTokensBalances,
     isErrorMvxTokensBalances,
     mvxTokensWithBalances,
