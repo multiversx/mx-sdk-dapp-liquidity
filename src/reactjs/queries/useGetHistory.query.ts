@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useCallback } from 'react';
 import { ProviderType } from 'types/providerType';
 import { getTransactions } from '../../api/getTransactions';
 import { getApiURL } from '../../helpers/getApiURL';
-import { getQueryClient } from '../context/queryClient';
 import { useWeb3App } from '../context/useWeb3App';
 
 type HistoryQueryType = {
@@ -59,8 +59,7 @@ export const useGetHistoryQuery = ({
       provider,
       status,
       tokenIn,
-      tokenOut,
-      nativeAuthToken
+      tokenOut
     ],
     queryFn,
     retry,
@@ -72,9 +71,11 @@ export const useGetHistoryQuery = ({
   });
 };
 
-export const invalidateHistoryQuery = () => {
-  const queryClient = getQueryClient();
-  queryClient.invalidateQueries({
-    queryKey: ['user-history']
-  });
+export const useInvalidateHistoryQuery = () => {
+  const queryClient = useQueryClient();
+  return useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: ['user-history']
+    });
+  }, [queryClient]);
 };

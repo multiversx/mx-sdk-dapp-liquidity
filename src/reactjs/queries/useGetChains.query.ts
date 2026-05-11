@@ -25,7 +25,7 @@ export const useGetChainsQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['chains', nativeAuthToken],
+    queryKey: ['chains', bridgeOnly],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

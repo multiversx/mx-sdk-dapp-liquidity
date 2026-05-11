@@ -1,8 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
-import { getQueryClient } from '../context/queryClient';
 import { useWeb3App } from '../context/useWeb3App';
 
 export const useGetMvxTokensBalancesQuery = ({
@@ -55,12 +54,7 @@ export const useGetMvxTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: [
-      'mvx-tokens-balances',
-      mvxAddress,
-      tokenIdentifiers.sort(),
-      nativeAuthToken
-    ],
+    queryKey: ['mvx-tokens-balances', mvxAddress, tokenIdentifiers.sort()],
     queryFn,
     retry,
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,
@@ -72,10 +66,11 @@ export const useGetMvxTokensBalancesQuery = ({
   });
 };
 
-export function invalidateMvxTokensBalancesQuery() {
-  const queryKey = ['mvx-tokens-balances'];
-  const queryClient = getQueryClient();
-  queryClient.invalidateQueries({
-    queryKey
-  });
+export function useInvalidateMvxTokensBalancesQuery() {
+  const queryClient = useQueryClient();
+  return useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: ['mvx-tokens-balances']
+    });
+  }, [queryClient]);
 }

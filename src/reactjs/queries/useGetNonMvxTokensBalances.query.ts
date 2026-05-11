@@ -1,9 +1,8 @@
 import { useAppKitAccount } from '@reown/appkit/react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TokenType } from '../../types';
-import { getQueryClient } from '../context/queryClient';
 import { useBalances } from '../hooks';
 
 export const useGetNonMvxTokensBalancesQuery = ({
@@ -71,10 +70,11 @@ export const useGetNonMvxTokensBalancesQuery = ({
   });
 };
 
-export function invalidateEvmTokensBalances() {
-  const queryKey = ['non-mvx-tokens-balances'];
-  const queryClient = getQueryClient();
-  queryClient.invalidateQueries({
-    queryKey
-  });
+export function useInvalidateEvmTokensBalances() {
+  const queryClient = useQueryClient();
+  return useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: ['non-mvx-tokens-balances']
+    });
+  }, [queryClient]);
 }
