@@ -81,6 +81,7 @@ export type InitOptions = {
   mvxChainId: '31' | '44' | '54';
   suiEnvironment?: 'mainnet' | 'testnet' | 'devnet';
   suiFeaturedWalletIds?: string[];
+  expectedSuiAddress?: string;
 };
 
 export enum SuiMethods {
@@ -138,7 +139,12 @@ export async function init(options: InitOptions): Promise<{
   if (options.suiEnvironment) {
     const suiNetwork = suiNetworkDefinitions[options.suiEnvironment];
     const explicitSuiCaip = suiNetwork.caipNetworkId ?? `sui:${suiNetwork.id}`;
-    adapters.push(new SuiAdapter({ explicitCaipChains: [explicitSuiCaip] }));
+    adapters.push(
+      new SuiAdapter({
+        explicitCaipChains: [explicitSuiCaip],
+        expectedSuiAddress: options.expectedSuiAddress
+      })
+    );
   }
 
   // Do not call UniversalProvider.init() here — AppKit creates the shared provider
@@ -163,11 +169,17 @@ export async function init(options: InitOptions): Promise<{
       suiNs?.accounts?.length &&
       !appKit.getCaipAddress('sui' as ChainNamespace)
     ) {
-      await (
-        appKit as unknown as {
-          syncWalletConnectAccount?: () => Promise<void>;
-        }
-      ).syncWalletConnectAccount?.();
+      const firstSuiAddress = suiNs.accounts[0]?.split(':').pop();
+      if (
+        !options.expectedSuiAddress ||
+        firstSuiAddress === options.expectedSuiAddress
+      ) {
+        await (
+          appKit as unknown as {
+            syncWalletConnectAccount?: () => Promise<void>;
+          }
+        ).syncWalletConnectAccount?.();
+      }
     }
   }
 
