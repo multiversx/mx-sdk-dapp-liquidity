@@ -1,4 +1,4 @@
-import { useAppKitProvider } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import type { BitcoinConnector } from '@reown/appkit-adapter-bitcoin';
 import {
   useAppKitConnection,
@@ -26,6 +26,9 @@ export const useSignTransaction = () => {
     useAppKitProvider<BitcoinConnector>('bip122');
   // TODO: type properly when @reown exports Sui provider type
   const { walletProvider: suiWalletProvider } = useAppKitProvider<any>('sui');
+  const { address: suiAddress } = useAppKitAccount({
+    namespace: 'sui' as any
+  });
 
   const signTransactionSolanaTransaction = async ({
     feePayer,
@@ -67,8 +70,6 @@ export const useSignTransaction = () => {
       throw Error('user is disconnected');
     }
 
-    params.signInputs = [];
-
     const signature = await btcWalletProvider.signPSBT(params);
 
     return signature.psbt;
@@ -94,6 +95,38 @@ export const useSignTransaction = () => {
 
     if (!suiWalletProvider) {
       throw new Error('Sui wallet not connected');
+    }
+
+    // Validate transaction bytes
+    const MAX_SUI_PAYLOAD_BYTES = 32 * 1024; // 32 KiB
+
+    // Must be a non-empty string
+    if (!transaction || typeof transaction !== 'string') {
+      throw new Error(
+        'Invalid Sui transaction: payload must be a non-empty string'
+      );
+    }
+
+    // Must be valid base64
+    try {
+      const decoded = atob(transaction);
+      if (decoded.length > MAX_SUI_PAYLOAD_BYTES) {
+        throw new Error(
+          `Sui transaction payload exceeds maximum size of ${MAX_SUI_PAYLOAD_BYTES} bytes`
+        );
+      }
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('maximum size')) {
+        throw e;
+      }
+      throw new Error('Invalid Sui transaction: payload is not valid base64');
+    }
+
+    // Address must match the connected address
+    if (suiParams.address && suiAddress && suiParams.address !== suiAddress) {
+      throw new Error(
+        `Sui address mismatch: expected ${suiAddress}, got ${suiParams.address}`
+      );
     }
 
     const result = await suiWalletProvider.request({
