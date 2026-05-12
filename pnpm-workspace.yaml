@@ -1,0 +1,9 @@
+allowBuilds:
+  '@reown/appkit': true
+  '@swc/core': true
+  bigint-buffer: true
+  bufferutil: true
+  esbuild: true
+  keccak: true
+  protobufjs: true
+  utf-8-validate: true
