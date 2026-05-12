@@ -16,6 +16,8 @@ export type BaseTransaction = {
   recentBlockhash?: string;
   feePayer?: string;
   instructions?: TransactionInstructionCtorFields[];
+  fromChainId?: string;
+  toChainId?: string;
   bitcoinParams?: {
     psbt: string;
     signInputs: {

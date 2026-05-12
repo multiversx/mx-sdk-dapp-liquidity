@@ -22,6 +22,15 @@ interface BridgeFormProps {
   onHistoryClose?: () => void;
   onMvxConnect: () => void;
   onMvxDisconnect?: () => void;
+  /**
+   * Called after the SDK updates the URL with token query params.
+   * The SDK always calls `history.replaceState` first, so the URL is already
+   * updated client-side. This callback is purely informational — pass a
+   * soft client-side router (e.g. Next.js `router.replace`) so your framework
+   * stays in sync. Do NOT use `window.location.assign` or any hard navigation:
+   * that will cause an infinite reload loop when an injected EVM provider
+   * (MetaMask, etc.) auto-connects on mount.
+   */
   onNavigate?: (url: string, options?: object) => void;
 }
 

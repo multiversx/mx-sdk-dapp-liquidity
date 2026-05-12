@@ -90,6 +90,7 @@ export const Deposit = ({
   onChangeDirection
 }: BridgeFormProps) => {
   const ref = useRef(null);
+  const prevSelectedChainIdRef = useRef<string | undefined>(undefined);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
   const [forceRefetchRate, setForceRefetchRate] = useState(1);
@@ -306,6 +307,15 @@ export const Deposit = ({
   };
 
   useEffect(() => {
+    const prev = prevSelectedChainIdRef.current;
+    prevSelectedChainIdRef.current = selectedChainOption?.chainId;
+
+    // Ignore the initial undefined→value transition caused by EVM provider
+    // auto-connecting on mount — that is handled by the token-init effect.
+    if (!prev) {
+      return;
+    }
+
     if (selectedChainOption?.chainId !== firstToken?.chainId) {
       const selectedOption = fromOptions?.find(
         (option) => option.chainId.toString() === selectedChainOption?.chainId
