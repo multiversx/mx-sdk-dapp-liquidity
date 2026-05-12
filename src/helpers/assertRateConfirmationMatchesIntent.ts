@@ -11,13 +11,13 @@ export function assertRateConfirmationMatchesIntent(
   transactions: ServerTransaction[]
 ): void {
   for (const tx of transactions) {
-    // Check MvX chainID field (present when the server returns MultiversX transactions)
+    // Check MvX fromChainId field (present when the server returns MultiversX transactions)
     if (
-      tx.chainID !== undefined &&
-      String(tx.chainID) !== String(intent.fromChainId)
+      tx.fromChainId !== undefined &&
+      String(tx.fromChainId) !== String(intent.fromChainId)
     ) {
       throw new RateConfirmationMismatchError(
-        `Transaction chainID ${tx.chainID} does not match approved fromChainId ${intent.fromChainId}`
+        `Transaction fromChainId ${tx.fromChainId} does not match approved fromChainId ${intent.fromChainId}`
       );
     }
 
