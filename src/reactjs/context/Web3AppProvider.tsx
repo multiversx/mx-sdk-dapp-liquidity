@@ -15,6 +15,7 @@ export type Web3AppContextProps = {
   supportedChains: AppKitNetwork[];
   nativeAuthToken: string;
   bridgeOnly?: boolean;
+  reconnectOnMount?: boolean;
   signMvxTransactions?: (transactions: IPlainTransactionObject[]) => Promise<{
     error?: string;
     batchId?: string;
@@ -39,6 +40,7 @@ export function Web3AppProvider({
   supportedChains = [],
   nativeAuthToken,
   bridgeOnly = false,
+  reconnectOnMount = true,
   signMvxTransactions,
   latestMvxTransactionHash,
   resetMvxTransactionHash
@@ -65,7 +67,7 @@ export function Web3AppProvider({
 
   return (
     <Web3AppContext.Provider value={value}>
-      <WagmiProvider config={config}>
+      <WagmiProvider config={config} reconnectOnMount={reconnectOnMount}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
