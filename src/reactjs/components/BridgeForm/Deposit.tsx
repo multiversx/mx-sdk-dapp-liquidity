@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { useBridgeTokenSelection } from './hooks/useBridgeTokenSelection';
 import { resolveSigningChainType } from './utils/bridgeFormHelpers';
 import { MVX_CHAIN_IDS } from '../../../constants';
-import { getApiURL } from '../../../helpers/getApiURL';
+import { getApiURL, safeImageUrl } from '../../../helpers';
 import { ChainType } from '../../../types/chainType';
 import { ProviderType } from '../../../types/providerType';
 import { BaseTransaction, ServerTransaction } from '../../../types/transaction';
@@ -29,7 +29,7 @@ import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetChainId } from '../../hooks/useGetChainId';
 import { useSendTransactions } from '../../hooks/useSendTransactions';
 import { useSignTransaction } from '../../hooks/useSignTransaction';
-import { invalidateHistoryQuery } from '../../queries/useGetHistory.query';
+import { useInvalidateHistoryQuery } from '../../queries/useGetHistory.query';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
 import { mxClsx } from '../../utils/mxClsx';
 import { AmountCard } from '../AmountCard';
@@ -90,6 +90,7 @@ export const Deposit = ({
   onChangeDirection
 }: BridgeFormProps) => {
   const ref = useRef(null);
+  const prevSelectedChainIdRef = useRef<string | undefined>(undefined);
   const [isTokenSelectorVisible, setIsTokenSelectorVisible] = useState(false);
   const [pendingSigning, setPendingSigning] = useState(false);
   const [forceRefetchRate, setForceRefetchRate] = useState(1);
@@ -97,6 +98,7 @@ export const Deposit = ({
     useState<number>(0);
   const account = useAccount();
   const { switchNetwork } = useAppKitNetwork();
+  const invalidateHistoryQuery = useInvalidateHistoryQuery();
   const {
     config,
     options,
@@ -305,6 +307,15 @@ export const Deposit = ({
   };
 
   useEffect(() => {
+    const prev = prevSelectedChainIdRef.current;
+    prevSelectedChainIdRef.current = selectedChainOption?.chainId;
+
+    // Ignore the initial undefined→value transition caused by EVM provider
+    // auto-connecting on mount — that is handled by the token-init effect.
+    if (!prev) {
+      return;
+    }
+
     if (selectedChainOption?.chainId !== firstToken?.chainId) {
       const selectedOption = fromOptions?.find(
         (option) => option.chainId.toString() === selectedChainOption?.chainId
@@ -677,7 +688,7 @@ export const Deposit = ({
             <span>To</span>
             <MvxAccountDisplay
               accountAddress={mvxAddress}
-              chainIcon={mvxChain?.pngUrl ?? ''}
+              chainIcon={safeImageUrl(mvxChain?.pngUrl)}
               username={username}
               accountExplorerUrl={`${options.mvxExplorerAddress}/accounts/${mvxAddress}`}
               showTag={true}
@@ -713,7 +724,7 @@ export const Deposit = ({
           {!mvxAddress && (
             <MvxConnectButton
               mvxAccountAddress={mvxAddress}
-              icon={mvxChain?.pngUrl ?? ''}
+              icon={safeImageUrl(mvxChain?.pngUrl)}
               onClick={onMvxConnect}
             />
           )}
@@ -742,7 +753,7 @@ export const Deposit = ({
                 <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
                   <div>Deposit on </div>
                   <img
-                    src={mvxChain?.pngUrl ?? ''}
+                    src={safeImageUrl(mvxChain?.pngUrl)}
                     alt=""
                     className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />
@@ -762,7 +773,7 @@ export const Deposit = ({
                   />
                   <div>Depositing on</div>
                   <img
-                    src={mvxChain?.pngUrl ?? ''}
+                    src={safeImageUrl(mvxChain?.pngUrl)}
                     alt=""
                     className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />

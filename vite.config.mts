@@ -21,7 +21,7 @@ export default defineConfig({
     svgr()
   ],
   build: {
-    minify: false,
+    minify: true,
     lib: {
       name: 'sdk-dapp-liquidity',
       entry: resolve(__dirname, 'src/index.ts'),

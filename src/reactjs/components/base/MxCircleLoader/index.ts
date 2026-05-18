@@ -1,1 +1,1 @@
-export * from "./MxCircleLoader";
+export * from './MxCircleLoader';

@@ -28,7 +28,7 @@ export const useGetAllTokensQuery = ({
   };
 
   return useQuery({
-    queryKey: ['all-tokens', nativeAuthToken],
+    queryKey: ['all-tokens', bridgeOnly],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

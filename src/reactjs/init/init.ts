@@ -8,6 +8,7 @@ import {
 } from '@reown/appkit-common';
 import type { Config, CreateConfigParameters } from '@wagmi/core';
 import * as viemNetworks from 'viem/chains';
+import { isMobileInjectedDappBrowser } from './isMobileInjectedDappBrowser';
 import { MVX_CHAIN_IDS } from '../../constants';
 import { InMemoryStore } from '../../store/inMemoryStore';
 import { SuiAdapter } from '../adapters/SuiAdapter';
@@ -81,6 +82,8 @@ export type InitOptions = {
   mvxChainId: '31' | '44' | '54';
   suiEnvironment?: 'mainnet' | 'testnet' | 'devnet';
   suiFeaturedWalletIds?: string[];
+  expectedSuiAddress?: string;
+  disableInjectedDiscoveryInMobileDapp?: boolean;
 };
 
 export enum SuiMethods {
@@ -94,6 +97,7 @@ export async function init(options: InitOptions): Promise<{
   appKit: any;
   options: InitOptions;
   supportedChains: AppKitNetwork[];
+  reconnectOnMount: boolean;
 }> {
   const store = InMemoryStore.getInstance();
   store.setItem('apiURL', options.apiURL);
@@ -126,11 +130,16 @@ export async function init(options: InitOptions): Promise<{
     allNetworks.push(suiNetwork);
   }
 
+  const shouldGuard =
+    Boolean(options.disableInjectedDiscoveryInMobileDapp) &&
+    isMobileInjectedDappBrowser();
+
   const wagmiAdapter = new WagmiAdapter({
     ...options.adapterConfig,
     ssr: options.adapterConfig.ssr ?? true,
     projectId: options.appKitOptions.projectId,
-    networks: supportedChains
+    networks: supportedChains,
+    ...(shouldGuard ? { multiInjectedProviderDiscovery: false } : {})
   });
 
   const adapters: any[] = [wagmiAdapter];
@@ -138,7 +147,12 @@ export async function init(options: InitOptions): Promise<{
   if (options.suiEnvironment) {
     const suiNetwork = suiNetworkDefinitions[options.suiEnvironment];
     const explicitSuiCaip = suiNetwork.caipNetworkId ?? `sui:${suiNetwork.id}`;
-    adapters.push(new SuiAdapter({ explicitCaipChains: [explicitSuiCaip] }));
+    adapters.push(
+      new SuiAdapter({
+        explicitCaipChains: [explicitSuiCaip],
+        expectedSuiAddress: options.expectedSuiAddress
+      })
+    );
   }
 
   // Do not call UniversalProvider.init() here — AppKit creates the shared provider
@@ -146,7 +160,8 @@ export async function init(options: InitOptions): Promise<{
   const appKit = createAppKit({
     ...options.appKitOptions,
     adapters,
-    networks: [allNetworks[0], ...allNetworks.slice(1)]
+    networks: [allNetworks[0], ...allNetworks.slice(1)],
+    ...(shouldGuard ? { enableEIP6963: false } : {})
   });
 
   // Await AppKit init (WC session + non-EVM namespaces); wagmi reconnects separately.
@@ -163,11 +178,17 @@ export async function init(options: InitOptions): Promise<{
       suiNs?.accounts?.length &&
       !appKit.getCaipAddress('sui' as ChainNamespace)
     ) {
-      await (
-        appKit as unknown as {
-          syncWalletConnectAccount?: () => Promise<void>;
-        }
-      ).syncWalletConnectAccount?.();
+      const firstSuiAddress = suiNs.accounts[0]?.split(':').pop();
+      if (
+        !options.expectedSuiAddress ||
+        firstSuiAddress === options.expectedSuiAddress
+      ) {
+        await (
+          appKit as unknown as {
+            syncWalletConnectAccount?: () => Promise<void>;
+          }
+        ).syncWalletConnectAccount?.();
+      }
     }
   }
 
@@ -175,6 +196,7 @@ export async function init(options: InitOptions): Promise<{
     config: wagmiAdapter.wagmiConfig,
     appKit,
     options,
-    supportedChains: allNetworks
+    supportedChains: allNetworks,
+    reconnectOnMount: !shouldGuard
   };
 }

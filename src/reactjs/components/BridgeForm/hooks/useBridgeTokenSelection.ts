@@ -325,9 +325,7 @@ export const useBridgeTokenSelection = ({
     updateUrlParams,
     sdkChains,
     activeChain,
-    switchNetwork,
-    firstToken,
-    secondToken
+    switchNetwork
   ]);
 
   // Update balances when they change

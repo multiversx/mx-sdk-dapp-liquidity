@@ -30,7 +30,7 @@ export const useCheckAccountQuery = () => {
   };
 
   return useQuery({
-    queryKey: ['check-account', address, bridgeApiChainId, nativeAuthToken],
+    queryKey: ['check-account', address, bridgeApiChainId],
     queryFn,
     retry,
     refetchOnWindowFocus: false,

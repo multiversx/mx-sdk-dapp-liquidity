@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useBridgeTokenSelection } from './hooks/useBridgeTokenSelection';
 import { MVX_CHAIN_IDS } from '../../../constants';
-import { getApiURL } from '../../../helpers';
+import { getApiURL, safeImageUrl } from '../../../helpers';
 import { ProviderType } from '../../../types/providerType.ts';
 import { ServerTransaction } from '../../../types/transaction';
 import { useWeb3App } from '../../context/useWeb3App';
@@ -24,7 +24,7 @@ import {
 } from '../../hooks/useBridgeFormik';
 import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetChainId } from '../../hooks/useGetChainId';
-import { invalidateHistoryQuery } from '../../queries/useGetHistory.query';
+import { useInvalidateHistoryQuery } from '../../queries/useGetHistory.query';
 import { useGetRateMutation } from '../../queries/useGetRate.mutation';
 import { mxClsx } from '../../utils/mxClsx';
 import { AmountCard } from '../AmountCard';
@@ -94,6 +94,7 @@ export const Transfer = ({
   >([]);
   const account = useAccount();
   const { switchNetwork } = useAppKitNetwork();
+  const invalidateHistoryQuery = useInvalidateHistoryQuery();
   const {
     options,
     supportedChains: sdkChains,
@@ -494,7 +495,7 @@ export const Transfer = ({
             <span>From</span>
             <MvxAccountDisplay
               accountAddress={mvxAddress}
-              chainIcon={mvxChain?.pngUrl ?? ''}
+              chainIcon={safeImageUrl(mvxChain?.pngUrl)}
               username={username}
               accountExplorerUrl={`${options.mvxExplorerAddress}/accounts/${mvxAddress}`}
               showTag={true}
@@ -578,7 +579,7 @@ export const Transfer = ({
           {!mvxAddress && (
             <MvxConnectButton
               mvxAccountAddress={mvxAddress}
-              icon={mvxChain?.pngUrl ?? ''}
+              icon={safeImageUrl(mvxChain?.pngUrl)}
               onClick={onMvxConnect}
             />
           )}
@@ -607,7 +608,7 @@ export const Transfer = ({
                 <div className="liq-flex liq-justify-center liq-items-center liq-gap-2">
                   <div>Transfer to </div>
                   <img
-                    src={secondTokenChain?.pngUrl ?? ''}
+                    src={safeImageUrl(secondTokenChain?.pngUrl)}
                     alt=""
                     className="liq-h-[1.5rem] liq-w-[1.5rem] liq-rounded-lg"
                   />

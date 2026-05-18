@@ -41,11 +41,36 @@ export const useGenericSignMessage = () => {
           throw new Error('Sui wallet not connected');
         }
         const encodedMessage = new TextEncoder().encode(message);
+        const params = {
+          message: Buffer.from(encodedMessage).toString('base64')
+        };
+
+        const MAX_SUI_MESSAGE_BYTES = 32 * 1024; // 32 KiB
+
+        if (!params.message || typeof params.message !== 'string') {
+          throw new Error(
+            'Invalid Sui message: payload must be a non-empty string'
+          );
+        }
+
+        // Validate base64
+        try {
+          const decoded = atob(params.message);
+          if (decoded.length > MAX_SUI_MESSAGE_BYTES) {
+            throw new Error(
+              `Sui message payload exceeds maximum size of ${MAX_SUI_MESSAGE_BYTES} bytes`
+            );
+          }
+        } catch (e) {
+          if (e instanceof Error && e.message.includes('maximum size')) {
+            throw e;
+          }
+          throw new Error('Invalid Sui message: payload is not valid base64');
+        }
+
         const result = await suiWalletProvider.request({
           method: 'sui_signPersonalMessage',
-          params: {
-            message: Buffer.from(encodedMessage).toString('base64')
-          }
+          params
         });
         return result.signature;
       }

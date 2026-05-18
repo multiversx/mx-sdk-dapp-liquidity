@@ -5,11 +5,11 @@ import { MVX_CHAIN_IDS } from '../../constants';
 import { useWeb3App } from '../context/useWeb3App.ts';
 import { useGetAllTokensQuery } from '../queries/useGetAllTokens.query';
 import {
-  invalidateMvxTokensBalancesQuery,
+  useInvalidateMvxTokensBalancesQuery,
   useGetMvxTokensBalancesQuery
 } from '../queries/useGetMvxTokensBalances.query';
 import {
-  invalidateEvmTokensBalances,
+  useInvalidateEvmTokensBalances,
   useGetNonMvxTokensBalancesQuery
 } from '../queries/useGetNonMvxTokensBalances.query';
 
@@ -25,6 +25,9 @@ export const useFetchTokens = ({
   const bridgeApiChainId = useBridgeApiChainId();
   const account = useAccount();
   const { nativeAuthToken, bridgeOnly } = useWeb3App();
+  const invalidateMvxTokensBalancesQuery =
+    useInvalidateMvxTokensBalancesQuery();
+  const invalidateEvmTokensBalances = useInvalidateEvmTokensBalances();
 
   const {
     data: tokens,

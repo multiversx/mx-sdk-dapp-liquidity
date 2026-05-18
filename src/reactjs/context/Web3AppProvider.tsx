@@ -1,12 +1,11 @@
 import { IPlainTransactionObject } from '@multiversx/sdk-core/out';
 import { AppKit } from '@reown/appkit/react';
 import { AppKitNetwork } from '@reown/appkit-common';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ResolvedRegister } from '@wagmi/core';
-import { PropsWithChildren, useMemo } from 'react';
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { createContext } from 'react';
 import { WagmiProvider } from 'wagmi';
-import { getQueryClient } from './queryClient';
 import { InitOptions } from '../init/init';
 
 export type Web3AppContextProps = {
@@ -16,6 +15,7 @@ export type Web3AppContextProps = {
   supportedChains: AppKitNetwork[];
   nativeAuthToken: string;
   bridgeOnly?: boolean;
+  reconnectOnMount?: boolean;
   signMvxTransactions?: (transactions: IPlainTransactionObject[]) => Promise<{
     error?: string;
     batchId?: string;
@@ -23,8 +23,6 @@ export type Web3AppContextProps = {
   latestMvxTransactionHash?: string;
   resetMvxTransactionHash?: () => void;
 };
-
-const queryClient = getQueryClient();
 
 export const Web3AppContext = createContext<Web3AppContextProps | undefined>(
   undefined
@@ -42,10 +40,17 @@ export function Web3AppProvider({
   supportedChains = [],
   nativeAuthToken,
   bridgeOnly = false,
+  reconnectOnMount = true,
   signMvxTransactions,
   latestMvxTransactionHash,
   resetMvxTransactionHash
 }: PropsWithChildren<Web3AppProviderType>) {
+  const [queryClient] = useState(() => new QueryClient());
+
+  useEffect(() => {
+    queryClient.invalidateQueries();
+  }, [nativeAuthToken]);
+
   const value = useMemo<Web3AppContextProps>(() => {
     return {
       config,
@@ -62,7 +67,7 @@ export function Web3AppProvider({
 
   return (
     <Web3AppContext.Provider value={value}>
-      <WagmiProvider config={config}>
+      <WagmiProvider config={config} reconnectOnMount={reconnectOnMount}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>

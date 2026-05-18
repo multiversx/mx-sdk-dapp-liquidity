@@ -4,6 +4,7 @@ import { object, string } from 'yup';
 import { useAmountSchema } from './validation/useAmountSchema';
 import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
+import { assertRateConfirmationMatchesIntent } from '../../helpers/assertRateConfirmationMatchesIntent';
 import { getApiURL } from '../../helpers/getApiURL';
 import { RateRequestResponse } from '../../types';
 import { ProviderType } from '../../types/providerType';
@@ -110,6 +111,11 @@ export const useBridgeFormik = ({
         pendingSigningRef.current = false;
         return;
       }
+
+      assertRateConfirmationMatchesIntent(
+        { fromChainId: values.fromChainId ?? '', sender: sender ?? '' },
+        transactions
+      );
 
       resetSwapForm();
       onSubmit({

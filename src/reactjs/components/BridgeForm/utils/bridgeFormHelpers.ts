@@ -36,6 +36,10 @@ export const updateUrlParams = ({
   if (currentUrl === newUrl) {
     return;
   }
+  // Update the URL without triggering a navigation/reload. onNavigate is still
+  // called so router-aware hosts (e.g. Next.js) can stay in sync, but the URL
+  // is already updated client-side, so hard-navigating hosts won't cause a loop.
+  safeWindow.history?.replaceState?.(null, '', newUrl);
   onNavigate?.(newUrl, { replace: true });
 };
 

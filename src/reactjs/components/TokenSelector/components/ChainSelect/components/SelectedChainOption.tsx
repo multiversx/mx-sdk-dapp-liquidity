@@ -1,5 +1,6 @@
 import { components, type SingleValueProps } from 'react-select';
 import { mxClsx } from 'reactjs/utils';
+import { safeImageUrl } from '../../../../../../helpers/safeImageUrl';
 import AllNetworks from '../../../../../assets/all-networks.svg';
 import {
   ALL_NETWORK_ID,
@@ -24,7 +25,10 @@ export const SelectedChainOption = ({
       >
         {chain?.pngUrl ? (
           <img
-            src={chain.pngUrl ?? chainIdentifier[chain.name as ChainNameType]}
+            src={safeImageUrl(
+              chain.pngUrl,
+              chainIdentifier[chain.name as ChainNameType]
+            )}
             alt={''}
             loading="lazy"
             className={mxClsx('liq-h-full liq-w-full', {

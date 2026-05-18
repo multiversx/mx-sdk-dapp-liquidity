@@ -18,6 +18,11 @@ export type SuiAdapterOptions = {
    * AppKit sometimes passes an empty `networks` array into `construct`; this keeps WC valid.
    */
   explicitCaipChains?: string[];
+  /**
+   * When set, `connect()` will throw if the WalletConnect session advertises a different address.
+   * If not set, any address is accepted (backward-compatible).
+   */
+  expectedSuiAddress?: string;
 };
 
 export class SuiAdapter extends AdapterBlueprint {
@@ -30,12 +35,15 @@ export class SuiAdapter extends AdapterBlueprint {
 
   private readonly explicitCaipChainsFromInit: string[];
 
+  private readonly expectedSuiAddress?: string;
+
   constructor(opts?: SuiAdapterOptions) {
     super({
       namespace: 'sui' as ChainNamespace,
       adapterType: 'sui'
     });
     this.explicitCaipChainsFromInit = opts?.explicitCaipChains ?? [];
+    this.expectedSuiAddress = opts?.expectedSuiAddress;
   }
 
   /**
@@ -234,6 +242,12 @@ export class SuiAdapter extends AdapterBlueprint {
       throw new Error('No Sui account found after WalletConnect session');
     }
 
+    if (this.expectedSuiAddress && address !== this.expectedSuiAddress) {
+      throw new Error(
+        `Sui account mismatch: expected ${this.expectedSuiAddress}, got ${address}`
+      );
+    }
+
     const caipNetwork = this.getCaipNetworks()?.find(
       (n) => n.id === params.chainId
     );
@@ -384,16 +398,38 @@ export class SuiAdapter extends AdapterBlueprint {
     return params.provider;
   }
 
+  /**
+   * Resolves the CAIP-2 chain scope string for WalletConnect requests.
+   * Resolution order:
+   *   1. `caipNetworkId` argument (if it starts with `'sui:'`)
+   *   2. First `'sui:'`-prefixed entry in `explicitCaipChainsFromInit`
+   *   3. `'sui:mainnet'` as a safe last resort
+   */
+  private getChainScope(caipNetworkId?: string): string {
+    if (caipNetworkId?.startsWith('sui:')) {
+      return caipNetworkId;
+    }
+    const fromInit = this.explicitCaipChainsFromInit.find((c) =>
+      c.startsWith('sui:')
+    );
+    if (fromInit) {
+      return fromInit;
+    }
+    return 'sui:mainnet';
+  }
+
   async signMessage(
     params: AdapterBlueprint.SignMessageParams
   ): Promise<AdapterBlueprint.SignMessageResult> {
     const wc = this.getWcProvider();
+    // SignMessageParams does not carry caipNetwork; resolve from init config
+    const chainScope = this.getChainScope();
     const result = await wc.request<{ signature: string }>(
       {
         method: 'sui_signPersonalMessage',
         params: { message: params.message, address: params.address }
       },
-      'sui:mainnet'
+      chainScope
     );
     return { signature: result.signature };
   }
@@ -402,12 +438,13 @@ export class SuiAdapter extends AdapterBlueprint {
     params: AdapterBlueprint.SendTransactionParams
   ): Promise<AdapterBlueprint.SendTransactionResult> {
     const wc = this.getWcProvider();
+    const chainScope = this.getChainScope(params.caipNetwork?.caipNetworkId);
     const result = await wc.request<{ digest: string }>(
       {
         method: 'sui_signAndExecuteTransaction',
         params: { transaction: params.data, address: params.to }
       },
-      'sui:mainnet'
+      chainScope
     );
     return { hash: result.digest };
   }
