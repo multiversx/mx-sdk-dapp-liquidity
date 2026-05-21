@@ -6,7 +6,9 @@ import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
 import { assertRateConfirmationMatchesIntent } from '../../helpers/assertRateConfirmationMatchesIntent';
 import { getApiURL } from '../../helpers/getApiURL';
+import { isValidAddressForChainType } from '../../helpers/isValidAddressForChainType';
 import { RateRequestResponse } from '../../types';
+import { ChainType } from '../../types/chainType';
 import { ProviderType } from '../../types/providerType';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
@@ -42,7 +44,9 @@ export const useBridgeFormik = ({
   setForceRefetchRate,
   rate,
   onSubmit,
-  isMvxConnected
+  isMvxConnected,
+  senderChainType,
+  receiverChainType
 }: {
   sender: string;
   receiver: string;
@@ -53,6 +57,8 @@ export const useBridgeFormik = ({
   firstToken?: TokenType;
   secondToken?: TokenType;
   isMvxConnected: boolean;
+  senderChainType?: ChainType;
+  receiverChainType?: ChainType;
   setForceRefetchRate?: (value: (previous: number) => number) => void;
   rate?: RateRequestResponse;
   onSubmit: ({
@@ -65,6 +71,24 @@ export const useBridgeFormik = ({
 }) => {
   const pendingSigningRef = useRef<boolean>();
   const { nativeAuthToken } = useWeb3App();
+
+  const isSenderValid =
+    !sender || !senderChainType
+      ? true
+      : isValidAddressForChainType(sender, senderChainType);
+  const isReceiverValid =
+    !receiver || !receiverChainType
+      ? true
+      : isValidAddressForChainType(receiver, receiverChainType);
+
+  const senderAddressError =
+    sender && !isSenderValid
+      ? `Invalid ${senderChainType} sender address`
+      : undefined;
+  const receiverAddressError =
+    receiver && !isReceiverValid
+      ? `Invalid ${receiverChainType} receiver address`
+      : undefined;
 
   const initialValues: TradeFormikValuesType = {
     firstAmount: '',
@@ -87,6 +111,11 @@ export const useBridgeFormik = ({
     pendingSigningRef.current = true;
 
     try {
+      if (!isSenderValid || !isReceiverValid) {
+        pendingSigningRef.current = false;
+        return;
+      }
+
       const { data } = await confirmRate({
         url: getApiURL(),
         nativeAuthToken: nativeAuthToken ?? '',
@@ -196,6 +225,8 @@ export const useBridgeFormik = ({
     firstAmountError,
     secondAmountError,
     fromChainError,
+    senderAddressError,
+    receiverAddressError,
     handleBlur,
     handleChange,
     handleSubmit,

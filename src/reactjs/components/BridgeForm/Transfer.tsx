@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { useBridgeTokenSelection } from './hooks/useBridgeTokenSelection';
 import { MVX_CHAIN_IDS } from '../../../constants';
 import { getApiURL, safeImageUrl } from '../../../helpers';
+import { ChainType } from '../../../types/chainType';
 import { ProviderType } from '../../../types/providerType.ts';
 import { ServerTransaction } from '../../../types/transaction';
 import { useWeb3App } from '../../context/useWeb3App';
@@ -344,6 +345,8 @@ export const Transfer = ({
     firstAmountError,
     secondAmountError,
     fromChainError,
+    senderAddressError,
+    receiverAddressError,
     handleBlur,
     handleChange,
     handleSubmit,
@@ -360,6 +363,8 @@ export const Transfer = ({
     secondToken,
     secondAmount,
     setForceRefetchRate,
+    senderChainType: ChainType.mvx,
+    receiverChainType: secondTokenChain?.chainType,
     onSubmit
   });
 
@@ -367,7 +372,9 @@ export const Transfer = ({
     firstAmountError ||
       secondAmountError ||
       fromChainError ||
-      rateValidationError
+      rateValidationError ||
+      senderAddressError ||
+      receiverAddressError
   );
 
   const amountErrorFirstInput = useMemo(() => {
@@ -503,6 +510,11 @@ export const Transfer = ({
               onConnect={onMvxConnect}
             />
           </div>
+          {senderAddressError && (
+            <div className="liq-text-red-400 liq-text-xs liq-mt-1">
+              {senderAddressError}
+            </div>
+          )}
           <div className="liq-flex liq-justify-between liq-gap-1">
             <AmountInput
               inputName="firstAmount"
@@ -551,6 +563,11 @@ export const Transfer = ({
               activeChain={secondTokenChain}
             />
           </div>
+          {receiverAddressError && (
+            <div className="liq-text-red-400 liq-text-xs liq-mt-1">
+              {receiverAddressError}
+            </div>
+          )}
           <div className="liq-flex liq-justify-between liq-gap-1">
             <AmountInput
               inputName="secondAmount"

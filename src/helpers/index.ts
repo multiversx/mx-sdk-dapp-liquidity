@@ -8,4 +8,5 @@ export * from './getMvxApiURL';
 export * from './getMvxChainId';
 export * from './getMvxExplorerAddress';
 export * from './safeImageUrl';
+export * from './isValidAddressForChainType';
 export * from './serializeTransaction';

@@ -23,7 +23,7 @@ describe('assertRateConfirmationMatchesIntent', () => {
   });
 
   it('does not throw when chainID and account match', () => {
-    const tx = makeTransaction({ chainID: '1', account: '0xSender' });
+    const tx = makeTransaction({ fromChainId: '1', account: '0xSender' });
     expect(() =>
       assertRateConfirmationMatchesIntent(intent, [tx])
     ).not.toThrow();
@@ -38,7 +38,7 @@ describe('assertRateConfirmationMatchesIntent', () => {
   });
 
   it('throws RateConfirmationMismatchError when chainID does not match fromChainId', () => {
-    const tx = makeTransaction({ chainID: '999', account: '0xSender' });
+    const tx = makeTransaction({ fromChainId: '999', account: '0xSender' });
     expect(() => assertRateConfirmationMatchesIntent(intent, [tx])).toThrow(
       RateConfirmationMismatchError
     );
@@ -68,8 +68,8 @@ describe('assertRateConfirmationMatchesIntent', () => {
   });
 
   it('throws on the bad transaction when mixed valid and invalid transactions are present', () => {
-    const goodTx = makeTransaction({ chainID: '1', account: '0xSender' });
-    const badTx = makeTransaction({ chainID: '999', account: '0xSender' });
+    const goodTx = makeTransaction({ fromChainId: '1', account: '0xSender' });
+    const badTx = makeTransaction({ fromChainId: '999', account: '0xSender' });
     expect(() =>
       assertRateConfirmationMatchesIntent(intent, [goodTx, badTx])
     ).toThrow(RateConfirmationMismatchError);

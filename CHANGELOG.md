@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [[v2.2.0](https://github.com/multiversx/mx-sdk-dapp-liquidity/pull/26)] - 2026-05-21
+
 ## [[v2.1.0](https://github.com/multiversx/mx-sdk-dapp-liquidity/pull/25)] - 2026-05-18
 
 ## [[v2.0.0](https://github.com/multiversx/mx-sdk-dapp-liquidity/pull/22)] - 2026-05-05

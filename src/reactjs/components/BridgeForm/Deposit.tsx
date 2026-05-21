@@ -522,6 +522,8 @@ export const Deposit = ({
     firstAmountError,
     secondAmountError,
     fromChainError,
+    senderAddressError,
+    receiverAddressError,
     handleBlur,
     handleChange,
     handleSubmit,
@@ -538,6 +540,8 @@ export const Deposit = ({
     secondToken,
     secondAmount,
     setForceRefetchRate,
+    senderChainType: firstTokenChain?.chainType,
+    receiverChainType: ChainType.mvx,
     onSubmit
   });
 
@@ -545,7 +549,9 @@ export const Deposit = ({
     firstAmountError ||
       secondAmountError ||
       fromChainError ||
-      rateValidationError
+      rateValidationError ||
+      senderAddressError ||
+      receiverAddressError
   );
 
   const amountErrorFirstInput = useMemo(() => {
@@ -643,6 +649,11 @@ export const Deposit = ({
               activeChain={firstTokenChain}
             />
           </div>
+          {senderAddressError && (
+            <div className="liq-text-red-400 liq-text-xs liq-mt-1">
+              {senderAddressError}
+            </div>
+          )}
           <div className="liq-flex liq-justify-between liq-gap-1">
             <AmountInput
               inputName="firstAmount"
@@ -696,6 +707,11 @@ export const Deposit = ({
               onConnect={onMvxConnect}
             />
           </div>
+          {receiverAddressError && (
+            <div className="liq-text-red-400 liq-text-xs liq-mt-1">
+              {receiverAddressError}
+            </div>
+          )}
           <div className="liq-flex liq-justify-between liq-gap-1">
             <AmountInput
               inputName="secondAmount"
