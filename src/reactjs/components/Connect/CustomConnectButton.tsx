@@ -1,4 +1,5 @@
 import { useAppKit } from '@reown/appkit/react';
+import { ChainNamespace } from '@reown/appkit-common';
 import { ReactNode } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 
@@ -6,11 +7,14 @@ export const CustomConnectButton = ({
   disabled,
   className,
   children,
+  namespace,
   'data-testid': dataTestId
 }: {
   disabled?: boolean;
   className?: string;
   children?: ReactNode;
+  /** AppKit namespace to restrict the WC session proposal (e.g. 'eip155'). */
+  namespace?: ChainNamespace;
   'data-testid'?: string;
 }) => {
   const { open } = useAppKit();
@@ -35,7 +39,8 @@ export const CustomConnectButton = ({
       data-testid={dataTestId}
       onClick={() =>
         open({
-          view: 'Connect'
+          view: 'Connect',
+          ...(namespace ? { namespace } : {})
         })
       }
       className={`${baseStyle} ${className}`}

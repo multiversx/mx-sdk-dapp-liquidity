@@ -25,8 +25,10 @@ import {
   BridgeFormikValuesEnum,
   useBridgeFormik
 } from '../../hooks/useBridgeFormik';
+import { useDisconnectOnChainTypeChange } from '../../hooks/useDisconnectOnChainTypeChange';
 import { useFetchBridgeData } from '../../hooks/useFetchBridgeData';
 import { useGetChainId } from '../../hooks/useGetChainId';
+import { useNamespaceAddress } from '../../hooks/useNamespaceAddress';
 import { useSendTransactions } from '../../hooks/useSendTransactions';
 import { useSignTransaction } from '../../hooks/useSignTransaction';
 import { useInvalidateHistoryQuery } from '../../queries/useGetHistory.query';
@@ -221,8 +223,17 @@ export const Deposit = ({
     [firstToken?.chainId, bridgeApiChainId]
   );
 
-  const bridgeAddress = account.address;
-  const isAuthenticated = account.isConnected && Boolean(bridgeAddress);
+  // Disconnect the previous namespace when the "From" chain type changes (e.g. SUI → EVM).
+  // Covers token selection, direction toggle, and any other path that changes chainType.
+  useDisconnectOnChainTypeChange(firstTokenChain?.chainType);
+
+  // Namespace-scoped sender: ensures the SUI address can't leak into an EVM sender slot
+  // (and vice-versa) during cross-namespace switches.
+  // Called after firstTokenChain is resolved so the correct chainType is always passed.
+  const namespaceSender = useNamespaceAddress(firstTokenChain?.chainType);
+
+  const bridgeAddress = namespaceSender;
+  const isAuthenticated = account.isConnected && Boolean(namespaceSender);
 
   const hasAmounts = firstAmount !== '' && secondAmount !== '';
 
@@ -231,7 +242,7 @@ export const Deposit = ({
       if (
         !amount ||
         !Number(amount) ||
-        !account.address ||
+        !namespaceSender ||
         !firstToken?.address ||
         !secondToken?.address ||
         !selectedChainOption ||
@@ -252,11 +263,14 @@ export const Deposit = ({
       });
     }, 500),
     [
-      account.address,
+      namespaceSender,
       bridgeFromChainId,
       firstToken?.address,
       secondToken?.address,
-      selectedChainOption
+      selectedChainOption,
+      mvxChainId,
+      nativeAuthToken,
+      getRate
     ]
   );
 
@@ -327,7 +341,12 @@ export const Deposit = ({
 
       onChangeFirstSelect(selectedOption);
     }
-  }, [selectedChainOption?.chainId]);
+  }, [
+    selectedChainOption?.chainId,
+    firstToken?.chainId,
+    fromOptions,
+    onChangeFirstSelect
+  ]);
 
   const onSubmit = useCallback(
     async ({
@@ -502,7 +521,7 @@ export const Deposit = ({
       }
     },
     [
-      firstTokenChain?.chainType,
+      firstTokenChain,
       bridgeAddress,
       config,
       handleOnChangeFirstAmount,
@@ -524,6 +543,7 @@ export const Deposit = ({
     fromChainError,
     senderAddressError,
     receiverAddressError,
+    confirmRateError,
     handleBlur,
     handleChange,
     handleSubmit,
@@ -531,7 +551,7 @@ export const Deposit = ({
   } = useBridgeFormik({
     isMvxConnected: Boolean(mvxAddress),
     rate,
-    sender: account.address ?? '',
+    sender: namespaceSender ?? '',
     receiver: mvxAddress ?? '',
     firstToken,
     firstAmount,
@@ -551,7 +571,8 @@ export const Deposit = ({
       fromChainError ||
       rateValidationError ||
       senderAddressError ||
-      receiverAddressError
+      receiverAddressError ||
+      confirmRateError
   );
 
   const amountErrorFirstInput = useMemo(() => {
@@ -712,6 +733,11 @@ export const Deposit = ({
               {receiverAddressError}
             </div>
           )}
+          {confirmRateError && (
+            <div className="liq-text-red-400 liq-text-xs liq-mt-1">
+              {confirmRateError}
+            </div>
+          )}
           <div className="liq-flex liq-justify-between liq-gap-1">
             <AmountInput
               inputName="secondAmount"
@@ -760,7 +786,7 @@ export const Deposit = ({
                 !hasAmounts ||
                 isPendingRate ||
                 !mvxAddress ||
-                !account.address ||
+                !namespaceSender ||
                 hasError ||
                 pendingSigning
               }
@@ -799,7 +825,7 @@ export const Deposit = ({
             </MxButton>
           )}
         </div>
-        {account.address && siginingTransactionsCount > 0 && (
+        {namespaceSender && siginingTransactionsCount > 0 && (
           <div className="liq-flex liq-items-center liq-justify-center liq-text-neutral-300 liq-text-sm">
             <div>
               You will be asked to sign {siginingTransactionsCount}{' '}

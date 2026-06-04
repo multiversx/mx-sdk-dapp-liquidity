@@ -122,7 +122,7 @@ export const useFetchTokens = ({
     if (mvxAddress) {
       invalidateMvxTokensBalancesQuery();
     }
-  }, [refetchTrigger, mvxAddress]);
+  }, [refetchTrigger, mvxAddress, invalidateMvxTokensBalancesQuery]);
 
   useEffect(() => {
     if (!account.address) {
@@ -130,7 +130,12 @@ export const useFetchTokens = ({
     }
 
     invalidateEvmTokensBalances();
-  }, [refetchTrigger, bridgeApiChainId, account.address]);
+  }, [
+    refetchTrigger,
+    bridgeApiChainId,
+    account.address,
+    invalidateEvmTokensBalances
+  ]);
 
   return {
     isTokensLoading,

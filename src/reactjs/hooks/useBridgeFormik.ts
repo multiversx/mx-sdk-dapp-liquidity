@@ -1,14 +1,19 @@
 import { useFormik } from 'formik';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { object, string } from 'yup';
 import { useAmountSchema } from './validation/useAmountSchema';
 import { useSecondAmountSchema } from './validation/useSecondAmountSchema';
 import { confirmRate } from '../../api/confirmRate';
+import { assertConfirmRateData } from '../../helpers/assertConfirmRateData';
 import { assertRateConfirmationMatchesIntent } from '../../helpers/assertRateConfirmationMatchesIntent';
 import { getApiURL } from '../../helpers/getApiURL';
 import { isValidAddressForChainType } from '../../helpers/isValidAddressForChainType';
 import { RateRequestResponse } from '../../types';
 import { ChainType } from '../../types/chainType';
+import {
+  ConfirmRateError,
+  MissingConfirmRateDataError
+} from '../../types/errors';
 import { ProviderType } from '../../types/providerType';
 import { TokenType } from '../../types/token';
 import { ServerTransaction } from '../../types/transaction';
@@ -71,6 +76,9 @@ export const useBridgeFormik = ({
 }) => {
   const pendingSigningRef = useRef<boolean>();
   const { nativeAuthToken } = useWeb3App();
+  const [confirmRateError, setConfirmRateError] = useState<string | undefined>(
+    undefined
+  );
 
   const isSenderValid =
     !sender || !senderChainType
@@ -109,12 +117,22 @@ export const useBridgeFormik = ({
       return;
     }
     pendingSigningRef.current = true;
+    setConfirmRateError(undefined);
 
     try {
       if (!isSenderValid || !isReceiverValid) {
         pendingSigningRef.current = false;
         return;
       }
+
+      assertConfirmRateData({
+        nativeAuthToken,
+        orderId: rate?.orderId,
+        fromChainId: values.fromChainId,
+        toChainId: values.toChainId,
+        sender,
+        receiver
+      });
 
       const { data } = await confirmRate({
         url: getApiURL(),
@@ -153,7 +171,14 @@ export const useBridgeFormik = ({
       });
     } catch (error) {
       console.error('Error confirming rate:', error);
-      setForceRefetchRate?.((prevState) => prevState + 1);
+      if (
+        error instanceof ConfirmRateError ||
+        error instanceof MissingConfirmRateDataError
+      ) {
+        setConfirmRateError((error as Error).message);
+      } else {
+        setForceRefetchRate?.((prevState) => prevState + 1);
+      }
     } finally {
       pendingSigningRef.current = false;
     }
@@ -184,19 +209,19 @@ export const useBridgeFormik = ({
 
   useEffect(() => {
     setFieldValue(BridgeFormikValuesEnum.firstToken, firstToken, true);
-  }, [firstToken]);
+  }, [firstToken, setFieldValue]);
 
   useEffect(() => {
     setFieldValue(BridgeFormikValuesEnum.secondToken, secondToken, true);
-  }, [secondToken]);
+  }, [secondToken, setFieldValue]);
 
   useEffect(() => {
     setFieldValue(BridgeFormikValuesEnum.fromChainId, fromChainId, true);
-  }, [fromChainId]);
+  }, [fromChainId, setFieldValue]);
 
   useEffect(() => {
     setFieldValue(BridgeFormikValuesEnum.toChainId, toChainId, true);
-  }, [toChainId]);
+  }, [toChainId, setFieldValue]);
 
   const secondAmountError =
     BridgeFormikValuesEnum.secondAmount in errors &&
@@ -227,6 +252,7 @@ export const useBridgeFormik = ({
     fromChainError,
     senderAddressError,
     receiverAddressError,
+    confirmRateError,
     handleBlur,
     handleChange,
     handleSubmit,

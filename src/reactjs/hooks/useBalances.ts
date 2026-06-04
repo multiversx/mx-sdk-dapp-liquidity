@@ -6,7 +6,6 @@ import { TokenType } from '../../types';
 import { useWeb3App } from '../context/useWeb3App';
 
 export const useBalances = () => {
-  const { config } = useWeb3App();
   const { address, isConnected } = useAppKitAccount();
   const { nativeAuthToken } = useWeb3App();
 
@@ -54,7 +53,7 @@ export const useBalances = () => {
         };
       });
     },
-    [config, isConnected, address]
+    [isConnected, address, nativeAuthToken]
   );
 
   return {

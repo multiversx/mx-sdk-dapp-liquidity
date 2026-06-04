@@ -278,17 +278,27 @@ export class SuiAdapter extends AdapterBlueprint {
   async disconnect(
     params: AdapterBlueprint.DisconnectParams
   ): Promise<AdapterBlueprint.DisconnectResult> {
-    if (params?.id) {
-      if (this.sharedWcProvider) {
-        try {
-          await this.sharedWcProvider.disconnect();
-        } catch {
-          // ignore if no active session
-        }
+    // Always tear down the WC sui session when present — stale SUI sessions must not
+    // survive after a cross-namespace switch (e.g. SUI → EVM on mobile injected dapps).
+    if (this.sharedWcProvider?.session?.namespaces?.['sui']) {
+      try {
+        await this.sharedWcProvider.disconnect();
+      } catch {
+        // ignore if no active session
       }
-      this.deleteConnection(params.id);
     }
 
+    if (params?.id) {
+      this.deleteConnection(params.id);
+    } else {
+      // No specific id means a full namespace teardown — clear every tracked connection.
+      for (const conn of [...this.connections]) {
+        this.deleteConnection(conn.connectorId);
+      }
+    }
+
+    // Only re-emit a remaining connection when one truly still exists; never resurface
+    // a stale connection after what should be a complete disconnect.
     if (this.connections.length === 0) {
       this.emit('disconnect');
     } else {

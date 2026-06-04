@@ -6,6 +6,7 @@ import { SwitchChainButton } from './SwitchChainButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { ChainType } from '../../../types/chainType';
 import { useAccount } from '../../hooks/useAccount';
+import { useNamespaceAddress } from '../../hooks/useNamespaceAddress';
 import { useSuiConnect } from '../../hooks/useSuiConnect';
 import { MxLink } from '../base';
 import { CopyButton } from '../CopyButton';
@@ -21,9 +22,20 @@ export const BridgeAccountDisplay = ({
   const account = useAccount();
   const { disconnect } = useDisconnect();
   const suiConnect = useSuiConnect();
+  // Namespace-scoped: returns EVM address for evm chains, SUI address for sui chains,
+  // undefined for sol/btc (falls back to account.address which wagmi manages for those).
+  const namespaceAddress = useNamespaceAddress(activeChain?.chainType);
 
   const isSuiChain = activeChain?.chainType === ChainType.sui;
-  const displayAddress = isSuiChain ? suiConnect.suiAddress : account.address;
+  const isNamespacedChain =
+    activeChain?.chainType === ChainType.evm ||
+    activeChain?.chainType === ChainType.sui;
+  // For EVM/SUI never fall back to the namespace-less account.address — it can carry
+  // a stale cross-chain address (e.g. SUI address persisting after switching to EVM).
+  // SOL/BTC are not managed by AppKit namespaces so the generic fallback is safe there.
+  const displayAddress = isNamespacedChain
+    ? namespaceAddress
+    : namespaceAddress ?? account.address;
 
   const handleDisconnect = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
@@ -123,6 +135,7 @@ export const BridgeAccountDisplay = ({
   return (
     <SwitchChainButton
       disabled={disabled}
+      chainType={activeChain?.chainType}
       className="liq-rounded-lg liq-font-semibold liq-transition-colors liq-duration-200 disabled:liq-opacity-50 liq-bg-neutral-750 !liq-text-primary-200 hover:enabled:liq-bg-primary liq-px-2"
     >
       <div className="liq-flex liq-items-center">
