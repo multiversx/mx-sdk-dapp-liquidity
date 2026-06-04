@@ -8,11 +8,30 @@ const MVX_ADDRESS_REGEX = /^erd1[0-9a-z]{58}$/;
 // Sui normalized addresses: 0x + exactly 64 hex chars (32 bytes)
 const SUI_ADDRESS_REGEX = /^0x[0-9a-fA-F]{64}$/;
 
+const BURN_ADDRESSES = new Set([
+  // EVM all-zero (20 bytes)
+  '0x0000000000000000000000000000000000000000',
+  // Sui all-zero (32 bytes)
+  '0x0000000000000000000000000000000000000000000000000000000000000000',
+  // MultiversX dead address
+  'erd1deaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaqtv0gag',
+  // BTC
+  '1111111111111111111114oLvT2'
+]);
+
+const isBurnAddress = (address: string): boolean => {
+  const lower = address.toLowerCase();
+  return BURN_ADDRESSES.has(lower) || BURN_ADDRESSES.has(address);
+};
+
 export const isValidAddressForChainType = (
   address: string | undefined,
   chainType: ChainType | undefined
 ): boolean => {
   if (!address || !chainType) {
+    return false;
+  }
+  if (isBurnAddress(address)) {
     return false;
   }
   try {

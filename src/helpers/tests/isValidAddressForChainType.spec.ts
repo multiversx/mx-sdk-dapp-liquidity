@@ -128,4 +128,48 @@ describe('isValidAddressForChainType', () => {
       ).toBe(false);
     });
   });
+
+  describe('burn / null addresses', () => {
+    it('rejects EVM all-zero burn address', () => {
+      expect(
+        isValidAddressForChainType(
+          '0x0000000000000000000000000000000000000000',
+          ChainType.evm
+        )
+      ).toBe(false);
+    });
+
+    it('rejects Sui all-zero burn address', () => {
+      expect(
+        isValidAddressForChainType(
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
+          ChainType.sui
+        )
+      ).toBe(false);
+    });
+
+    it('rejects MultiversX dead address', () => {
+      expect(
+        isValidAddressForChainType(
+          'erd1deaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaddeaqtv0gag',
+          ChainType.mvx
+        )
+      ).toBe(false);
+    });
+
+    it('rejects BTC unspendable genesis burn address', () => {
+      expect(
+        isValidAddressForChainType('1111111111111111111114oLvT2', ChainType.btc)
+      ).toBe(false);
+    });
+
+    it('rejects EVM all-zero burn address regardless of case', () => {
+      expect(
+        isValidAddressForChainType(
+          '0X0000000000000000000000000000000000000000'.toLowerCase(),
+          ChainType.evm
+        )
+      ).toBe(false);
+    });
+  });
 });

@@ -161,7 +161,7 @@ export async function init(options: InitOptions): Promise<{
     ...options.appKitOptions,
     adapters,
     networks: [allNetworks[0], ...allNetworks.slice(1)],
-    ...(shouldGuard ? { enableEIP6963: false } : {})
+    ...(shouldGuard ? { enableEIP6963: false, enableInjected: false } : {})
   });
 
   // Await AppKit init (WC session + non-EVM namespaces); wagmi reconnects separately.

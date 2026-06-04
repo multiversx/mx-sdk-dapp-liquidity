@@ -1,7 +1,21 @@
+import { ChainNamespace } from '@reown/appkit-common';
 import { CustomConnectButton } from './CustomConnectButton';
 import { ChainDTO } from '../../../dto/Chain.dto';
 import { getDisplayName, safeImageUrl } from '../../../helpers';
+import { ChainType } from '../../../types/chainType';
 import { useAccount } from '../../hooks/useAccount';
+
+const chainTypeToNamespace = (
+  chainType?: ChainType
+): ChainNamespace | undefined => {
+  if (chainType === ChainType.evm) {
+    return 'eip155';
+  }
+  if (chainType === ChainType.sui) {
+    return 'sui';
+  }
+  return undefined;
+};
 
 export const BridgeConnectButton = ({
   activeChain,
@@ -18,6 +32,7 @@ export const BridgeConnectButton = ({
     <CustomConnectButton
       className={className}
       disabled={disabled}
+      namespace={chainTypeToNamespace(activeChain?.chainType)}
       data-testid="evm-network-connect-button"
     >
       {account.isConnected ? null : (

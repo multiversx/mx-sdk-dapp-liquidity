@@ -8,7 +8,7 @@ export const useDebounce = (value: any, timeout: number) => {
     return () => clearTimeout(handler);
   };
 
-  useEffect(effect, [value]);
+  useEffect(effect, [value, timeout]);
 
   return state;
 };
