@@ -34,7 +34,8 @@ export type BaseTransaction = {
   };
 };
 
-export type ServerTransaction = BaseTransaction & Partial<MvxTransactions>;
+export type ServerTransaction = BaseTransaction &
+  Partial<Omit<MvxTransactions, 'gasLimit' | 'value'>>;
 
 export type TransactionType = TransactionBase & {
   account: `0x${string}`;

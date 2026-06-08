@@ -46,7 +46,6 @@
   "rules": {
     "no-multiple-empty-lines":"error",
     "@typescript-eslint/no-unused-vars":"error",
-    "promise/always-return": 0,
     "no-shadow": "off",
     "no-undef": "warn",
     "curly": ["error", "all"],

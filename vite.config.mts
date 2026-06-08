@@ -1,12 +1,10 @@
 import { extname, relative, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import nodeResolve from '@rollup/plugin-node-resolve';
 import { glob } from 'glob';
 import nodeExternals from 'rollup-plugin-node-externals';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,7 +15,6 @@ export default defineConfig({
     dts({
       entryRoot: 'src'
     }),
-    tsconfigPaths(),
     svgr()
   ],
   build: {
@@ -27,7 +24,8 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       fileName: (format, entryName) =>
         `${entryName}.${format === 'es' ? 'mjs' : 'js'}`,
-      formats: ['es', 'cjs']
+      formats: ['es', 'cjs'],
+      cssFileName: 'style'
     },
     rollupOptions: {
       input: Object.fromEntries(
@@ -57,16 +55,15 @@ export default defineConfig({
           }
           return '#!/usr/bin/env node';
         },
-        inlineDynamicImports: false,
         globals: {
           fetch: 'cross-fetch'
-        },
-        plugins: [nodeResolve()]
+        }
       },
       external: ['cross-fetch', 'cross-fetch/polyfill']
     }
   },
   resolve: {
+    tsconfigPaths: true,
     alias: {
       src: resolve('src/'),
       replacement: resolve(__dirname, './src')
