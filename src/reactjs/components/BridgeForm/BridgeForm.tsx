@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useFetchBridgeData } from 'reactjs/hooks';
+import { getInitialTokens } from 'reactjs/utils';
 import { Deposit } from './Deposit';
 import { Transfer } from './Transfer';
+import { isTokenIdFromMvx } from './utils/bridgeFormHelpers';
 import { useWeb3App } from '../../context/useWeb3App';
+import { MxCircleLoader } from '../base/MxCircleLoader';
 
 interface BridgeFormProps {
   mvxChainId: string;
@@ -55,10 +59,27 @@ export const BridgeForm = ({
   onHistoryClose,
   onNavigate
 }: BridgeFormProps) => {
-  const { bridgeOnly } = useWeb3App();
-  const [direction, setDirection] = useState<'deposit' | 'withdraw'>(
-    bridgeOnly === false ? 'deposit' : 'deposit'
-  );
+  const { bridgeOnly, options } = useWeb3App();
+  const { firstTokenId, secondTokenId } = getInitialTokens({
+    firstTokenId: firstTokenIdentifier,
+    secondTokenId: secondTokenIdentifier
+  });
+
+  const [direction, setDirection] = useState<
+    'deposit' | 'withdraw' | undefined
+  >(undefined);
+
+  const {
+    isTokensLoading: tokensLoading,
+    isLoadingEvmTokensBalances,
+    isLoadingMvxTokensBalances,
+    isChainsLoading,
+    mvxTokensWithBalances
+  } = useFetchBridgeData({
+    refetchTrigger,
+    mvxAddress,
+    mvxApiURL: options.mvxApiURL
+  });
 
   const handleChangeDirection = () => {
     // Prevent direction change when bridgeOnly is false
@@ -71,7 +92,68 @@ export const BridgeForm = ({
     });
   };
 
-  return direction === 'deposit' ? (
+  const isTokensLoading =
+    tokensLoading ||
+    isLoadingEvmTokensBalances ||
+    isLoadingMvxTokensBalances ||
+    isChainsLoading;
+
+  // Resolve direction once token lists are available.
+  // Only fires when direction is still undefined (i.e. once, on first successful load).
+  useEffect(() => {
+    if (isTokensLoading || direction !== undefined) {
+      return;
+    }
+    // Deposit-only mode: never auto-switch to withdraw.
+    if (bridgeOnly === false) {
+      setDirection('deposit');
+      return;
+    }
+    const isWithdraw =
+      Boolean(firstTokenId) &&
+      Boolean(secondTokenId) &&
+      isTokenIdFromMvx(firstTokenId, mvxTokensWithBalances);
+    setDirection(isWithdraw ? 'withdraw' : 'deposit');
+  }, [
+    isTokensLoading,
+    direction,
+    bridgeOnly,
+    firstTokenId,
+    secondTokenId,
+    mvxTokensWithBalances
+  ]);
+
+  if (isTokensLoading || direction === undefined) {
+    return <MxCircleLoader />;
+  }
+
+  if (direction === 'withdraw') {
+    return (
+      <Transfer
+        mvxChainId={mvxChainId}
+        mvxAddress={mvxAddress}
+        username={username}
+        callbackRoute={callbackRoute}
+        firstTokenIdentifier={firstTokenIdentifier}
+        secondTokenIdentifier={secondTokenIdentifier}
+        firstTokenAmount={firstTokenAmount}
+        secondTokenAmount={secondTokenAmount}
+        refetchTrigger={refetchTrigger}
+        showHistory={showHistory}
+        forcedDestinationTokenSymbol={forcedDestinationTokenSymbol}
+        direction={direction}
+        onChangeDirection={handleChangeDirection}
+        onSuccessfullySentTransaction={onSuccessfullySentMvxTransaction}
+        onFailedSentTransaction={onFailedSentMvxTransaction}
+        onHistoryClose={onHistoryClose}
+        onMvxConnect={onMvxConnect}
+        onMvxDisconnect={onMvxDisconnect}
+        onNavigate={onNavigate}
+      />
+    );
+  }
+
+  return (
     <Deposit
       mvxChainId={mvxChainId}
       mvxAddress={mvxAddress}
@@ -88,28 +170,6 @@ export const BridgeForm = ({
       onChangeDirection={handleChangeDirection}
       onSuccessfullySentTransaction={onSuccessfullySentTransaction}
       onFailedSentTransaction={onFailedSentTransaction}
-      onHistoryClose={onHistoryClose}
-      onMvxConnect={onMvxConnect}
-      onMvxDisconnect={onMvxDisconnect}
-      onNavigate={onNavigate}
-    />
-  ) : (
-    <Transfer
-      mvxChainId={mvxChainId}
-      mvxAddress={mvxAddress}
-      username={username}
-      callbackRoute={callbackRoute}
-      firstTokenIdentifier={firstTokenIdentifier}
-      secondTokenIdentifier={secondTokenIdentifier}
-      firstTokenAmount={firstTokenAmount}
-      secondTokenAmount={secondTokenAmount}
-      refetchTrigger={refetchTrigger}
-      showHistory={showHistory}
-      forcedDestinationTokenSymbol={forcedDestinationTokenSymbol}
-      direction={direction}
-      onChangeDirection={handleChangeDirection}
-      onSuccessfullySentTransaction={onSuccessfullySentMvxTransaction}
-      onFailedSentTransaction={onFailedSentMvxTransaction}
       onHistoryClose={onHistoryClose}
       onMvxConnect={onMvxConnect}
       onMvxDisconnect={onMvxDisconnect}

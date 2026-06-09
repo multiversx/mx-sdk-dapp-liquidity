@@ -119,3 +119,18 @@ export const getDefaultReceivingToken = (
     fallbackTokens?.find((x) => x.symbol.toLowerCase().includes('usdc'))
   );
 };
+
+/** True when `tokenId` matches a token in the MVX list (compared by address). */
+export const isTokenIdFromMvx = (
+  tokenId: string | undefined,
+  mvxTokens: TokenType[] | undefined
+): boolean => {
+  if (!tokenId) {
+    return false;
+  }
+  return Boolean(
+    mvxTokens?.some(
+      (token) => token.address.toLowerCase() === tokenId.toLowerCase()
+    )
+  );
+};

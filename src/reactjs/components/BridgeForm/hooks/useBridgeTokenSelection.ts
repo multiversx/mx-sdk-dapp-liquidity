@@ -251,7 +251,9 @@ export const useBridgeTokenSelection = ({
 
     const firstOption =
       fromOptions.find(
-        ({ identifier }) => initialTokens?.firstTokenId === identifier
+        ({ identifier }) =>
+          initialTokens?.firstTokenId?.toLowerCase() ===
+          identifier.toLowerCase()
       ) ??
       fromOptions.find((option) =>
         sameBridgeApiChainId(option.chainId, activeChainId)
@@ -291,6 +293,7 @@ export const useBridgeTokenSelection = ({
     }
 
     let initialized = false;
+
     if (firstOption) {
       setFirstToken(firstOption);
       updateUrlParams({ firstTokenId: firstOption.address });
@@ -331,7 +334,7 @@ export const useBridgeTokenSelection = ({
   // Update balances when they change
   useEffect(() => {
     const selectedTokenOption = fromTokens?.find(
-      (x) => x.address === firstToken?.address
+      (x) => x.address.toLowerCase() === firstToken?.address?.toLowerCase()
     );
     if (selectedTokenOption) {
       setFirstToken((prev) => {
@@ -342,7 +345,7 @@ export const useBridgeTokenSelection = ({
 
   useEffect(() => {
     const selectedTokenOption = toTokens?.find(
-      (x) => x.address === secondToken?.address
+      (x) => x.address.toLowerCase() === secondToken?.address?.toLowerCase()
     );
     if (selectedTokenOption) {
       setSecondToken((prev) => {
