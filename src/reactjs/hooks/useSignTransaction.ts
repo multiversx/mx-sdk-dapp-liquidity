@@ -10,14 +10,17 @@ import {
   TransactionInstruction,
   TransactionInstructionCtorFields
 } from '@solana/web3.js';
-import { useSendTransaction } from 'wagmi';
+import { useSendTransaction as useSendWagmiTransaction } from 'wagmi';
+
+// Portable stand-in for wagmi's sendTransactionAsync — avoids referencing
+// SendTransactionErrorType from @wagmi/core (a non-direct dependency).
+type EvmSignTransactionFn = (
+  args: Record<string, unknown>
+) => Promise<`0x${string}`>;
 
 export const useSignTransaction = () => {
-  const {
-    data: hash,
-    sendTransactionAsync: signEvmTransaction,
-    ...rest
-  } = useSendTransaction();
+  const { data: hash, sendTransactionAsync: signEvmTransaction } =
+    useSendWagmiTransaction();
 
   const { connection } = useAppKitConnection();
   const { walletProvider: solWalletProvider } =
@@ -147,8 +150,7 @@ export const useSignTransaction = () => {
   return {
     evm: {
       hash,
-      signTransaction: signEvmTransaction,
-      ...rest
+      signTransaction: signEvmTransaction as EvmSignTransactionFn
     },
     solana: {
       signTransaction: signTransactionSolanaTransaction,
