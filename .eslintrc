@@ -1,5 +1,5 @@
 {
-  "root":true,
+  "root": true,
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "prettier",
@@ -7,11 +7,7 @@
     "plugin:jest/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins":[
-    "@typescript-eslint",
-    "import",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "import", "prettier"],
   "env": {
     "es2021": true,
     "node": true,
@@ -35,27 +31,21 @@
     }
   },
   "overrides": [
-      {
-          "files": ["src/localConstants.ts"],
-          "env": {
-              "browser": true,
-              "node": false
-          }
+    {
+      "files": ["src/localConstants.ts"],
+      "env": {
+        "browser": true,
+        "node": false
       }
+    }
   ],
   "rules": {
-    "no-multiple-empty-lines":"error",
-    "@typescript-eslint/no-unused-vars":"error",
+    "no-multiple-empty-lines": "error",
+    "@typescript-eslint/no-unused-vars": "error",
     "no-shadow": "off",
     "no-undef": "warn",
     "curly": ["error", "all"],
     "no-catch-shadow": "error",
-    "no-confusing-arrow": [
-      "warn",
-      {
-        "allowParens": true
-      }
-    ],
     "@typescript-eslint/no-shadow": "error",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/indent": "off",
@@ -71,6 +61,6 @@
         }
       }
     ],
-    "radix":"off"
+    "radix": "off"
   }
 }

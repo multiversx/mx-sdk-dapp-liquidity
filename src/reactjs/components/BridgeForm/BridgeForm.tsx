@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useFetchBridgeData } from 'reactjs/hooks';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { getInitialTokens } from 'reactjs/utils';
 import { Deposit } from './Deposit';
 import { Transfer } from './Transfer';
-import { isTokenIdFromMvx } from './utils/bridgeFormHelpers';
+import { MVX_CHAIN_IDS } from '../../../constants';
 import { useWeb3App } from '../../context/useWeb3App';
-import { MxCircleLoader } from '../base/MxCircleLoader';
+import { useGetAllTokensQuery } from '../../queries/useGetAllTokens.query';
+import { MxLoadSkeleton } from '../base/MxLoadSkeleton';
 
 interface BridgeFormProps {
   mvxChainId: string;
@@ -59,27 +59,42 @@ export const BridgeForm = ({
   onHistoryClose,
   onNavigate
 }: BridgeFormProps) => {
-  const { bridgeOnly, options } = useWeb3App();
-  const { firstTokenId, secondTokenId } = getInitialTokens({
-    firstTokenId: firstTokenIdentifier,
-    secondTokenId: secondTokenIdentifier
+  const { bridgeOnly, nativeAuthToken } = useWeb3App();
+
+  const { data: tokens, isLoading } = useGetAllTokensQuery({
+    nativeAuthToken,
+    bridgeOnly
   });
 
-  const [direction, setDirection] = useState<
-    'deposit' | 'withdraw' | undefined
-  >(undefined);
-
-  const {
-    isTokensLoading: tokensLoading,
-    isLoadingEvmTokensBalances,
-    isLoadingMvxTokensBalances,
-    isChainsLoading,
-    mvxTokensWithBalances
-  } = useFetchBridgeData({
-    refetchTrigger,
-    mvxAddress,
-    mvxApiURL: options.mvxApiURL
+  const { firstTokenId } = getInitialTokens({
+    firstTokenId: firstTokenIdentifier
   });
+
+  const [direction, setDirection] = useState<'deposit' | 'withdraw'>('deposit');
+  const [directionReady, setDirectionReady] = useState(!firstTokenId);
+
+  const isFirstTokenMvx = useMemo(() => {
+    if (!firstTokenId || !tokens || isLoading) {
+      return false;
+    }
+    const match = tokens.find(
+      (t) => t.address.toLowerCase() === firstTokenId.toLowerCase()
+    );
+    return Boolean(match && MVX_CHAIN_IDS.includes(match.chainId.toString()));
+  }, [firstTokenId, tokens, isLoading]);
+
+  const directionInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (directionInitializedRef.current || !tokens || isLoading) {
+      return;
+    }
+    directionInitializedRef.current = true;
+    if (isFirstTokenMvx) {
+      setDirection('withdraw');
+    }
+    setDirectionReady(true);
+  }, [tokens, isFirstTokenMvx, isLoading]);
 
   const handleChangeDirection = () => {
     // Prevent direction change when bridgeOnly is false
@@ -92,39 +107,8 @@ export const BridgeForm = ({
     });
   };
 
-  const isTokensLoading =
-    tokensLoading ||
-    isLoadingEvmTokensBalances ||
-    isLoadingMvxTokensBalances ||
-    isChainsLoading;
-
-  // Resolve direction once token lists are available.
-  // Only fires when direction is still undefined (i.e. once, on first successful load).
-  useEffect(() => {
-    if (isTokensLoading || direction !== undefined) {
-      return;
-    }
-    // Deposit-only mode: never auto-switch to withdraw.
-    if (bridgeOnly === false) {
-      setDirection('deposit');
-      return;
-    }
-    const isWithdraw =
-      Boolean(firstTokenId) &&
-      Boolean(secondTokenId) &&
-      isTokenIdFromMvx(firstTokenId, mvxTokensWithBalances);
-    setDirection(isWithdraw ? 'withdraw' : 'deposit');
-  }, [
-    isTokensLoading,
-    direction,
-    bridgeOnly,
-    firstTokenId,
-    secondTokenId,
-    mvxTokensWithBalances
-  ]);
-
-  if (isTokensLoading || direction === undefined) {
-    return <MxCircleLoader />;
+  if (!directionReady) {
+    return <MxLoadSkeleton />;
   }
 
   if (direction === 'withdraw') {

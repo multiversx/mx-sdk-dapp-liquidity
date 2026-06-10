@@ -108,6 +108,33 @@ export const getAvailableTokens = (
 };
 
 /**
+ * Finds the best paired destination token for a given source token.
+ * Priority: availableTokens address match > symbol match (last resort).
+ */
+export const findPairedToken = (
+  sourceToken: TokenType,
+  targetTokens?: TokenType[],
+  forcedDestinationTokenSymbol?: string
+): TokenType | undefined => {
+  const available = getAvailableTokens(
+    sourceToken,
+    targetTokens,
+    forcedDestinationTokenSymbol
+  );
+
+  if (available.length > 0) {
+    // available[] is already filtered by availableTokens address match; use order
+    return available[0];
+  }
+
+  // Symbol fallback when availableTokens lookup yields nothing
+  const symbolToMatch = forcedDestinationTokenSymbol ?? sourceToken.symbol;
+  return targetTokens?.find(
+    (t) => t.symbol.toLowerCase() === symbolToMatch.toLowerCase()
+  );
+};
+
+/**
  * Gets the default receiving token (prefers USDC)
  */
 export const getDefaultReceivingToken = (

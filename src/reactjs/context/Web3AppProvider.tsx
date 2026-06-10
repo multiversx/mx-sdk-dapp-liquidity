@@ -3,7 +3,7 @@ import { AppKit } from '@reown/appkit/react';
 import { AppKitNetwork } from '@reown/appkit-common';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ResolvedRegister } from '@wagmi/core';
-import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import { PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react';
 import { createContext } from 'react';
 import { WagmiProvider } from 'wagmi';
 import { InitOptions } from '../init/init';
@@ -47,7 +47,12 @@ export function Web3AppProvider({
 }: PropsWithChildren<Web3AppProviderType>) {
   const [queryClient] = useState(() => new QueryClient());
 
+  const isFirstRenderRef = useRef(true);
   useEffect(() => {
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
+      return;
+    }
     queryClient.invalidateQueries();
   }, [nativeAuthToken]);
 

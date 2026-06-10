@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { useCallback, useMemo } from 'react';
 import { MvxTokenType, TokenType } from '../../types/token';
 import { useWeb3App } from '../context/useWeb3App';
@@ -49,20 +49,17 @@ export const useGetMvxTokensBalancesQuery = ({
     });
   };
 
-  const retry = (_failureCount: number, error: AxiosError) => {
-    return error.response?.status === 404;
-  };
-
   return useQuery({
     queryKey: ['mvx-tokens-balances', mvxAddress, tokenIdentifiers.sort()],
     queryFn,
-    retry,
+    retry: false,
     enabled: Boolean(mvxAddress) && tokenIdentifiers.length > 0,
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: true,
-    refetchInterval: 20000,
+    refetchInterval: (query) =>
+      query.state.status === 'error' ? false : 20000,
     refetchOnReconnect: 'always',
-    gcTime: 0
+    gcTime: 60 * 1000
   });
 };
 

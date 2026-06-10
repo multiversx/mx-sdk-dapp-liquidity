@@ -78,19 +78,16 @@ export const useBridgeTokenSelection = ({
       return [];
     }
 
-    return (
-      toTokens
-        ?.filter(
-          (token) =>
-            token.symbol.toLowerCase() === firstToken.symbol.toLowerCase()
-        )
-        .map((token) => ({
-          ...token,
-          identifier: token.address,
-          ticker: token.symbol
-        })) ?? []
-    );
-  }, [firstToken?.symbol, toTokens]);
+    return BridgeFormHelpers.getAvailableTokens(
+      firstToken,
+      toTokens,
+      forcedDestinationTokenSymbol
+    ).map((token) => ({
+      ...token,
+      identifier: token.address,
+      ticker: token.symbol
+    }));
+  }, [firstToken, toTokens, forcedDestinationTokenSymbol]);
 
   const selectedChainOption = useMemo(() => {
     const anchorToken = mvxChainId ? secondToken : firstToken;
@@ -161,26 +158,25 @@ export const useBridgeTokenSelection = ({
       setFirstToken(option);
       updateUrlParams({ firstTokenId: option.address });
 
-      // First try to find matching token by symbol directly in toTokens
-      let secondOption = toTokens?.find(
-        (x) => x.symbol.toLowerCase() === option.symbol.toLowerCase()
-      );
-
-      // If not found, use availableTokens and find by symbol
-      if (!secondOption) {
-        const availableTokens = getAvailableTokens(option);
-        secondOption =
-          availableTokens.find(
-            (x) => x.symbol.toLowerCase() === option.symbol.toLowerCase()
-          ) ?? getDefaultReceivingToken(availableTokens);
-      }
+      const secondOption =
+        BridgeFormHelpers.findPairedToken(
+          option,
+          toTokens,
+          forcedDestinationTokenSymbol
+        ) ?? getDefaultReceivingToken(getAvailableTokens(option));
 
       if (secondOption) {
         setSecondToken(secondOption);
         updateUrlParams({ secondTokenId: secondOption.address });
       }
     },
-    [getAvailableTokens, getDefaultReceivingToken, updateUrlParams, toTokens]
+    [
+      getAvailableTokens,
+      getDefaultReceivingToken,
+      updateUrlParams,
+      toTokens,
+      forcedDestinationTokenSymbol
+    ]
   );
 
   const onChangeSecondSelect = useCallback(
@@ -260,25 +256,16 @@ export const useBridgeTokenSelection = ({
       ) ??
       fromOptions[0];
 
-    // Try to find matching token by symbol first in toTokens
-    let secondOption = toTokens?.find(
-      (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()
-    );
-
-    // Fallback to availableTokens logic if not found
-    if (!secondOption) {
-      const availableTokens = getAvailableTokens(firstOption);
-      secondOption =
-        availableTokens?.find(
-          ({ address }) =>
-            address.toLowerCase() ===
-            (firstOption?.symbol ?? initialTokens?.secondTokenId)?.toLowerCase()
-        ) ??
-        availableTokens.find(
-          (x) => x.symbol.toLowerCase() === firstOption?.symbol.toLowerCase()
-        ) ??
-        getDefaultReceivingToken(availableTokens);
-    }
+    const secondOption =
+      (firstOption &&
+        BridgeFormHelpers.findPairedToken(
+          firstOption,
+          toTokens,
+          forcedDestinationTokenSymbol
+        )) ??
+      getDefaultReceivingToken(
+        firstOption ? getAvailableTokens(firstOption) : []
+      );
 
     const hasOptionsSelected =
       Boolean(firstToken) &&
@@ -323,6 +310,7 @@ export const useBridgeTokenSelection = ({
     firstTokenIdentifier,
     secondTokenIdentifier,
     activeChainId,
+    forcedDestinationTokenSymbol,
     getAvailableTokens,
     getDefaultReceivingToken,
     updateUrlParams,
