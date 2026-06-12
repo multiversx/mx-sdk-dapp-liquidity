@@ -331,7 +331,9 @@ export const Transfer = ({
           throw new Error('signMvxTransactions function is not provided');
         }
 
-        await signMvxTransactions(transactions as IPlainTransactionObject[]);
+        await signMvxTransactions(
+          transactions as unknown as IPlainTransactionObject[]
+        );
         setLatestTransactions(transactions);
       } catch (e) {
         console.error(e);

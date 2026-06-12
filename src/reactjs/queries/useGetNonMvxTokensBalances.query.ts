@@ -58,15 +58,16 @@ export const useGetNonMvxTokensBalancesQuery = ({
   };
 
   return useQuery({
-    queryKey: ['non-mvx-tokens-balances', address, chainId, identifiers],
+    queryKey: ['non-mvx-tokens-balances', address, chainId],
     queryFn,
     retry,
-    enabled: Boolean(address) && Boolean(chainId),
+    enabled: Boolean(address) && Boolean(chainId) && identifiers.length > 0,
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: true,
-    refetchInterval: 20000,
+    refetchInterval: (query) =>
+      query.state.status === 'error' ? false : 20000,
     refetchOnReconnect: 'always',
-    gcTime: 0
+    gcTime: 60 * 1000
   });
 };
 

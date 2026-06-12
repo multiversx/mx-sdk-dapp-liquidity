@@ -330,7 +330,10 @@ export const Deposit = ({
       return;
     }
 
-    if (selectedChainOption?.chainId !== firstToken?.chainId) {
+    if (
+      firstToken?.chainId &&
+      selectedChainOption?.chainId !== firstToken.chainId
+    ) {
       const selectedOption = fromOptions?.find(
         (option) => option.chainId.toString() === selectedChainOption?.chainId
       );
@@ -341,12 +344,7 @@ export const Deposit = ({
 
       onChangeFirstSelect(selectedOption);
     }
-  }, [
-    selectedChainOption?.chainId,
-    firstToken?.chainId,
-    fromOptions,
-    onChangeFirstSelect
-  ]);
+  }, [selectedChainOption?.chainId, firstToken?.chainId, fromOptions]);
 
   const onSubmit = useCallback(
     async ({

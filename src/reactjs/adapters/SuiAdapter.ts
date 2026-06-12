@@ -137,8 +137,9 @@ export class SuiAdapter extends AdapterBlueprint {
   async setUniversalProvider(sharedProvider: UniversalProvider): Promise<void> {
     this.sharedWcProvider = sharedProvider;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wcConnector = new WalletConnectConnector({
-      provider: sharedProvider,
+      provider: sharedProvider as any,
       namespace: 'sui' as ChainNamespace,
       caipNetworks: this.getCaipNetworksForWalletConnectConnector()
     });
@@ -146,7 +147,8 @@ export class SuiAdapter extends AdapterBlueprint {
     this.addConnector(wcConnector as unknown as ChainAdapterConnector);
 
     WcHelpersUtil.listenWcProvider({
-      universalProvider: sharedProvider,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      universalProvider: sharedProvider as any,
       namespace: 'sui' as ChainNamespace,
       onConnect: (accounts) => this.onConnect(accounts, WC_ID),
       onDisconnect: () => this.onDisconnect(WC_ID),
@@ -234,7 +236,9 @@ export class SuiAdapter extends AdapterBlueprint {
 
     const wc = this.getWcProvider();
     const accounts = WcHelpersUtil.getWalletConnectAccounts(
-      wc,
+      wc as unknown as Parameters<
+        typeof WcHelpersUtil.getWalletConnectAccounts
+      >[0],
       'sui' as ChainNamespace
     );
     const address = accounts[0]?.address;
@@ -316,7 +320,9 @@ export class SuiAdapter extends AdapterBlueprint {
       return { accounts: [] };
     }
     const accounts = WcHelpersUtil.getWalletConnectAccounts(
-      this.sharedWcProvider,
+      this.sharedWcProvider as unknown as Parameters<
+        typeof WcHelpersUtil.getWalletConnectAccounts
+      >[0],
       'sui' as ChainNamespace
     );
     return {
@@ -386,7 +392,9 @@ export class SuiAdapter extends AdapterBlueprint {
     }
 
     const accounts = WcHelpersUtil.getWalletConnectAccounts(
-      this.sharedWcProvider,
+      this.sharedWcProvider as unknown as Parameters<
+        typeof WcHelpersUtil.getWalletConnectAccounts
+      >[0],
       'sui' as ChainNamespace
     );
     if (accounts.length > 0) {
@@ -489,5 +497,12 @@ export class SuiAdapter extends AdapterBlueprint {
 
   async walletGetAssets(): Promise<AdapterBlueprint.WalletGetAssetsResponse> {
     return {};
+  }
+
+  async writeSolanaTransaction(
+    params: AdapterBlueprint.WriteSolanaTransactionParams
+  ): Promise<AdapterBlueprint.WriteSolanaTransactionResult> {
+    void params;
+    return { hash: '' };
   }
 }
