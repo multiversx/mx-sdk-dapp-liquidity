@@ -18,7 +18,7 @@ const suiMainnet = defineChain({
   name: 'SUI Mainnet',
   nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: 9 },
   rpcUrls: {
-    default: { http: ['https://fullnode.mainnet.sui.io:443'] }
+    default: { http: ['https://sui-mainnet.gateway.tatum.io'] }
   },
   blockExplorers: {
     default: { name: 'SUI Explorer', url: 'https://explorer.sui.io/' }
@@ -32,7 +32,7 @@ const suiTestnet = defineChain({
   name: 'SUI Testnet',
   nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: 9 },
   rpcUrls: {
-    default: { http: ['https://fullnode.testnet.sui.io:443'] }
+    default: { http: ['https://sui-testnet.gateway.tatum.io'] }
   },
   blockExplorers: {
     default: {
@@ -49,7 +49,7 @@ const suiDevnet = defineChain({
   name: 'SUI Devnet',
   nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: 9 },
   rpcUrls: {
-    default: { http: ['https://fullnode.devnet.sui.io:443'] }
+    default: { http: ['https://sui-devnet.gateway.tatum.io'] }
   },
   blockExplorers: {
     default: {

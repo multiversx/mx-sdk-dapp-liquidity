@@ -124,7 +124,9 @@ export class SuiAdapter extends AdapterBlueprint {
         name: 'Sui',
         nativeCurrency: { name: 'SUI', symbol: 'SUI', decimals: 9 },
         rpcUrls: {
-          default: { http: [`https://fullnode.${id}.sui.io:443`] }
+          default: {
+            http: [`https://sui-${id}.gateway.tatum.io`]
+          }
         }
       } as CaipNetwork;
     });
@@ -340,35 +342,38 @@ export class SuiAdapter extends AdapterBlueprint {
     if (!params.address) {
       return { balance: '0', symbol: 'SUI' };
     }
-    try {
-      const caipNetwork = this.getCaipNetworks()?.find(
-        (n) => n.id === params.chainId
-      );
-      const rpcUrl = `https://fullnode.${caipNetwork?.id}.sui.io:443`;
-      if (!rpcUrl) {
-        return { balance: '0', symbol: 'SUI' };
-      }
 
-      const res = await fetch(rpcUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'suix_getBalance',
-          params: [params.address, '0x2::sui::SUI']
-        })
-      });
-      const data = await res.json();
-      const totalBalance = data?.result?.totalBalance ?? '0';
-      const formatted = (parseInt(totalBalance, 10) / 1e9).toString();
-      return {
-        balance: formatted,
-        symbol: caipNetwork?.nativeCurrency?.symbol || 'SUI'
-      };
-    } catch {
-      return { balance: '0', symbol: 'SUI' };
-    }
+    // NOT used in Liquidity SDK, skipped until gRPC fully supported by appkit
+    return { balance: '0', symbol: 'SUI' };
+    // try {
+    //   const caipNetwork = this.getCaipNetworks()?.find(
+    //     (n) => n.id === params.chainId
+    //   );
+    //   const rpcUrl = `https://sui-${caipNetwork?.id}.gateway.tatum.ioh`;
+    //   if (!rpcUrl) {
+    //     return { balance: '0', symbol: 'SUI' };
+    //   }
+
+    //   const res = await fetch(rpcUrl, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       jsonrpc: '2.0',
+    //       id: 1,
+    //       method: 'suix_getBalance',
+    //       params: [params.address, '0x2::sui::SUI']
+    //     })
+    //   });
+    //   const data = await res.json();
+    //   const totalBalance = data?.result?.totalBalance ?? '0';
+    //   const formatted = (parseInt(totalBalance, 10) / 1e9).toString();
+    //   return {
+    //     balance: formatted,
+    //     symbol: caipNetwork?.nativeCurrency?.symbol || 'SUI'
+    //   };
+    // } catch {
+    //   return { balance: '0', symbol: 'SUI' };
+    // }
   }
 
   async switchNetwork(
