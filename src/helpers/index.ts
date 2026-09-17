@@ -1,3 +1,4 @@
+export * from './assertAllTransactionsSigned';
 export * from './base64Utils';
 export * from './decodeLoginToken';
 export * from './decodeToken';
@@ -9,4 +10,5 @@ export * from './getMvxChainId';
 export * from './getMvxExplorerAddress';
 export * from './safeImageUrl';
 export * from './isValidAddressForChainType';
+export * from './resolveSubmittedTxHashes';
 export * from './serializeTransaction';

@@ -25,3 +25,14 @@ export class MissingConfirmRateDataError extends Error {
     this.name = 'MissingConfirmRateDataError';
   }
 }
+
+/**
+ * Thrown when a bridge leg could not be signed — the wallet returned nothing, the
+ * server omitted the chain-specific signing payload, or the user aborted.
+ */
+export class TransactionNotSignedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TransactionNotSignedError';
+  }
+}
