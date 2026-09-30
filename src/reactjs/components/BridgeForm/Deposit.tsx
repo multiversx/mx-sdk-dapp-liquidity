@@ -10,8 +10,14 @@ import { toast } from 'react-toastify';
 import { useBridgeTokenSelection } from './hooks/useBridgeTokenSelection';
 import { resolveSigningChainType } from './utils/bridgeFormHelpers';
 import { MVX_CHAIN_IDS } from '../../../constants';
-import { getApiURL, safeImageUrl } from '../../../helpers';
+import {
+  assertAllTransactionsSigned,
+  getApiURL,
+  resolveSubmittedTxHashes,
+  safeImageUrl
+} from '../../../helpers';
 import { ChainType } from '../../../types/chainType';
+import { TransactionNotSignedError } from '../../../types/errors';
 import { ProviderType } from '../../../types/providerType';
 import { BaseTransaction, ServerTransaction } from '../../../types/transaction';
 import { useWeb3App } from '../../context/useWeb3App';
@@ -372,7 +378,9 @@ export const Deposit = ({
                 });
 
                 if (!hash) {
-                  break;
+                  throw new TransactionNotSignedError(
+                    'The EVM wallet did not return a transaction hash'
+                  );
                 }
 
                 signedTransactions.push({
@@ -380,7 +388,7 @@ export const Deposit = ({
                   txHash: hash
                 });
 
-                if (txIndex === transactions.length - 1 || !hash) {
+                if (txIndex === transactions.length - 1) {
                   break;
                 }
 
@@ -401,7 +409,9 @@ export const Deposit = ({
               }
               case ChainType.sol:
                 if (!transaction.instructions || !transaction.feePayer) {
-                  break;
+                  throw new TransactionNotSignedError(
+                    'No Solana instructions or fee payer returned for signing'
+                  );
                 }
 
                 const txHash = await solana.signTransaction({
@@ -411,7 +421,9 @@ export const Deposit = ({
                 });
 
                 if (!txHash) {
-                  break;
+                  throw new TransactionNotSignedError(
+                    'The Solana wallet did not return a transaction hash'
+                  );
                 }
 
                 signedTransactions.push({
@@ -422,13 +434,20 @@ export const Deposit = ({
 
               case ChainType.btc:
                 if (!transaction.bitcoinParams) {
-                  console.error('No bitcoin params');
-                  break;
+                  throw new TransactionNotSignedError(
+                    'No Bitcoin params returned for signing'
+                  );
                 }
 
                 const psbt = await bitcoin.signTransaction(
                   transaction.bitcoinParams
                 );
+
+                if (!psbt) {
+                  throw new TransactionNotSignedError(
+                    'The Bitcoin wallet did not return a signed PSBT'
+                  );
+                }
 
                 signedTransactions.push({
                   ...transaction,
@@ -441,8 +460,9 @@ export const Deposit = ({
                 const sender = transaction.suiParams?.sender;
 
                 if (!serializedTx || !sender) {
-                  console.error('No Sui transaction bytes or sender address');
-                  break;
+                  throw new TransactionNotSignedError(
+                    'No Sui transaction bytes or sender address returned for signing'
+                  );
                 }
 
                 const signature = await sui.signTransaction({
@@ -451,7 +471,9 @@ export const Deposit = ({
                 });
 
                 if (!signature) {
-                  break;
+                  throw new TransactionNotSignedError(
+                    'The Sui wallet did not return a signature'
+                  );
                 }
 
                 signedTransactions.push({
@@ -464,22 +486,29 @@ export const Deposit = ({
                 break;
               }
               default:
-                toast.error('Provider not supported');
-                setPendingSigning(false);
-                return;
+                throw new TransactionNotSignedError('Provider not supported');
             }
 
             setSigningTransactionsCount(
               () => transactions.length - 1 - txIndex
             );
           } catch (e) {
+            const message =
+              e instanceof TransactionNotSignedError
+                ? e.message
+                : 'Transaction aborted';
+
+            console.error(e);
             toast.dismiss();
-            toast.error('Transaction aborted');
-            onFailedSentTransaction?.('Transaction aborted');
+            toast.error(message);
+            onFailedSentTransaction?.(message);
             setPendingSigning(false);
+            setSigningTransactionsCount(0);
             return;
           }
         }
+
+        assertAllTransactionsSigned(transactions, signedTransactions);
 
         const { data: batch } = await sendTransactions({
           transactions: signedTransactions,
@@ -488,29 +517,18 @@ export const Deposit = ({
           token: nativeAuthToken ?? ''
         });
 
-        const apiHashes =
-          batch.transactions
-            ?.map((tx) => tx.txHash)
-            .filter((h): h is string => Boolean(h)) ?? [];
-        const localHashes = signedTransactions
-          .map((tx) => tx.txHash)
-          .filter((h): h is string => Boolean(h));
-        const txHashes =
-          apiHashes.length > 0
-            ? apiHashes
-            : localHashes.length > 0
-              ? localHashes
-              : batch.batchId
-                ? [batch.batchId]
-                : [];
-
-        onSuccess(txHashes);
+        onSuccess(resolveSubmittedTxHashes(batch, signedTransactions));
         setPendingSigning(false);
       } catch (e) {
+        const message =
+          e instanceof TransactionNotSignedError
+            ? e.message
+            : 'Transaction cancelled';
+
         console.error(e);
         toast.dismiss();
-        toast.error('Transaction cancelled');
-        onFailedSentTransaction?.('Transaction cancelled');
+        toast.error(message);
+        onFailedSentTransaction?.(message);
         setPendingSigning(false);
         setSigningTransactionsCount(0);
         resetSwapForm();
