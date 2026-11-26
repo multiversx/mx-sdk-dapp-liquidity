@@ -1,5 +1,6 @@
 import { TokenItem } from './TokenItem';
 import { TokenType } from '../../../../types/token';
+import { sameBridgeApiChainId } from '../../../helpers/resolveBridgeApiChainId';
 
 export const TokenList = ({
   tokens,
@@ -19,7 +20,8 @@ export const TokenList = ({
           onClick={onSelect}
           selected={
             selectedToken?.address?.toLowerCase() ===
-            token.address.toLowerCase()
+              token.address.toLowerCase() &&
+            sameBridgeApiChainId(selectedToken?.chainId, token.chainId)
           }
         />
       ))}

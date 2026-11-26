@@ -2,6 +2,7 @@ import { ChainType } from '../../../../types/chainType';
 import { TokenType } from '../../../../types/token';
 import { ServerTransaction } from '../../../../types/transaction';
 import { safeWindow } from '../../../constants';
+import { sameBridgeApiChainId } from '../../../helpers/resolveBridgeApiChainId';
 import { getCompletePathname } from '../../../utils/getCompletePathname';
 import { InitialTokensType } from '../../../utils/getInitialTokens';
 
@@ -94,9 +95,12 @@ export const getAvailableTokens = (
   const foundTokens: TokenType[] = [];
 
   for (const availableToken of option.availableTokens) {
+    // The same contract address can exist on several EVM chains (e.g. PELL on
+    // Ethereum and BSC), so the chain must match as well as the address.
     const foundToken = targetTokens?.find(
       (token) =>
-        token.address.toLowerCase() === availableToken.address.toLowerCase()
+        token.address.toLowerCase() === availableToken.address.toLowerCase() &&
+        sameBridgeApiChainId(token.chainId, availableToken.chainId)
     );
 
     if (foundToken) {

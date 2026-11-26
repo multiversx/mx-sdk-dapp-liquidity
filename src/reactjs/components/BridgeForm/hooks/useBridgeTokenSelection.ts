@@ -322,25 +322,29 @@ export const useBridgeTokenSelection = ({
   // Update balances when they change
   useEffect(() => {
     const selectedTokenOption = fromTokens?.find(
-      (x) => x.address.toLowerCase() === firstToken?.address?.toLowerCase()
+      (x) =>
+        x.address.toLowerCase() === firstToken?.address?.toLowerCase() &&
+        sameBridgeApiChainId(x.chainId, firstToken?.chainId)
     );
     if (selectedTokenOption) {
       setFirstToken((prev) => {
         return prev ? { ...prev, balance: selectedTokenOption.balance } : prev;
       });
     }
-  }, [fromTokens, firstToken?.address]);
+  }, [fromTokens, firstToken?.address, firstToken?.chainId]);
 
   useEffect(() => {
     const selectedTokenOption = toTokens?.find(
-      (x) => x.address.toLowerCase() === secondToken?.address?.toLowerCase()
+      (x) =>
+        x.address.toLowerCase() === secondToken?.address?.toLowerCase() &&
+        sameBridgeApiChainId(x.chainId, secondToken?.chainId)
     );
     if (selectedTokenOption) {
       setSecondToken((prev) => {
         return prev ? { ...prev, balance: selectedTokenOption.balance } : prev;
       });
     }
-  }, [toTokens, secondToken?.address]);
+  }, [toTokens, secondToken?.address, secondToken?.chainId]);
 
   return {
     firstToken,
