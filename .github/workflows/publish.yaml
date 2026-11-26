@@ -4,25 +4,27 @@ on:
   workflow_dispatch:
 
 permissions:
+  contents: read
   id-token: write
-  contents: write
 
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      packages: write
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.ref }}
           clean: true
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
 
       - name: Update npm
         run: npm install -g npm@latest
@@ -44,25 +46,21 @@ jobs:
         uses: andreigiura/action-nodejs-package-info@v1.0.2
 
       - name: Publish to npmjs alpha version
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ contains(steps.package.outputs.version, 'alpha') }}
-        run: cd dist && npm publish --tag alpha
+        working-directory: dist
+        run: npm publish --tag alpha
 
       - name: Publish to npmjs beta version
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ contains(steps.package.outputs.version, 'beta') }}
-        run: cd dist && npm publish --tag beta
+        working-directory: dist
+        run: npm publish --tag beta
 
       - name: Publish to npmjs next version
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        if: ${{ steps.package.outputs.is-release-candidate == 'true'}}
-        run: pnpm run publish-package-next
+        if: ${{ steps.package.outputs.is-release-candidate == 'true' }}
+        working-directory: dist
+        run: npm publish --tag next
 
       - name: Publish to npmjs
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ steps.package.outputs.is-prerelease == 'false' }}
-        run: pnpm run publish-package
+        working-directory: dist
+        run: npm publish
